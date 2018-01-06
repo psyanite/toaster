@@ -52,6 +52,83 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
+-- Name: enum_post_reviews_ambience_score; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE enum_post_reviews_ambience_score AS ENUM (
+    'bad',
+    'okay',
+    'good'
+);
+
+
+ALTER TYPE enum_post_reviews_ambience_score OWNER TO postgres;
+
+--
+-- Name: enum_post_reviews_overall_score; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE enum_post_reviews_overall_score AS ENUM (
+    'bad',
+    'okay',
+    'good'
+);
+
+
+ALTER TYPE enum_post_reviews_overall_score OWNER TO postgres;
+
+--
+-- Name: enum_post_reviews_service_score; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE enum_post_reviews_service_score AS ENUM (
+    'bad',
+    'okay',
+    'good'
+);
+
+
+ALTER TYPE enum_post_reviews_service_score OWNER TO postgres;
+
+--
+-- Name: enum_post_reviews_taste_score; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE enum_post_reviews_taste_score AS ENUM (
+    'bad',
+    'okay',
+    'good'
+);
+
+
+ALTER TYPE enum_post_reviews_taste_score OWNER TO postgres;
+
+--
+-- Name: enum_post_reviews_value_score; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE enum_post_reviews_value_score AS ENUM (
+    'bad',
+    'okay',
+    'good'
+);
+
+
+ALTER TYPE enum_post_reviews_value_score OWNER TO postgres;
+
+--
+-- Name: enum_posts_type; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE enum_posts_type AS ENUM (
+    'review',
+    'photo'
+);
+
+
+ALTER TYPE enum_posts_type OWNER TO postgres;
+
+--
 -- Name: post_type; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -76,16 +153,17 @@ CREATE TYPE reward_type AS ENUM (
 ALTER TYPE reward_type OWNER TO postgres;
 
 --
--- Name: reward_types; Type: TYPE; Schema: public; Owner: postgres
+-- Name: score_type; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE reward_types AS ENUM (
-    'one_time',
-    'unlimited'
+CREATE TYPE score_type AS ENUM (
+    'bad',
+    'okay',
+    'good'
 );
 
 
-ALTER TYPE reward_types OWNER TO postgres;
+ALTER TYPE score_type OWNER TO postgres;
 
 --
 -- Name: user_reward_state; Type: TYPE; Schema: public; Owner: postgres
@@ -285,6 +363,7 @@ ALTER SEQUENCE location_id_seq OWNED BY locations.id;
 --
 
 CREATE TABLE post_photos (
+    id integer NOT NULL,
     post_id integer NOT NULL,
     photo text NOT NULL
 );
@@ -293,20 +372,65 @@ CREATE TABLE post_photos (
 ALTER TABLE post_photos OWNER TO postgres;
 
 --
+-- Name: post_photos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE post_photos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE post_photos_id_seq OWNER TO postgres;
+
+--
+-- Name: post_photos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE post_photos_id_seq OWNED BY post_photos.id;
+
+
+--
 -- Name: post_reviews; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE post_reviews (
+    id integer NOT NULL,
     post_id integer NOT NULL,
-    overall_score real NOT NULL,
-    taste_score real NOT NULL,
-    service_score real NOT NULL,
-    value_score real NOT NULL,
-    body text NOT NULL
+    overall_score score_type NOT NULL,
+    taste_score score_type NOT NULL,
+    service_score score_type NOT NULL,
+    value_score score_type NOT NULL,
+    ambience_score score_type NOT NULL,
+    body text
 );
 
 
 ALTER TABLE post_reviews OWNER TO postgres;
+
+--
+-- Name: post_reviews_2_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE post_reviews_2_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE post_reviews_2_id_seq OWNER TO postgres;
+
+--
+-- Name: post_reviews_2_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE post_reviews_2_id_seq OWNED BY post_reviews.id;
+
 
 --
 -- Name: posts; Type: TABLE; Schema: public; Owner: postgres
@@ -317,7 +441,7 @@ CREATE TABLE posts (
     type post_type NOT NULL,
     store_id integer NOT NULL,
     posted_by_id integer NOT NULL,
-    posted_at date NOT NULL
+    posted_at timestamp without time zone NOT NULL
 );
 
 
@@ -667,6 +791,20 @@ ALTER TABLE ONLY locations ALTER COLUMN id SET DEFAULT nextval('location_id_seq'
 
 
 --
+-- Name: post_photos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY post_photos ALTER COLUMN id SET DEFAULT nextval('post_photos_id_seq'::regclass);
+
+
+--
+-- Name: post_reviews id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY post_reviews ALTER COLUMN id SET DEFAULT nextval('post_reviews_2_id_seq'::regclass);
+
+
+--
 -- Name: posts id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -997,18 +1135,30 @@ INSERT INTO locations VALUES (5, 'Westfield Pitt Street Mall', 1);
 -- Data for Name: post_photos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO post_photos VALUES (1, 1, 'https://b.zmtcdn.com/data/reviews_photos/4e2/768396f0d2f2240303be0853341a84e2_1459007636.jpg');
+INSERT INTO post_photos VALUES (2, 1, 'https://b.zmtcdn.com/data/reviews_photos/fd5/56b36df276a188e5ee74c617d24aefd5_1502800424.jpg');
+INSERT INTO post_photos VALUES (3, 3, 'https://b.zmtcdn.com/data/pictures/chains/0/18347530/62820c277b3ffaa51767bc0049cbc3af.jpg');
+INSERT INTO post_photos VALUES (4, 5, 'https://b.zmtcdn.com/data/pictures/chains/5/16564875/3c87693a4c32ce2fefb1c857829bc2fd.jpg');
 
 
 --
 -- Data for Name: post_reviews; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO post_reviews VALUES (3, 4, 'bad', 'okay', 'good', 'okay', 'good', 'Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)');
+INSERT INTO post_reviews VALUES (1, 1, 'good', 'bad', 'bad', 'okay', 'okay', 'We came for the xialongbao (Shanghai soup dumplings) and weren''t disappointed. Theses are some of the best. Fill in the order form and in a few, short moments the steamers will begin to arrive, carrying delicate dumplings, full of the tasty minced pork filling and that delicious soup. The rest of the menu is also fantastic. The only thing stopping me giving 5/5 is the price. It''s pretty expensive, but certainly worth it for a special occasion. I doubt you will find better value in Sydney.');
+INSERT INTO post_reviews VALUES (2, 2, 'okay', 'good', 'bad', 'okay', 'good', 'This is the first time I''m had Dumplings and Co, it was a really good experience. I was shocked to see the number of options available for vegetarians. The menu was easy to understand the food was very tasty. We reached here at 5:20 and the restaurant re-opened on time, which showcased good hospitality. We ordered for vegetarian wonton soup and a vegetarian fried rice with mushroom and truffle oil, our order was served very fast and both the dishes were really tasty. We paid $24 for both, which was a good deal as the portions were good in size.');
 
 
 --
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO posts VALUES (1, 'review', 1, 1, '2017-12-29 15:04:20');
+INSERT INTO posts VALUES (2, 'review', 1, 2, '2017-11-25 09:10:55');
+INSERT INTO posts VALUES (3, 'photo', 2, 1, '2017-10-07 12:54:38.249');
+INSERT INTO posts VALUES (4, 'review', 3, 2, '2017-10-17 22:22:02.385');
+INSERT INTO posts VALUES (5, 'photo', 3, 1, '2017-11-06 07:58:09.777');
 
 
 --
@@ -1075,12 +1225,16 @@ INSERT INTO suburbs VALUES (1, 'CBD', 1);
 -- Data for Name: user_accounts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO user_accounts VALUES (1);
+INSERT INTO user_accounts VALUES (2);
 
 
 --
 -- Data for Name: user_profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO user_profiles VALUES (1, 'nyatella', 'Luna', 'https://instagram.fsyd4-1.fna.fbcdn.net/t51.2885-15/s640x640/sh0.08/e35/25009242_1265083993624512_2786963626508943360_n.jpg');
+INSERT INTO user_profiles VALUES (2, 'curious_chloe', 'Curious Chloe', 'https://i.pinimg.com/736x/70/51/24/7051248ece052066b0575d3e712786f4--hair-images-a-hotel.jpg');
 
 
 --
@@ -1125,10 +1279,24 @@ SELECT pg_catalog.setval('location_id_seq', 5, true);
 
 
 --
+-- Name: post_photos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('post_photos_id_seq', 4, true);
+
+
+--
+-- Name: post_reviews_2_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('post_reviews_2_id_seq', 3, true);
+
+
+--
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('posts_id_seq', 1, false);
+SELECT pg_catalog.setval('posts_id_seq', 1, true);
 
 
 --
@@ -1214,19 +1382,19 @@ ALTER TABLE ONLY locations
 
 
 --
--- Name: post_photos post_photos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: post_photos post_photos_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY post_photos
-    ADD CONSTRAINT post_photos_pkey PRIMARY KEY (post_id);
+    ADD CONSTRAINT post_photos_id_pk PRIMARY KEY (id);
 
 
 --
--- Name: post_reviews post_reviews_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: post_reviews post_reviews_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY post_reviews
-    ADD CONSTRAINT post_reviews_pkey PRIMARY KEY (post_id);
+    ADD CONSTRAINT post_reviews_id_pk PRIMARY KEY (id);
 
 
 --
@@ -1367,17 +1535,24 @@ CREATE INDEX locations_name ON locations USING btree (name);
 
 
 --
--- Name: post_photos_post_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+-- Name: post_photos_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX post_photos_post_id_uindex ON post_photos USING btree (post_id);
+CREATE UNIQUE INDEX post_photos_id_uindex ON post_photos USING btree (id);
 
 
 --
--- Name: post_reviews_post_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+-- Name: post_photos_photo_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX post_reviews_post_id_uindex ON post_reviews USING btree (post_id);
+CREATE INDEX post_photos_photo_index ON post_photos USING btree (photo);
+
+
+--
+-- Name: post_photos_post_id_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX post_photos_post_id_index ON post_photos USING btree (post_id);
 
 
 --
@@ -1482,19 +1657,19 @@ ALTER TABLE ONLY locations
 
 
 --
--- Name: post_photos post_photos_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: post_photos post_photos_posts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY post_photos
-    ADD CONSTRAINT post_photos_post_id_fkey FOREIGN KEY (post_id) REFERENCES posts(id);
+    ADD CONSTRAINT post_photos_posts_id_fk FOREIGN KEY (post_id) REFERENCES posts(id);
 
 
 --
--- Name: post_reviews post_reviews_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: post_reviews post_reviews_2_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY post_reviews
-    ADD CONSTRAINT post_reviews_post_id_fkey FOREIGN KEY (post_id) REFERENCES posts(id);
+    ADD CONSTRAINT post_reviews_2_post_id_fkey FOREIGN KEY (post_id) REFERENCES posts(id);
 
 
 --
