@@ -44,4 +44,22 @@ export default {
       },
     }),
   },
+
+  postsByUserAccountId: {
+    type: new List(PostType),
+    args: {
+      userAccountId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: resolver(Post, {
+      before: (findOptions, args) => {
+        findOptions.where = {
+          posted_by_id: args.userAccountId,
+        }
+        findOptions.order = [['posted_at', 'ASC']]
+        return findOptions
+      },
+    }),
+  },
 }
