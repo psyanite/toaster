@@ -1,19 +1,24 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+import Sequelize from 'sequelize'
+import config from '../../config/config'
 
-import Sequelize from 'sequelize';
-import config from '../config';
+// https://github.com/sequelize/sequelize/issues/8417
 
-const sequelize = new Sequelize(config.databaseUrl, {
-  define: {
-    freezeTableName: true,
+const sequelize = new Sequelize(
+  config.database.name,
+  config.database.username,
+  config.database.password,
+  {
+    host: config.database.host,
+    port: config.database.port,
+    dialect: config.database.dialect,
+    operatorsAliases: Sequelize.Op,
+    define: {
+      underscored: true,
+      underscoredAll: true,
+      freezeTableName: true,
+      timestamps: false,
+    },
   },
-});
+)
 
-export default sequelize;
+export default sequelize
