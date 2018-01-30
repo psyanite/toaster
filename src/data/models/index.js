@@ -1,42 +1,41 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+import sequelize from '../sequelize'
 
-import sequelize from '../sequelize';
-import User from './User';
-import UserLogin from './UserLogin';
-import UserClaim from './UserClaim';
-import UserProfile from './UserProfile';
+import UserAccount from './User/UserAccounts'
+import UserProfile from './User/UserProfile'
 
-User.hasMany(UserLogin, {
-  foreignKey: 'userId',
-  as: 'logins',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
-});
+import Store from './Store'
 
-User.hasMany(UserClaim, {
-  foreignKey: 'userId',
-  as: 'claims',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
-});
+import Cuisine from './Cuisine'
 
-User.hasOne(UserProfile, {
-  foreignKey: 'userId',
-  as: 'profile',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
-});
+import Country from './Location/Country'
+import District from './Location/District'
+import City from './Location/City'
+import Suburb from './Location/Suburb'
+import Location from './Location/Location'
+import Address from './Location/Address'
+
+import Post from './Post/Post'
+import PostPhoto from './Post/PostPhoto'
+import PostReview from './Post/PostReview'
 
 function sync(...args) {
-  return sequelize.sync(...args);
+  return sequelize.sync(...args)
 }
 
-export default { sync };
-export { User, UserLogin, UserClaim, UserProfile };
+export default { sync }
+
+export {
+  UserAccount,
+  UserProfile,
+  Store,
+  Cuisine,
+  Country,
+  District,
+  City,
+  Suburb,
+  Location,
+  Address,
+  Post,
+  PostPhoto,
+  PostReview,
+}
