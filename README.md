@@ -1,19 +1,43 @@
-# 🍞 Frakkin Toasters #
+# 🍞 Toaster 0.2.0
 
-🐈 Meow, meow-meow-meow, meow-meow, meow.
+🐈 GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 
-### Development Tools ###
+### Queries
+
+```
+allStores: [Store]
+storeById(id: Int!): [Store]
+
+allUserAccounts: [UserAccount]
+userAccountById(id: Int!): [UserAccount]
+
+allPosts: [Post]
+postById(id: Int!): [Post]
+postsByStoreId(storeId: Int!): [Post]
+postsByUserAccountId(userAccountId: Int!): [Post]
+```
+
+### Meowtations
+
+```
+addStore(name: String!): Store
+```
+
+### Development Tools
+
 * PostgreSQL 10
 * WebStorm
 * DataGrip
 * Git Bash
 * Git Kraken
 
-### How to database ###
-* Install PostgreSQL 10
+### How to assemble
+
+* Install PostgreSQL
 * Clone repository
 * Create .env file in root
 * Add configurations like such:
+
 ```
 DATABASE_DIALECT = 'postgres'
 DATABSE_HOST = 'localhost'
@@ -22,38 +46,15 @@ DATABASE_NAME = 'burntoast'
 DATABASE_USERNAME = 'postgres'
 DATABASE_PASSWORD = 'password'
 ```
+
 * More information available at [dotenv Github repository](https://github.com/motdotla/dotenv)
 * cd src/data/migrations
-* psql -U postgres -f 'export.sql'
+* psql -U postgres -f 'src/data/migrations/export.sql'
+* Other helpful scripts can be find in the same directory
 
-### How to start the frakkin toaster ###
+### How to start the frakkin toaster
+
 * yarn install
 * yarn start
 * https://localhost:3000/graphql
 * Don't stick your knife in there
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
