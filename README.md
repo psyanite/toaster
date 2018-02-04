@@ -26,7 +26,7 @@ addStore(name: String!): Store
 ### Development Tools
 
 * PostgreSQL 10
-* WebStorm
+* IntelliJ
 * DataGrip
 * Git Bash
 * Git Kraken
@@ -48,7 +48,6 @@ DATABASE_PASSWORD = 'password'
 ```
 
 * More information available at [dotenv Github repository](https://github.com/motdotla/dotenv)
-* cd src/data/migrations
 * psql -U postgres -f 'src/data/migrations/export.sql'
 * Other helpful scripts can be find in the same directory
 
