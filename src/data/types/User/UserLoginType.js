@@ -4,23 +4,21 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { UserAccount, UserProfile } from '../../models';
+import { UserAccount, UserLogin } from '../../models';
 import UserAccountType from './UserAccountType';
 
-UserProfile.UserAccount = UserProfile.belongsTo(UserAccount, {
+UserLogin.UserAccount = UserLogin.belongsTo(UserAccount, {
   foreignKey: 'user_account_id',
 });
 
 export default new ObjectType({
-  name: 'UserProfile',
+  name: 'UserLogin',
   fields: () => ({
     user_account: {
       type: UserAccountType,
-      resolve: resolver(UserProfile.UserAccount),
+      resolve: resolver(UserLogin.UserAccount),
     },
-    username: { type: String },
-    display_name: { type: String },
-    profile_picture: { type: String },
-    gender: { type: String },
+    name: { type: String },
+    key: { type: String },
   }),
 });

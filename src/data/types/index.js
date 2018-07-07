@@ -1,4 +1,6 @@
 import UserAccountType from './User/UserAccountType';
+import UserClaimType from './User/UserClaimType';
+import UserLoginType from './User/UserLoginType';
 import UserProfileType from './User/UserProfileType';
 
 import StoreType from './StoreType';
@@ -18,6 +20,8 @@ import PostReviewType from './Post/PostReviewType';
 
 export {
   UserAccountType,
+  UserClaimType,
+  UserLoginType,
   UserProfileType,
   StoreType,
   CuisineType,

@@ -1,9 +1,8 @@
+/* eslint-disable prettier/prettier */
 import DataType from 'sequelize';
 import Model from '../../sequelize';
 
-export default Model.define(
-  'user_accounts',
-  {
+export default Model.define('user_accounts', {
     id: {
       type: DataType.INTEGER,
       autoIncrement: true,
@@ -12,15 +11,15 @@ export default Model.define(
 
     email: {
       type: DataType.STRING(255),
-      validate: { isEmail: true },
+      validate: {isEmail: true},
     },
 
-    emailConfirmed: {
+    email_confirmed: {
       type: DataType.BOOLEAN,
       defaultValue: false,
     },
   },
   {
-    indexes: [{ fields: ['email'] }],
+    indexes: [{fields: ['email']}],
   },
 );

@@ -6,13 +6,20 @@ export default Model.define('user_profiles', {
     type: DataType.INTEGER,
     primaryKey: true,
   },
+
   username: {
     type: DataType.STRING(64),
   },
+
   display_name: {
     type: DataType.STRING(64),
   },
+
   profile_picture: {
     type: DataType.TEXT,
+  },
+
+  gender: {
+    type: DataType.STRING(50),
   },
 });
