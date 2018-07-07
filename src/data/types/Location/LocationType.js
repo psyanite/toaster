@@ -3,12 +3,12 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
-import { Location, Suburb } from '../../models'
-import SuburbType from './SuburbType'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
+import { Location, Suburb } from '../../models';
+import SuburbType from './SuburbType';
 
-Location.Suburb = Location.belongsTo(Suburb, { constraints: false })
+Location.Suburb = Location.belongsTo(Suburb, { constraints: false });
 
 export default new ObjectType({
   name: 'Location',
@@ -20,4 +20,4 @@ export default new ObjectType({
       resolve: resolver(Location.Suburb),
     },
   }),
-})
+});

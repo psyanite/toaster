@@ -1,5 +1,5 @@
-import Sequelize from 'sequelize'
-import config from '../../config/config'
+import Sequelize from 'sequelize';
+import config from '../../config/config';
 
 // https://github.com/sequelize/sequelize/issues/8417
 
@@ -19,6 +19,6 @@ const sequelize = new Sequelize(
       timestamps: false,
     },
   },
-)
+);
 
-export default sequelize
+export default sequelize;

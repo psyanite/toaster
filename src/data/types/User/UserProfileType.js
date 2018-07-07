@@ -1,14 +1,15 @@
 import {
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
 
-import { UserAccount, UserProfile } from '../../models'
-import UserAccountType from './UserAccountType'
+import { UserAccount, UserProfile } from '../../models';
+import UserAccountType from './UserAccountType';
 
-UserProfile.UserAccount = UserProfile.belongsTo(UserAccount, { foreignKey: 'user_account_id' })
-
+UserProfile.UserAccount = UserProfile.belongsTo(UserAccount, {
+  foreignKey: 'user_account_id',
+});
 
 export default new ObjectType({
   name: 'UserProfile',
@@ -21,4 +22,4 @@ export default new ObjectType({
     display_name: { type: String },
     profile_picture: { type: String },
   }),
-})
+});

@@ -2,12 +2,13 @@ import {
   GraphQLInt as Int,
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
-  GraphQLString as String } from 'graphql'
-import { resolver } from 'graphql-sequelize'
-import { Address, Store } from '../../models/index'
-import StoreType from '../StoreType'
+  GraphQLString as String,
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
+import { Address, Store } from '../../models/index';
+import StoreType from '../StoreType';
 
-Address.Store = Address.belongsTo(Store, { foreignKey: 'store_id' })
+Address.Store = Address.belongsTo(Store, { foreignKey: 'store_id' });
 
 export default new ObjectType({
   name: 'Address',
@@ -23,4 +24,4 @@ export default new ObjectType({
     address_street_name: { type: String },
     google_url: { type: String },
   }),
-})
+});

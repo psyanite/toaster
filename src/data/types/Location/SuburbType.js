@@ -4,17 +4,17 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
-import { Location, Suburb, City } from '../../models'
-import LocationType from './LocationType'
-import CityType from './CityType'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
+import { Location, Suburb, City } from '../../models';
+import LocationType from './LocationType';
+import CityType from './CityType';
 
-Suburb.City = Suburb.belongsTo(City, { constraints: false })
+Suburb.City = Suburb.belongsTo(City, { constraints: false });
 Suburb.Locations = Suburb.hasMany(Location, {
   as: 'locations',
   constraints: false,
-})
+});
 
 export default new ObjectType({
   name: 'Suburb',
@@ -30,4 +30,4 @@ export default new ObjectType({
       resolve: resolver(Suburb.Locations),
     },
   }),
-})
+});

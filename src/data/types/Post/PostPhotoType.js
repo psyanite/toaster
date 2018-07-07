@@ -3,12 +3,12 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
-import { Post, PostPhoto } from '../../models'
-import PostType from './PostType'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
+import { Post, PostPhoto } from '../../models';
+import PostType from './PostType';
 
-PostPhoto.Post = PostPhoto.belongsTo(Post, { foreignKey: 'post_id' })
+PostPhoto.Post = PostPhoto.belongsTo(Post, { foreignKey: 'post_id' });
 
 export default new ObjectType({
   name: 'PostPhoto',
@@ -20,4 +20,4 @@ export default new ObjectType({
     },
     photo: { type: String },
   }),
-})
+});

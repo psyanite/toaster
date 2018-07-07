@@ -4,15 +4,15 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
-import { Store, Cuisine } from '../models'
-import StoreType from './StoreType'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
+import { Store, Cuisine } from '../models';
+import StoreType from './StoreType';
 
 Cuisine.Stores = Cuisine.belongsToMany(Store, {
   through: 'store_cuisines',
   foreignKey: 'cuisine_id',
-})
+});
 
 export default new ObjectType({
   name: 'Cuisine',
@@ -24,4 +24,4 @@ export default new ObjectType({
       resolve: resolver(Cuisine.Stores),
     },
   }),
-})
+});

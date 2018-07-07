@@ -1,5 +1,5 @@
-import DataType from 'sequelize'
-import Model from '../../sequelize'
+import DataType from 'sequelize';
+import Model from '../../sequelize';
 
 export default Model.define(
   'cities',
@@ -21,4 +21,4 @@ export default Model.define(
   {
     indexes: [{ fields: ['name'] }],
   },
-)
+);

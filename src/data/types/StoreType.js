@@ -4,22 +4,22 @@ import {
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
   GraphQLList as List,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
 
-import { Store, Location, Suburb, Cuisine, Address } from '../models'
-import SuburbType from './Location/SuburbType'
-import LocationType from './Location/LocationType'
-import AddressType from './Location/AddressType'
-import CuisineType from './CuisineType'
+import { Store, Location, Suburb, Cuisine, Address } from '../models';
+import SuburbType from './Location/SuburbType';
+import LocationType from './Location/LocationType';
+import AddressType from './Location/AddressType';
+import CuisineType from './CuisineType';
 
-Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' })
-Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' })
-Store.Address = Store.hasOne(Address)
+Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' });
+Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' });
+Store.Address = Store.hasOne(Address);
 Store.Cuisines = Store.belongsToMany(Cuisine, {
   through: 'store_cuisines',
   foreignKey: 'store_id',
-})
+});
 
 export default new ObjectType({
   name: 'Store',
@@ -45,4 +45,4 @@ export default new ObjectType({
       resolve: resolver(Store.Cuisines),
     },
   }),
-})
+});

@@ -2,13 +2,13 @@ import {
   GraphQLInt as Int,
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
 
-import { UserAccount, UserProfile } from '../../models'
-import UserProfileType from './UserProfileType'
+import { UserAccount, UserProfile } from '../../models';
+import UserProfileType from './UserProfileType';
 
-UserAccount.UserProfile = UserAccount.hasOne(UserProfile)
+UserAccount.UserProfile = UserAccount.hasOne(UserProfile);
 
 export default new ObjectType({
   name: 'UserAccount',
@@ -19,4 +19,4 @@ export default new ObjectType({
       resolve: resolver(UserAccount.UserProfile),
     },
   }),
-})
+});

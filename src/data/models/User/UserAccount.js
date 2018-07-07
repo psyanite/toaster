@@ -2,7 +2,7 @@ import DataType from 'sequelize';
 import Model from '../../sequelize';
 
 export default Model.define(
-  'countries',
+  'user_accounts',
   {
     id: {
       type: DataType.INTEGER,
@@ -10,11 +10,17 @@ export default Model.define(
       primaryKey: true,
     },
 
-    name: {
+    email: {
       type: DataType.STRING(255),
+      validate: { isEmail: true },
+    },
+
+    emailConfirmed: {
+      type: DataType.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
-    indexes: [{ fields: ['name'] }],
+    indexes: [{ fields: ['email'] }],
   },
 );

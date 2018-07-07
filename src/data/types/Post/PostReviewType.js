@@ -1,13 +1,15 @@
 import {
-  GraphQLEnumType as EnumType, GraphQLInt as Int, GraphQLNonNull as NonNull,
+  GraphQLEnumType as EnumType,
+  GraphQLInt as Int,
+  GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
-} from 'graphql'
-import { resolver } from 'graphql-sequelize'
-import { Post, PostReview } from '../../models'
-import PostType from './PostType'
+} from 'graphql';
+import { resolver } from 'graphql-sequelize';
+import { Post, PostReview } from '../../models';
+import PostType from './PostType';
 
-PostReview.Post = PostReview.belongsTo(Post, { foreignKey: 'post_id' })
+PostReview.Post = PostReview.belongsTo(Post, { foreignKey: 'post_id' });
 
 const ScoreType = new EnumType({
   name: 'ScoreType',
@@ -16,7 +18,7 @@ const ScoreType = new EnumType({
     okay: { value: 'okay' },
     good: { value: 'good' },
   },
-})
+});
 
 export default new ObjectType({
   name: 'PostReview',
@@ -33,4 +35,4 @@ export default new ObjectType({
     ambience_score: { type: ScoreType },
     body: { type: String },
   }),
-})
+});

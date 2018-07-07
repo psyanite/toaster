@@ -3,17 +3,17 @@ import {
   GraphQLList as List,
   GraphQLNonNull as NonNull,
   GraphQLInt as Int,
-} from 'graphql'
+} from 'graphql';
 
-import { resolver } from 'graphql-sequelize'
-import { PostType } from '../types'
-import { Post } from '../models'
+import { resolver } from 'graphql-sequelize';
+import { PostType } from '../types';
+import { Post } from '../models';
 
 export default {
   allPosts: {
     type: new List(PostType),
     resolve() {
-      return Post.findAll({}).then(data => data)
+      return Post.findAll({}).then(data => data);
     },
   },
 
@@ -38,9 +38,9 @@ export default {
       before: (findOptions, args) => {
         findOptions.where = {
           store_id: args.storeId,
-        }
-        findOptions.order = [['posted_at', 'ASC']]
-        return findOptions
+        };
+        findOptions.order = [['posted_at', 'ASC']];
+        return findOptions;
       },
     }),
   },
@@ -56,10 +56,10 @@ export default {
       before: (findOptions, args) => {
         findOptions.where = {
           posted_by_id: args.userAccountId,
-        }
-        findOptions.order = [['posted_at', 'ASC']]
-        return findOptions
+        };
+        findOptions.order = [['posted_at', 'ASC']];
+        return findOptions;
       },
     }),
   },
-}
+};
