@@ -1,23 +1,52 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
-import PropTypes from 'prop-types';
+import graphqlify from 'graphqlify';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { getUserAccountId } from '../../utils/AuthService';
 import s from './Home.css';
 
 class Home extends React.Component {
+  state = {
+    profile: null,
+  };
+
+  async componentWillMount() {
+    const meId = getUserAccountId();
+    if (meId) {
+      const meQuery = graphqlify({
+        profileByUserAccountId: {
+          params: { userAccountId: 22 },
+          fields: {
+            username: {},
+            display_name: {},
+            profile_picture: {},
+          },
+        },
+      });
+      const resp = await this.props.fetch('/graphql', {
+        body: JSON.stringify({ query: meQuery }),
+      });
+
+      const { data } = await resp.json();
+      const profile = data ? data.profileByUserAccountId.pop() : null;
+      this.setState({ profile });
+    }
+  }
+
   render() {
+    const { profile } = this.state;
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>Meow</h1>
+          {profile ? (
+            <div>
+              <h1>Welcome {profile.display_name}</h1>
+              <img src={profile.profile_picture} alt="meow" />
+            </div>
+          ) : (
+            <div>
+              <h1>Welcome Guest</h1>
+            </div>
+          )}
         </div>
       </div>
     );
