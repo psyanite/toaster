@@ -40,7 +40,7 @@ passport.use(
          */
         if (req.user) {
           const userLogin = await UserLogin.findOne({
-            attributes: ['name', 'key'],
+            attributes: ['user_account_id', 'name', 'key'],
             where: { name: loginName, key: profile.id },
           });
           if (userLogin) {
@@ -49,7 +49,10 @@ passport.use(
               attributes: ['id', 'email'],
               where: { id: userLogin.user_account_id },
             });
-            done(null, account);
+            done(null, {
+              id: account.id,
+              email: account.email,
+            });
           } else {
             const user = await UserAccount.create(
               {
@@ -80,7 +83,7 @@ passport.use(
             });
           }
         } else {
-          const users = await UserAccount.findAll({
+          const accounts = await UserAccount.findAll({
             attributes: ['id', 'email'],
             where: { name: loginName, key: profile.id },
             include: [
@@ -91,17 +94,24 @@ passport.use(
               },
             ],
           });
-          if (users.length) {
-            const user = users[0].get({ plain: true });
-            done(null, user);
+          if (accounts.length) {
+            const account = accounts[0].get({ plain: true });
+            done(null, {
+              id: account.id,
+              email: account.email,
+            });
           } else {
-            let user = await UserAccount.findOne({
+            let account = await UserAccount.findOne({
+              attributes: ['id', 'email'],
               where: { email: profile._json.email },
             });
-            if (user) {
-              done(null, user);
+            if (account) {
+              done(null, {
+                id: account.id,
+                email: account.email,
+              });
             } else {
-              user = await UserAccount.create(
+              account = await UserAccount.create(
                 {
                   email: profile._json.email,
                   emailConfirmed: true,
@@ -124,7 +134,10 @@ passport.use(
                   ],
                 },
               );
-              done(null, user);
+              done(null, {
+                id: account.id,
+                email: account.email,
+              });
             }
           }
         }

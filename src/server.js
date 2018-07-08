@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
@@ -91,7 +82,20 @@ app.get(
     const expiresIn = 60 * 60 * 24 * 180; // 180 days
     const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    res.redirect('/');
+    res.cookie('user_account_id', req.user.id, {
+      maxAge: 1000 * expiresIn,
+      httpOnly: true,
+    });
+    const url = require('url');
+    res.redirect(
+      url.format({
+        pathname: '/me',
+        query: {
+          id_token: token,
+          user_account_id: req.user.id,
+        },
+      }),
+    );
   },
 );
 
