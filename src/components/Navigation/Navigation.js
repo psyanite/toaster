@@ -1,6 +1,6 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { isLoggedIn } from '../../utils/AuthService';
+import { isLoggedIn } from '../../utils/SessionService';
 import s from './Navigation.css';
 import Link from '../Link';
 

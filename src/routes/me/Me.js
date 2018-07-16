@@ -1,5 +1,5 @@
 import React from 'react';
-import { setIdToken, setUserAccountId } from '../../utils/AuthService';
+import { setIdToken, setUserAccountId } from '../../utils/SessionService';
 
 class Me extends React.Component {
   componentDidMount() {

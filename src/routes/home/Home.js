@@ -1,7 +1,7 @@
 import React from 'react';
 import graphqlify from 'graphqlify';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { getUserAccountId } from '../../utils/AuthService';
+import { getUserAccountId } from '../../utils/SessionService';
 import s from './Home.css';
 
 class Home extends React.Component {

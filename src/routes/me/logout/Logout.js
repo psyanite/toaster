@@ -1,5 +1,5 @@
 import React from 'react';
-import { clearTokens } from '../../../utils/AuthService';
+import { clearTokens } from '../../../utils/SessionService';
 
 class Logout extends React.Component {
   componentDidMount() {

@@ -1,47 +1,86 @@
-import decode from 'jwt-decode';
+/* eslint-disable no-underscore-dangle */
 
-const USER_ACCOUNT_ID_KEY = 'user_account_id';
-const ID_TOKEN_KEY = 'id_token';
+import { UserAccount, UserLogin, UserProfile, UserClaim } from '../data/models';
 
-export function getIdToken() {
-  return localStorage.getItem(ID_TOKEN_KEY);
-}
+const randomUsername = () => 'smoldoggo';
 
-export function setIdToken(value) {
-  localStorage.setItem(ID_TOKEN_KEY, value);
-}
+const randomProfilePicture = () => 'https://imgur.com/HYz307Q.jpg';
 
-export function getUserAccountId() {
-  return localStorage.getItem(USER_ACCOUNT_ID_KEY);
-}
+const fbProfilePicture = profileId =>
+  `https://graph.facebook.com/${profileId}/picture?type=large`;
 
-export function setUserAccountId(value) {
-  return localStorage.setItem(USER_ACCOUNT_ID_KEY, value);
-}
+export const consumeFacebookAuth = async (accessToken, fbProfile) => {
+  const loginName = 'facebook';
+  const claimType = 'urn:facebook:access_token';
 
-export function clearTokens() {
-  localStorage.removeItem(ID_TOKEN_KEY);
-  localStorage.removeItem(USER_ACCOUNT_ID_KEY);
-}
+  const accounts = await UserAccount.findAll({
+    attributes: ['id', 'email'],
+    include: [
+      {
+        attributes: ['name', 'key'],
+        model: UserLogin,
+        required: true,
+        as: 'logins',
+        where: { name: loginName, key: fbProfile.id },
+      },
+      {
+        attributes: ['username', 'display_name', 'gender', 'profile_picture'],
+        model: UserProfile,
+        required: true,
+        as: 'profile',
+      },
+    ],
+  });
 
-function getTokenExpirationDate(encodedToken) {
-  const token = decode(encodedToken);
-  if (!token.exp) {
-    return null;
+  console.log('AuthServices.findAllByLoginNameAndFbProfileId');
+  console.log(accounts);
+
+  if (accounts.length) {
+    console.log('It is going to return:');
+    console.log(accounts[0].get({ plain: true }));
+    // There exists an account linked to this Facebook account
+    return accounts[0].get({ plain: true });
   }
 
-  const date = new Date(0);
-  date.setUTCSeconds(token.exp);
+  console.log('Did not match fb login to an existing account');
+  console.log('Now creating new account');
+  console.log(fbProfile);
 
-  return date;
-}
+  // No account linked to this Facebook account
+  // Create a new one
+  const user = await UserAccount.create(
+    {
+      email: fbProfile.email,
+      emailConfirmed: true,
+      logins: [{ name: loginName, key: fbProfile.id }],
+      claims: [{ type: claimType, value: accessToken }],
+      profile: {
+        display_name: fbProfile.name,
+        username: randomUsername(),
+        gender: fbProfile.gender,
+        profile_picture: randomProfilePicture(),
+      },
+    },
+    {
+      include: [
+        { model: UserClaim, as: 'claims' },
+        { model: UserLogin, as: 'logins' },
+        { model: UserProfile, as: 'profile' },
+      ],
+    },
+  );
 
-function isTokenExpired(token) {
-  const expirationDate = getTokenExpirationDate(token);
-  return expirationDate < new Date();
-}
+  console.log('AuthServices created a new user');
+  console.log(user);
 
-export function isLoggedIn() {
-  const idToken = getIdToken();
-  return !!idToken && !isTokenExpired(idToken);
-}
+  return {
+    id: user.id,
+    email: user.email,
+    profile: {
+      username: user.profile.username,
+      displayName: user.profile.displayName,
+      gender: user.profile.gender,
+      profilePicture: user.profile.profilePicture,
+    },
+  };
+};
