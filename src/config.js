@@ -1,18 +1,13 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
-/* eslint-disable max-len */
+/* eslint-disable max-len,global-require */
 
 if (process.env.BROWSER) {
   throw new Error(
     'Do not import `config.js` from inside the client-side code.',
   );
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
 }
 
 module.exports = {
@@ -30,7 +25,15 @@ module.exports = {
   },
 
   // Database
-  databaseUrl: process.env.DATABASE_URL || 'sqlite:database.sqlite',
+  database: {
+    url: process.env.DATABASE_URL || 'postgres://localhost:5432/burntoast',
+    name: process.env.DATABASE_NAME || 'public',
+    dialect: process.env.DATABASE_DIALECT || 'postgres',
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: process.env.DATABASE_PORT || 5432,
+    username: process.env.DATABASE_USERNAME || 'username',
+    password: process.env.DATABASE_PASSWORD || 'password',
+  },
 
   // Web analytics
   analytics: {
@@ -40,13 +43,13 @@ module.exports = {
 
   // Authentication
   auth: {
-    jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
+    jwt: { secret: process.env.JWT_SECRET || 'JWT Secret' },
 
     // https://developers.facebook.com/
     facebook: {
-      id: process.env.FACEBOOK_APP_ID || '223129748069711',
+      id: process.env.FACEBOOK_APP_ID || '186244551745631',
       secret:
-        process.env.FACEBOOK_APP_SECRET || '4b846278a55fbe90348ab6fcbcd444e6',
+        process.env.FACEBOOK_APP_SECRET || 'a970ae3240ab4b9b8aae0f9f0661c6fc',
     },
 
     // https://cloud.google.com/console/project
