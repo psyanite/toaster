@@ -26,9 +26,16 @@ addStore(name: String!): Store
 ### Development Tools
 
 * PostgreSQL 10
-* IntelliJ
+* JDK
+* Git
+* Babun
+* Yarn
+* Node
+* Intellij
 * DataGrip
-* Git Bash
+* Android Studio
+* Expo
+* Genymotion
 * Git Kraken
 
 ### How to assemble
@@ -57,3 +64,7 @@ DATABASE_PASSWORD = 'password'
 * yarn start
 * https://localhost:3000/graphql
 * Don't stick your knife in there
+
+### More docos
+
+* [How to Heroku](./docs/how-to-heroku.md)
