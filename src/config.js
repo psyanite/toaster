@@ -1,4 +1,9 @@
-/* eslint-disable max-len,global-require */
+/* eslint-disable global-require */
+const ENV = {
+  DEV: 'development',
+  STAGE: 'stage',
+  PROD: 'production',
+};
 
 if (process.env.BROWSER) {
   throw new Error(
@@ -6,11 +11,17 @@ if (process.env.BROWSER) {
   );
 }
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== ENV.PROD) {
   require('dotenv').config();
 }
 
 module.exports = {
+  // Environment constants
+  ENV,
+
+  // Environment
+  env: process.env.NODE_ENV || ENV.DEV,
+
   // Node.js app
   port: process.env.PORT || 3000,
 
@@ -43,7 +54,7 @@ module.exports = {
 
   // Authentication
   auth: {
-    jwt: { secret: process.env.JWT_SECRET || 'JWT Secret' },
+    jwt: { secret: process.env.JWT_SECRET || 'Burntoast JWT Secret' },
 
     // https://developers.facebook.com/
     facebook: {

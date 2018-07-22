@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=6.5",
+    "node": "8.11.2",
     "npm": ">=3.10"
   },
   "browserslist": [
@@ -163,6 +163,7 @@
     "render": "babel-node tools/run render",
     "serve": "babel-node tools/run runServer",
     "start": "babel-node tools/run start",
-    "debug": "babel-node tools/run start --debug --inspect"
+    "debug": "babel-node tools/run start --debug --inspect",
+    "deploy-heroku": "yarn run build -- --release && yarn run deploy && heroku open"
   }
 }
