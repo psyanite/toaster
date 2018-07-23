@@ -22,6 +22,7 @@ if (config.env === config.ENV.development) {
       port: config.database.port,
       dialect: config.database.dialect,
       operatorsAliases: Sequelize.Op,
+      define,
     },
   );
 } else {

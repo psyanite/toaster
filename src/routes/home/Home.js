@@ -14,7 +14,7 @@ class Home extends React.Component {
     if (meId) {
       const meQuery = graphqlify({
         profileByUserAccountId: {
-          params: { userAccountId: 22 },
+          params: { userAccountId: meId },
           fields: {
             username: {},
             display_name: {},
