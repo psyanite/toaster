@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 const ENV = {
-  DEV: 'development',
-  STAGE: 'stage',
-  PROD: 'production',
+  development: 'development',
+  stage: 'stage',
+  production: 'production',
 };
 
 if (process.env.BROWSER) {
@@ -11,7 +11,7 @@ if (process.env.BROWSER) {
   );
 }
 
-if (process.env.NODE_ENV !== ENV.PROD) {
+if (process.env.NODE_ENV !== ENV.production) {
   require('dotenv').config();
 }
 
@@ -20,7 +20,7 @@ module.exports = {
   ENV,
 
   // Environment
-  env: process.env.NODE_ENV || ENV.DEV,
+  env: process.env.NODE_ENV || ENV.development,
 
   // Node.js app
   port: process.env.PORT || 3000,

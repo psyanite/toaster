@@ -12,7 +12,7 @@ const define = {
 
 let sequelize;
 
-if (config.env === config.ENV.DEV) {
+if (config.env === config.ENV.development) {
   sequelize = new Sequelize(
     config.database.name,
     config.database.username,
