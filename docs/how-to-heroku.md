@@ -1,11 +1,19 @@
-# How to deploy to Heroku
+### How to deploy to Heroku
 
 * Commit changes
 * Run `yarn deploy-heroku`
 * Run `heroku open`
 
 
-# How Heroku was setup
+### How to update Heroku database
+
+* `heroku pg:reset DATABASE_URL --confirm burntoast`
+* `heroku pg:psql < 'src/data/migrations/export.sql'`
+* Ignore any errors labelled `ERROR:  must be member of role "postgres"`
+* Check database
+
+
+### How Heroku was setup
 
 * cd to project root directory
 * Run `heroku create`

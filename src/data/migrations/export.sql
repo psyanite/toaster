@@ -2,181 +2,159 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.1
--- Dumped by pg_dump version 10.0
+-- Dumped from database version 10.3
+-- Dumped by pg_dump version 10.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-SET row_security = off;
-
-DROP DATABASE IF EXISTS burntoast;
---
--- Name: burntoast; Type: DATABASE; Schema: -; Owner: postgres
---
-
-CREATE DATABASE burntoast WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'English_United States.1252' LC_CTYPE = 'English_United States.1252';
-
-
-ALTER DATABASE burntoast OWNER TO postgres;
-
-\connect burntoast
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
-SET search_path = public, pg_catalog;
-
 --
 -- Name: enum_post_reviews_ambience_score; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE enum_post_reviews_ambience_score AS ENUM (
+CREATE TYPE public.enum_post_reviews_ambience_score AS ENUM (
     'bad',
     'okay',
     'good'
 );
 
 
-ALTER TYPE enum_post_reviews_ambience_score OWNER TO postgres;
+ALTER TYPE public.enum_post_reviews_ambience_score OWNER TO postgres;
 
 --
 -- Name: enum_post_reviews_overall_score; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE enum_post_reviews_overall_score AS ENUM (
+CREATE TYPE public.enum_post_reviews_overall_score AS ENUM (
     'bad',
     'okay',
     'good'
 );
 
 
-ALTER TYPE enum_post_reviews_overall_score OWNER TO postgres;
+ALTER TYPE public.enum_post_reviews_overall_score OWNER TO postgres;
 
 --
 -- Name: enum_post_reviews_service_score; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE enum_post_reviews_service_score AS ENUM (
+CREATE TYPE public.enum_post_reviews_service_score AS ENUM (
     'bad',
     'okay',
     'good'
 );
 
 
-ALTER TYPE enum_post_reviews_service_score OWNER TO postgres;
+ALTER TYPE public.enum_post_reviews_service_score OWNER TO postgres;
 
 --
 -- Name: enum_post_reviews_taste_score; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE enum_post_reviews_taste_score AS ENUM (
+CREATE TYPE public.enum_post_reviews_taste_score AS ENUM (
     'bad',
     'okay',
     'good'
 );
 
 
-ALTER TYPE enum_post_reviews_taste_score OWNER TO postgres;
+ALTER TYPE public.enum_post_reviews_taste_score OWNER TO postgres;
 
 --
 -- Name: enum_post_reviews_value_score; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE enum_post_reviews_value_score AS ENUM (
+CREATE TYPE public.enum_post_reviews_value_score AS ENUM (
     'bad',
     'okay',
     'good'
 );
 
 
-ALTER TYPE enum_post_reviews_value_score OWNER TO postgres;
+ALTER TYPE public.enum_post_reviews_value_score OWNER TO postgres;
 
 --
 -- Name: enum_posts_type; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE enum_posts_type AS ENUM (
+CREATE TYPE public.enum_posts_type AS ENUM (
     'review',
     'photo'
 );
 
 
-ALTER TYPE enum_posts_type OWNER TO postgres;
+ALTER TYPE public.enum_posts_type OWNER TO postgres;
 
 --
 -- Name: post_type; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE post_type AS ENUM (
+CREATE TYPE public.post_type AS ENUM (
     'photo',
     'review'
 );
 
 
-ALTER TYPE post_type OWNER TO postgres;
+ALTER TYPE public.post_type OWNER TO postgres;
 
 --
 -- Name: reward_type; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE reward_type AS ENUM (
+CREATE TYPE public.reward_type AS ENUM (
     'one_time',
     'unlimited'
 );
 
 
-ALTER TYPE reward_type OWNER TO postgres;
+ALTER TYPE public.reward_type OWNER TO postgres;
 
 --
 -- Name: score_type; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE score_type AS ENUM (
+CREATE TYPE public.score_type AS ENUM (
     'bad',
     'okay',
     'good'
 );
 
 
-ALTER TYPE score_type OWNER TO postgres;
+ALTER TYPE public.score_type OWNER TO postgres;
 
 --
 -- Name: user_reward_state; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE user_reward_state AS ENUM (
+CREATE TYPE public.user_reward_state AS ENUM (
     'active',
     'redeemed',
     'expired'
 );
 
 
-ALTER TYPE user_reward_state OWNER TO postgres;
+ALTER TYPE public.user_reward_state OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -186,20 +164,20 @@ SET default_with_oids = false;
 -- Name: cities; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE cities (
+CREATE TABLE public.cities (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
     district_id integer NOT NULL
 );
 
 
-ALTER TABLE cities OWNER TO postgres;
+ALTER TABLE public.cities OWNER TO postgres;
 
 --
 -- Name: cities_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE cities_id_seq
+CREATE SEQUENCE public.cities_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -207,20 +185,20 @@ CREATE SEQUENCE cities_id_seq
     CACHE 1;
 
 
-ALTER TABLE cities_id_seq OWNER TO postgres;
+ALTER TABLE public.cities_id_seq OWNER TO postgres;
 
 --
 -- Name: cities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE cities_id_seq OWNED BY cities.id;
+ALTER SEQUENCE public.cities_id_seq OWNED BY public.cities.id;
 
 
 --
 -- Name: countries; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE countries (
+CREATE TABLE public.countries (
     id integer NOT NULL,
     name character varying(100) NOT NULL,
     alpha_2 character varying(2) NOT NULL,
@@ -234,13 +212,13 @@ CREATE TABLE countries (
 );
 
 
-ALTER TABLE countries OWNER TO postgres;
+ALTER TABLE public.countries OWNER TO postgres;
 
 --
 -- Name: countries_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE countries_id_seq
+CREATE SEQUENCE public.countries_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -248,32 +226,32 @@ CREATE SEQUENCE countries_id_seq
     CACHE 1;
 
 
-ALTER TABLE countries_id_seq OWNER TO postgres;
+ALTER TABLE public.countries_id_seq OWNER TO postgres;
 
 --
 -- Name: countries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
+ALTER SEQUENCE public.countries_id_seq OWNED BY public.countries.id;
 
 
 --
 -- Name: cuisines; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE cuisines (
+CREATE TABLE public.cuisines (
     id integer NOT NULL,
     name character varying(100) NOT NULL
 );
 
 
-ALTER TABLE cuisines OWNER TO postgres;
+ALTER TABLE public.cuisines OWNER TO postgres;
 
 --
 -- Name: cuisines_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE cuisines_id_seq
+CREATE SEQUENCE public.cuisines_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -281,33 +259,33 @@ CREATE SEQUENCE cuisines_id_seq
     CACHE 1;
 
 
-ALTER TABLE cuisines_id_seq OWNER TO postgres;
+ALTER TABLE public.cuisines_id_seq OWNER TO postgres;
 
 --
 -- Name: cuisines_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE cuisines_id_seq OWNED BY cuisines.id;
+ALTER SEQUENCE public.cuisines_id_seq OWNED BY public.cuisines.id;
 
 
 --
 -- Name: districts; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE districts (
+CREATE TABLE public.districts (
     id integer NOT NULL,
     name character varying(100) NOT NULL,
     country_id integer NOT NULL
 );
 
 
-ALTER TABLE districts OWNER TO postgres;
+ALTER TABLE public.districts OWNER TO postgres;
 
 --
 -- Name: districts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE districts_id_seq
+CREATE SEQUENCE public.districts_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -315,33 +293,33 @@ CREATE SEQUENCE districts_id_seq
     CACHE 1;
 
 
-ALTER TABLE districts_id_seq OWNER TO postgres;
+ALTER TABLE public.districts_id_seq OWNER TO postgres;
 
 --
 -- Name: districts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE districts_id_seq OWNED BY districts.id;
+ALTER SEQUENCE public.districts_id_seq OWNED BY public.districts.id;
 
 
 --
 -- Name: locations; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE locations (
+CREATE TABLE public.locations (
     id integer NOT NULL,
     name character varying(100) NOT NULL,
     suburb_id integer NOT NULL
 );
 
 
-ALTER TABLE locations OWNER TO postgres;
+ALTER TABLE public.locations OWNER TO postgres;
 
 --
 -- Name: location_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE location_id_seq
+CREATE SEQUENCE public.location_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -349,33 +327,33 @@ CREATE SEQUENCE location_id_seq
     CACHE 1;
 
 
-ALTER TABLE location_id_seq OWNER TO postgres;
+ALTER TABLE public.location_id_seq OWNER TO postgres;
 
 --
 -- Name: location_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE location_id_seq OWNED BY locations.id;
+ALTER SEQUENCE public.location_id_seq OWNED BY public.locations.id;
 
 
 --
 -- Name: post_photos; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE post_photos (
+CREATE TABLE public.post_photos (
     id integer NOT NULL,
     post_id integer NOT NULL,
     photo text NOT NULL
 );
 
 
-ALTER TABLE post_photos OWNER TO postgres;
+ALTER TABLE public.post_photos OWNER TO postgres;
 
 --
 -- Name: post_photos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE post_photos_id_seq
+CREATE SEQUENCE public.post_photos_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -383,38 +361,38 @@ CREATE SEQUENCE post_photos_id_seq
     CACHE 1;
 
 
-ALTER TABLE post_photos_id_seq OWNER TO postgres;
+ALTER TABLE public.post_photos_id_seq OWNER TO postgres;
 
 --
 -- Name: post_photos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE post_photos_id_seq OWNED BY post_photos.id;
+ALTER SEQUENCE public.post_photos_id_seq OWNED BY public.post_photos.id;
 
 
 --
 -- Name: post_reviews; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE post_reviews (
+CREATE TABLE public.post_reviews (
     id integer NOT NULL,
     post_id integer NOT NULL,
-    overall_score score_type NOT NULL,
-    taste_score score_type NOT NULL,
-    service_score score_type NOT NULL,
-    value_score score_type NOT NULL,
-    ambience_score score_type NOT NULL,
+    overall_score public.score_type NOT NULL,
+    taste_score public.score_type NOT NULL,
+    service_score public.score_type NOT NULL,
+    value_score public.score_type NOT NULL,
+    ambience_score public.score_type NOT NULL,
     body text
 );
 
 
-ALTER TABLE post_reviews OWNER TO postgres;
+ALTER TABLE public.post_reviews OWNER TO postgres;
 
 --
 -- Name: post_reviews_2_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE post_reviews_2_id_seq
+CREATE SEQUENCE public.post_reviews_2_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -423,35 +401,35 @@ CREATE SEQUENCE post_reviews_2_id_seq
     CACHE 1;
 
 
-ALTER TABLE post_reviews_2_id_seq OWNER TO postgres;
+ALTER TABLE public.post_reviews_2_id_seq OWNER TO postgres;
 
 --
 -- Name: post_reviews_2_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE post_reviews_2_id_seq OWNED BY post_reviews.id;
+ALTER SEQUENCE public.post_reviews_2_id_seq OWNED BY public.post_reviews.id;
 
 
 --
 -- Name: posts; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE posts (
+CREATE TABLE public.posts (
     id integer NOT NULL,
-    type post_type NOT NULL,
+    type public.post_type NOT NULL,
     store_id integer NOT NULL,
     posted_by_id integer NOT NULL,
     posted_at timestamp without time zone NOT NULL
 );
 
 
-ALTER TABLE posts OWNER TO postgres;
+ALTER TABLE public.posts OWNER TO postgres;
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE posts_id_seq
+CREATE SEQUENCE public.posts_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -459,24 +437,24 @@ CREATE SEQUENCE posts_id_seq
     CACHE 1;
 
 
-ALTER TABLE posts_id_seq OWNER TO postgres;
+ALTER TABLE public.posts_id_seq OWNER TO postgres;
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
+ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
 
 
 --
 -- Name: rewards; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE rewards (
+CREATE TABLE public.rewards (
     id integer NOT NULL,
     name character varying(30) NOT NULL,
     description character varying(100),
-    type reward_type,
+    type public.reward_type,
     store_id integer,
     store_group_id integer,
     valid_from date NOT NULL,
@@ -486,13 +464,13 @@ CREATE TABLE rewards (
 );
 
 
-ALTER TABLE rewards OWNER TO postgres;
+ALTER TABLE public.rewards OWNER TO postgres;
 
 --
 -- Name: rewards_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE rewards_id_seq
+CREATE SEQUENCE public.rewards_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -500,20 +478,20 @@ CREATE SEQUENCE rewards_id_seq
     CACHE 1;
 
 
-ALTER TABLE rewards_id_seq OWNER TO postgres;
+ALTER TABLE public.rewards_id_seq OWNER TO postgres;
 
 --
 -- Name: rewards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE rewards_id_seq OWNED BY rewards.id;
+ALTER SEQUENCE public.rewards_id_seq OWNED BY public.rewards.id;
 
 
 --
 -- Name: store_addresses; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE store_addresses (
+CREATE TABLE public.store_addresses (
     id integer NOT NULL,
     store_id integer NOT NULL,
     address_first_line character varying(100),
@@ -524,13 +502,13 @@ CREATE TABLE store_addresses (
 );
 
 
-ALTER TABLE store_addresses OWNER TO postgres;
+ALTER TABLE public.store_addresses OWNER TO postgres;
 
 --
 -- Name: store_addresses_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE store_addresses_id_seq
+CREATE SEQUENCE public.store_addresses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -538,56 +516,56 @@ CREATE SEQUENCE store_addresses_id_seq
     CACHE 1;
 
 
-ALTER TABLE store_addresses_id_seq OWNER TO postgres;
+ALTER TABLE public.store_addresses_id_seq OWNER TO postgres;
 
 --
 -- Name: store_addresses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE store_addresses_id_seq OWNED BY store_addresses.id;
+ALTER SEQUENCE public.store_addresses_id_seq OWNED BY public.store_addresses.id;
 
 
 --
 -- Name: store_cuisines; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE store_cuisines (
+CREATE TABLE public.store_cuisines (
     store_id integer NOT NULL,
     cuisine_id integer NOT NULL
 );
 
 
-ALTER TABLE store_cuisines OWNER TO postgres;
+ALTER TABLE public.store_cuisines OWNER TO postgres;
 
 --
 -- Name: store_group_stores; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE store_group_stores (
+CREATE TABLE public.store_group_stores (
     group_id integer NOT NULL,
     store_id integer NOT NULL
 );
 
 
-ALTER TABLE store_group_stores OWNER TO postgres;
+ALTER TABLE public.store_group_stores OWNER TO postgres;
 
 --
 -- Name: store_groups; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE store_groups (
+CREATE TABLE public.store_groups (
     id integer NOT NULL,
     name character varying(100) NOT NULL
 );
 
 
-ALTER TABLE store_groups OWNER TO postgres;
+ALTER TABLE public.store_groups OWNER TO postgres;
 
 --
 -- Name: store_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE store_groups_id_seq
+CREATE SEQUENCE public.store_groups_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -595,20 +573,20 @@ CREATE SEQUENCE store_groups_id_seq
     CACHE 1;
 
 
-ALTER TABLE store_groups_id_seq OWNER TO postgres;
+ALTER TABLE public.store_groups_id_seq OWNER TO postgres;
 
 --
 -- Name: store_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE store_groups_id_seq OWNED BY store_groups.id;
+ALTER SEQUENCE public.store_groups_id_seq OWNED BY public.store_groups.id;
 
 
 --
 -- Name: store_ratings_cache; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE store_ratings_cache (
+CREATE TABLE public.store_ratings_cache (
     store_id integer NOT NULL,
     heart_ratings integer DEFAULT 0 NOT NULL,
     okay_ratings integer DEFAULT 0 NOT NULL,
@@ -616,13 +594,13 @@ CREATE TABLE store_ratings_cache (
 );
 
 
-ALTER TABLE store_ratings_cache OWNER TO postgres;
+ALTER TABLE public.store_ratings_cache OWNER TO postgres;
 
 --
 -- Name: stores; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE stores (
+CREATE TABLE public.stores (
     id integer NOT NULL,
     name character varying(50),
     phone_country character varying(20),
@@ -634,13 +612,13 @@ CREATE TABLE stores (
 );
 
 
-ALTER TABLE stores OWNER TO postgres;
+ALTER TABLE public.stores OWNER TO postgres;
 
 --
 -- Name: stores_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE stores_id_seq
+CREATE SEQUENCE public.stores_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -648,33 +626,33 @@ CREATE SEQUENCE stores_id_seq
     CACHE 1;
 
 
-ALTER TABLE stores_id_seq OWNER TO postgres;
+ALTER TABLE public.stores_id_seq OWNER TO postgres;
 
 --
 -- Name: stores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE stores_id_seq OWNED BY stores.id;
+ALTER SEQUENCE public.stores_id_seq OWNED BY public.stores.id;
 
 
 --
 -- Name: suburbs; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE suburbs (
+CREATE TABLE public.suburbs (
     id integer NOT NULL,
     name character varying(100) NOT NULL,
     city_id integer NOT NULL
 );
 
 
-ALTER TABLE suburbs OWNER TO postgres;
+ALTER TABLE public.suburbs OWNER TO postgres;
 
 --
 -- Name: suburbs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE suburbs_id_seq
+CREATE SEQUENCE public.suburbs_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -682,31 +660,33 @@ CREATE SEQUENCE suburbs_id_seq
     CACHE 1;
 
 
-ALTER TABLE suburbs_id_seq OWNER TO postgres;
+ALTER TABLE public.suburbs_id_seq OWNER TO postgres;
 
 --
 -- Name: suburbs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE suburbs_id_seq OWNED BY suburbs.id;
+ALTER SEQUENCE public.suburbs_id_seq OWNED BY public.suburbs.id;
 
 
 --
 -- Name: user_accounts; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE user_accounts (
-    id integer NOT NULL
+CREATE TABLE public.user_accounts (
+    id integer NOT NULL,
+    email character varying(255),
+    email_confirmed boolean DEFAULT false NOT NULL
 );
 
 
-ALTER TABLE user_accounts OWNER TO postgres;
+ALTER TABLE public.user_accounts OWNER TO postgres;
 
 --
 -- Name: user_accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE user_accounts_id_seq
+CREATE SEQUENCE public.user_accounts_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -714,150 +694,177 @@ CREATE SEQUENCE user_accounts_id_seq
     CACHE 1;
 
 
-ALTER TABLE user_accounts_id_seq OWNER TO postgres;
+ALTER TABLE public.user_accounts_id_seq OWNER TO postgres;
 
 --
 -- Name: user_accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE user_accounts_id_seq OWNED BY user_accounts.id;
+ALTER SEQUENCE public.user_accounts_id_seq OWNED BY public.user_accounts.id;
 
+
+--
+-- Name: user_claims; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_claims (
+    user_account_id integer NOT NULL,
+    type character varying(256),
+    value character varying(4000)
+);
+
+
+ALTER TABLE public.user_claims OWNER TO postgres;
+
+--
+-- Name: user_logins; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_logins (
+    name character varying(50) NOT NULL,
+    key character varying(100) NOT NULL,
+    user_account_id integer NOT NULL
+);
+
+
+ALTER TABLE public.user_logins OWNER TO postgres;
 
 --
 -- Name: user_profiles; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE user_profiles (
+CREATE TABLE public.user_profiles (
     user_account_id integer NOT NULL,
     username character varying(64) NOT NULL,
     display_name character varying(64),
-    profile_picture text
+    profile_picture text,
+    gender character varying(50)
 );
 
 
-ALTER TABLE user_profiles OWNER TO postgres;
+ALTER TABLE public.user_profiles OWNER TO postgres;
 
 --
 -- Name: user_rewards; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE user_rewards (
+CREATE TABLE public.user_rewards (
     user_account_id integer NOT NULL,
     reward_id integer NOT NULL,
     redeem_count integer DEFAULT 0 NOT NULL,
     code character varying(255) DEFAULT NULL::character varying,
-    state user_reward_state NOT NULL,
+    state public.user_reward_state NOT NULL,
     favorited_at date,
     redeemed_at date,
     expires_at date
 );
 
 
-ALTER TABLE user_rewards OWNER TO postgres;
+ALTER TABLE public.user_rewards OWNER TO postgres;
 
 --
 -- Name: cities id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY cities ALTER COLUMN id SET DEFAULT nextval('cities_id_seq'::regclass);
+ALTER TABLE ONLY public.cities ALTER COLUMN id SET DEFAULT nextval('public.cities_id_seq'::regclass);
 
 
 --
 -- Name: countries id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
+ALTER TABLE ONLY public.countries ALTER COLUMN id SET DEFAULT nextval('public.countries_id_seq'::regclass);
 
 
 --
 -- Name: cuisines id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY cuisines ALTER COLUMN id SET DEFAULT nextval('cuisines_id_seq'::regclass);
+ALTER TABLE ONLY public.cuisines ALTER COLUMN id SET DEFAULT nextval('public.cuisines_id_seq'::regclass);
 
 
 --
 -- Name: districts id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY districts ALTER COLUMN id SET DEFAULT nextval('districts_id_seq'::regclass);
+ALTER TABLE ONLY public.districts ALTER COLUMN id SET DEFAULT nextval('public.districts_id_seq'::regclass);
 
 
 --
 -- Name: locations id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY locations ALTER COLUMN id SET DEFAULT nextval('location_id_seq'::regclass);
+ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.location_id_seq'::regclass);
 
 
 --
 -- Name: post_photos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY post_photos ALTER COLUMN id SET DEFAULT nextval('post_photos_id_seq'::regclass);
+ALTER TABLE ONLY public.post_photos ALTER COLUMN id SET DEFAULT nextval('public.post_photos_id_seq'::regclass);
 
 
 --
 -- Name: post_reviews id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY post_reviews ALTER COLUMN id SET DEFAULT nextval('post_reviews_2_id_seq'::regclass);
+ALTER TABLE ONLY public.post_reviews ALTER COLUMN id SET DEFAULT nextval('public.post_reviews_2_id_seq'::regclass);
 
 
 --
 -- Name: posts id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
+ALTER TABLE ONLY public.posts ALTER COLUMN id SET DEFAULT nextval('public.posts_id_seq'::regclass);
 
 
 --
 -- Name: rewards id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY rewards ALTER COLUMN id SET DEFAULT nextval('rewards_id_seq'::regclass);
+ALTER TABLE ONLY public.rewards ALTER COLUMN id SET DEFAULT nextval('public.rewards_id_seq'::regclass);
 
 
 --
 -- Name: store_addresses id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_addresses ALTER COLUMN id SET DEFAULT nextval('store_addresses_id_seq'::regclass);
+ALTER TABLE ONLY public.store_addresses ALTER COLUMN id SET DEFAULT nextval('public.store_addresses_id_seq'::regclass);
 
 
 --
 -- Name: store_groups id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_groups ALTER COLUMN id SET DEFAULT nextval('store_groups_id_seq'::regclass);
+ALTER TABLE ONLY public.store_groups ALTER COLUMN id SET DEFAULT nextval('public.store_groups_id_seq'::regclass);
 
 
 --
 -- Name: stores id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY stores ALTER COLUMN id SET DEFAULT nextval('stores_id_seq'::regclass);
+ALTER TABLE ONLY public.stores ALTER COLUMN id SET DEFAULT nextval('public.stores_id_seq'::regclass);
 
 
 --
 -- Name: suburbs id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY suburbs ALTER COLUMN id SET DEFAULT nextval('suburbs_id_seq'::regclass);
+ALTER TABLE ONLY public.suburbs ALTER COLUMN id SET DEFAULT nextval('public.suburbs_id_seq'::regclass);
 
 
 --
 -- Name: user_accounts id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY user_accounts ALTER COLUMN id SET DEFAULT nextval('user_accounts_id_seq'::regclass);
+ALTER TABLE ONLY public.user_accounts ALTER COLUMN id SET DEFAULT nextval('public.user_accounts_id_seq'::regclass);
 
 
 --
 -- Data for Name: cities; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY cities (id, name, district_id) FROM stdin;
+COPY public.cities (id, name, district_id) FROM stdin;
 1	Sydney	1
 \.
 
@@ -866,7 +873,7 @@ COPY cities (id, name, district_id) FROM stdin;
 -- Data for Name: countries; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY countries (id, name, alpha_2, alpha_3, country_code, iso_3166_2, region, sub_region, region_code, sub_region_code) FROM stdin;
+COPY public.countries (id, name, alpha_2, alpha_3, country_code, iso_3166_2, region, sub_region, region_code, sub_region_code) FROM stdin;
 1	Afghanistan	AF	AFG	4	ISO 3166-2:AF	Asia	Southern Asia	142	34
 2	Ã…land Islands	AX	ALA	248	ISO 3166-2:AX	Europe	Northern Europe	150	154
 3	Albania	AL	ALB	8	ISO 3166-2:AL	Europe	Southern Europe	150	39
@@ -1114,7 +1121,7 @@ COPY countries (id, name, alpha_2, alpha_3, country_code, iso_3166_2, region, su
 -- Data for Name: cuisines; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY cuisines (id, name) FROM stdin;
+COPY public.cuisines (id, name) FROM stdin;
 1	Café
 2	Modern Australian
 3	Italian
@@ -1126,7 +1133,7 @@ COPY cuisines (id, name) FROM stdin;
 -- Data for Name: districts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY districts (id, name, country_id) FROM stdin;
+COPY public.districts (id, name, country_id) FROM stdin;
 1	New South Wales	13
 \.
 
@@ -1135,7 +1142,7 @@ COPY districts (id, name, country_id) FROM stdin;
 -- Data for Name: locations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY locations (id, name, suburb_id) FROM stdin;
+COPY public.locations (id, name, suburb_id) FROM stdin;
 4	The Galleries	1
 5	Chatswood Westfield	2
 \.
@@ -1145,7 +1152,7 @@ COPY locations (id, name, suburb_id) FROM stdin;
 -- Data for Name: post_photos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY post_photos (id, post_id, photo) FROM stdin;
+COPY public.post_photos (id, post_id, photo) FROM stdin;
 1	1	https://b.zmtcdn.com/data/reviews_photos/4e2/768396f0d2f2240303be0853341a84e2_1459007636.jpg
 2	1	https://b.zmtcdn.com/data/reviews_photos/fd5/56b36df276a188e5ee74c617d24aefd5_1502800424.jpg
 3	3	https://b.zmtcdn.com/data/pictures/chains/0/18347530/62820c277b3ffaa51767bc0049cbc3af.jpg
@@ -1164,11 +1171,11 @@ COPY post_photos (id, post_id, photo) FROM stdin;
 -- Data for Name: post_reviews; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY post_reviews (id, post_id, overall_score, taste_score, service_score, value_score, ambience_score, body) FROM stdin;
+COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score, value_score, ambience_score, body) FROM stdin;
 3	4	bad	okay	good	okay	good	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
 1	1	good	bad	bad	okay	okay	We came for the xialongbao (Shanghai soup dumplings) and weren't disappointed. Theses are some of the best. Fill in the order form and in a few, short moments the steamers will begin to arrive, carrying delicate dumplings, full of the tasty minced pork filling and that delicious soup. The rest of the menu is also fantastic. The only thing stopping me giving 5/5 is the price. It's pretty expensive, but certainly worth it for a special occasion. I doubt you will find better value in Sydney.
-2	2	okay	good	bad	okay	good	This is the first time I'm had Dumplings and Co, it was a really good experience. I was shocked to see the number of options available for vegetarians. The menu was easy to understand the food was very tasty. We reached here at 5:20 and the restaurant re-opened on time, which showcased good hospitality. We ordered for vegetarian wonton soup and a vegetarian fried rice with mushroom and truffle oil, our order was served very fast and both the dishes were really tasty. We paid $24 for both, which was a good deal as the portions were good in size.
 4	8	okay	okay	okay	good	good	Lovely service breakfast open 7-4, nice area and food was ok , only thing have to say is a bit expensive . Have to go at weekend , a lot of fun and nice location for family Time
+2	2	okay	good	bad	okay	good	This is the first time I had Dumplings and Co, it was a really good experience. I was shocked to see the number of options available for vegetarians. The menu was easy to understand the food was very tasty. We reached here at 5:20 and the restaurant re-opened on time, which showcased good hospitality. We ordered for vegetarian wonton soup and a vegetarian fried rice with mushroom and truffle oil, our order was served very fast and both the dishes were really tasty. We paid $24 for both, which was a good deal as the portions were good in size.
 \.
 
 
@@ -1176,7 +1183,7 @@ COPY post_reviews (id, post_id, overall_score, taste_score, service_score, value
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY posts (id, type, store_id, posted_by_id, posted_at) FROM stdin;
+COPY public.posts (id, type, store_id, posted_by_id, posted_at) FROM stdin;
 7	photo	2	4	2017-07-12 12:12:23.453
 1	review	1	1	2017-01-19 15:04:20
 3	photo	2	1	2017-02-07 12:54:38.249
@@ -1192,7 +1199,7 @@ COPY posts (id, type, store_id, posted_by_id, posted_at) FROM stdin;
 -- Data for Name: rewards; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY rewards (id, name, description, type, store_id, store_group_id, valid_from, expires_at, promo_image, terms_and_conditions) FROM stdin;
+COPY public.rewards (id, name, description, type, store_id, store_group_id, valid_from, expires_at, promo_image, terms_and_conditions) FROM stdin;
 \.
 
 
@@ -1200,7 +1207,7 @@ COPY rewards (id, name, description, type, store_id, store_group_id, valid_from,
 -- Data for Name: store_addresses; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY store_addresses (id, store_id, address_first_line, address_second_line, address_street_number, address_street_name, google_url) FROM stdin;
+COPY public.store_addresses (id, store_id, address_first_line, address_second_line, address_street_number, address_street_name, google_url) FROM stdin;
 3	1	Level 2, Hawker Lane	Chatswood Westfield	1	Anderson Street	https://goo.gl/maps/GZxSRicabTu
 2	2	Level 1, Shop 11.04	Regent Place Arcade	487	George Street	https://goo.gl/maps/Ds7vagBoTu42
 1	3	Basement Level	\N	500	George Street	https://goo.gl/maps/njQmnE8NFi52
@@ -1211,7 +1218,7 @@ COPY store_addresses (id, store_id, address_first_line, address_second_line, add
 -- Data for Name: store_cuisines; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY store_cuisines (store_id, cuisine_id) FROM stdin;
+COPY public.store_cuisines (store_id, cuisine_id) FROM stdin;
 1	1
 1	4
 2	2
@@ -1224,7 +1231,7 @@ COPY store_cuisines (store_id, cuisine_id) FROM stdin;
 -- Data for Name: store_group_stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY store_group_stores (group_id, store_id) FROM stdin;
+COPY public.store_group_stores (group_id, store_id) FROM stdin;
 \.
 
 
@@ -1232,7 +1239,7 @@ COPY store_group_stores (group_id, store_id) FROM stdin;
 -- Data for Name: store_groups; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY store_groups (id, name) FROM stdin;
+COPY public.store_groups (id, name) FROM stdin;
 \.
 
 
@@ -1240,7 +1247,7 @@ COPY store_groups (id, name) FROM stdin;
 -- Data for Name: store_ratings_cache; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY store_ratings_cache (store_id, heart_ratings, okay_ratings, burnt_ratings) FROM stdin;
+COPY public.store_ratings_cache (store_id, heart_ratings, okay_ratings, burnt_ratings) FROM stdin;
 \.
 
 
@@ -1248,7 +1255,7 @@ COPY store_ratings_cache (store_id, heart_ratings, okay_ratings, burnt_ratings) 
 -- Data for Name: stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image) FROM stdin;
+COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image) FROM stdin;
 3	Workshop Meowpresso	+61	288819222	4	1	1	https://b.zmtcdn.com/data/res_imagery/16562081_RESTAURANT_bf27f21b41f1ee074a931eae5d8f719b.jpg?fit=around%7C1200%3A464&crop=1200%3A464%3B0%2C0
 1	Dumplings & Co.	+61	296992235	5	2	1	https://b.zmtcdn.com/data/pictures/chains/2/16560902/528cc961dce573b97a5fddb55b406791.jpg
 2	Sokyo	+61	295258017	\N	1	1	https://b.zmtcdn.com/data/res_imagery/16564570_RESTAURANT_058971a49fafe87b9c772331b251b1fa.jpg
@@ -1259,7 +1266,7 @@ COPY stores (id, name, phone_country, phone_number, location_id, suburb_id, city
 -- Data for Name: suburbs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY suburbs (id, name, city_id) FROM stdin;
+COPY public.suburbs (id, name, city_id) FROM stdin;
 1	CBD	1
 2	Chatswood	1
 \.
@@ -1269,11 +1276,36 @@ COPY suburbs (id, name, city_id) FROM stdin;
 -- Data for Name: user_accounts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY user_accounts (id) FROM stdin;
-1
-2
-3
-4
+COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
+2	\N	f
+3	\N	f
+4	\N	f
+25	\N	f
+1	psyneia@gmail.com	f
+27	\N	f
+28	\N	f
+\.
+
+
+--
+-- Data for Name: user_claims; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_claims (user_account_id, type, value) FROM stdin;
+25	urn:facebook:access_token	EAADK73FfXU8BAEUgFQGtzIITgjEZA0xrHJo3YoV10zsGqGaC82CvYuK3SeR1l2Sh10HkCIStLkZC978lY3ULcz16xZAUP1Oyaq3pVjcaRT9mSuizjsFRo1SWfNviblCGu6hbZBZCHtAShV2qrJtppYxyvyDNCgwq4VgraNGjiLhqc4RXRHwsLZATi9GsKwXELNCNrllJHb5odpJl0hN1sG
+1	urn:facebook:access_token	EAADK73FfXU8BAAQbdMSeYoZCSl7pCDJw9l8ReFrJsEgxtZBzdsE7ZAEwY8dgxYZBjJpZCpdKNlz9ZBSsZAudR0anLKENFxrfRN2cDTf5yDxHPvZBZCwwEHBYrTRG8aXbZCCZBgc4ZCCN989kPfqM0HsPckNJ06oMgfrSUw76N68D5EbGygZDZD
+27	urn:facebook:access_token	EAADK73FfXU8BAEviPw1AsUnZCqz3eDdObbSBnSxPZCTD7qYermWtLBu2kc30ZC2C9BCSZCrkQlAZCHH5BCB9gvxZCf5olZBqdTMlxbWWR0YZB1iMDMdLdLvLTVYQYodOofFnJ9jEGjd70WmJkE04KxAP046YkUgRUZAhTmpyACfYmrrVL7fOU1WrMLpmSc1rRZCj3hHX5EgR3CXAZDZD
+28	urn:facebook:access_token	EAADK73FfXU8BAIFRyv7ZBxhw1EI4rSxUvzKTKMDrcItnfpyPY97vWLPk1wGkgtsfpLBhgWHxEnPahBFvpaXYLmwMoNxdIASbu1OX57JJYN7sDAsgaUaq2qgChRHcrTEZCxjoi1jXhoeu2WEDOLcZBi6fH6H7EqVtgLeoa0bP8L8XHJ0gMu9VGRB5FgwKaLyIzKcnJvh7QZDZD
+\.
+
+
+--
+-- Data for Name: user_logins; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_logins (name, key, user_account_id) FROM stdin;
+facebook	134766764092722	25
+facebook	1672032292917116	1
 \.
 
 
@@ -1281,11 +1313,14 @@ COPY user_accounts (id) FROM stdin;
 -- Data for Name: user_profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY user_profiles (user_account_id, username, display_name, profile_picture) FROM stdin;
-2	curious_chloe	Curious Chloe	https://i.pinimg.com/736x/70/51/24/7051248ece052066b0575d3e712786f4--hair-images-a-hotel.jpg
-1	nyatella	Luna	https://instagram.fsyd3-1.fna.fbcdn.net/t51.2885-15/sh0.08/e35/p750x750/26185455_928351753997159_9061312647214923776_n.jpg
-3	annika_b	Annika	https://instagram.fsyd3-1.fna.fbcdn.net/t51.2885-15/e35/14033023_1278668948832351_1340040698_n.jpg
-4	leia	Leia	http://i.imgur.com/sjad1TX.jpg
+COPY public.user_profiles (user_account_id, username, display_name, profile_picture, gender) FROM stdin;
+4	leia	Leia	http://i.imgur.com/sjad1TX.jpg	\N
+2	curious_chloe	Curious Chloe	https://imgur.com/FErrGkO.jpg	\N
+3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	\N
+1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	\N
+25	smoldoggo	Luna Lytele	https://imgur.com/HYz307Q.jpg	male
+27	smoldoggo	\N	https://imgur.com/HYz307Q.jpg	\N
+28	smoldoggo	\N	https://imgur.com/HYz307Q.jpg	\N
 \.
 
 
@@ -1293,7 +1328,7 @@ COPY user_profiles (user_account_id, username, display_name, profile_picture) FR
 -- Data for Name: user_rewards; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY user_rewards (user_account_id, reward_id, redeem_count, code, state, favorited_at, redeemed_at, expires_at) FROM stdin;
+COPY public.user_rewards (user_account_id, reward_id, redeem_count, code, state, favorited_at, redeemed_at, expires_at) FROM stdin;
 \.
 
 
@@ -1301,105 +1336,105 @@ COPY user_rewards (user_account_id, reward_id, redeem_count, code, state, favori
 -- Name: cities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('cities_id_seq', 1, true);
+SELECT pg_catalog.setval('public.cities_id_seq', 1, true);
 
 
 --
 -- Name: countries_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('countries_id_seq', 240, true);
+SELECT pg_catalog.setval('public.countries_id_seq', 240, true);
 
 
 --
 -- Name: cuisines_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('cuisines_id_seq', 4, true);
+SELECT pg_catalog.setval('public.cuisines_id_seq', 4, true);
 
 
 --
 -- Name: districts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('districts_id_seq', 1, true);
+SELECT pg_catalog.setval('public.districts_id_seq', 1, true);
 
 
 --
 -- Name: location_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('location_id_seq', 5, true);
+SELECT pg_catalog.setval('public.location_id_seq', 5, true);
 
 
 --
 -- Name: post_photos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('post_photos_id_seq', 5, true);
+SELECT pg_catalog.setval('public.post_photos_id_seq', 5, true);
 
 
 --
 -- Name: post_reviews_2_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('post_reviews_2_id_seq', 3, true);
+SELECT pg_catalog.setval('public.post_reviews_2_id_seq', 3, true);
 
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('posts_id_seq', 2, true);
+SELECT pg_catalog.setval('public.posts_id_seq', 2, true);
 
 
 --
 -- Name: rewards_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('rewards_id_seq', 1, false);
+SELECT pg_catalog.setval('public.rewards_id_seq', 1, false);
 
 
 --
 -- Name: store_addresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('store_addresses_id_seq', 3, true);
+SELECT pg_catalog.setval('public.store_addresses_id_seq', 3, true);
 
 
 --
 -- Name: store_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('store_groups_id_seq', 1, false);
+SELECT pg_catalog.setval('public.store_groups_id_seq', 1, false);
 
 
 --
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('stores_id_seq', 3, true);
+SELECT pg_catalog.setval('public.stores_id_seq', 3, true);
 
 
 --
 -- Name: suburbs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('suburbs_id_seq', 1, true);
+SELECT pg_catalog.setval('public.suburbs_id_seq', 1, true);
 
 
 --
 -- Name: user_accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('user_accounts_id_seq', 1, false);
+SELECT pg_catalog.setval('public.user_accounts_id_seq', 28, true);
 
 
 --
 -- Name: cities cities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY cities
+ALTER TABLE ONLY public.cities
     ADD CONSTRAINT cities_pkey PRIMARY KEY (id);
 
 
@@ -1407,7 +1442,7 @@ ALTER TABLE ONLY cities
 -- Name: countries countries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY countries
+ALTER TABLE ONLY public.countries
     ADD CONSTRAINT countries_pkey PRIMARY KEY (id);
 
 
@@ -1415,7 +1450,7 @@ ALTER TABLE ONLY countries
 -- Name: cuisines cuisines_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY cuisines
+ALTER TABLE ONLY public.cuisines
     ADD CONSTRAINT cuisines_id_pk PRIMARY KEY (id);
 
 
@@ -1423,7 +1458,7 @@ ALTER TABLE ONLY cuisines
 -- Name: districts districts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY districts
+ALTER TABLE ONLY public.districts
     ADD CONSTRAINT districts_pkey PRIMARY KEY (id);
 
 
@@ -1431,7 +1466,7 @@ ALTER TABLE ONLY districts
 -- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY locations
+ALTER TABLE ONLY public.locations
     ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
 
 
@@ -1439,7 +1474,7 @@ ALTER TABLE ONLY locations
 -- Name: post_photos post_photos_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY post_photos
+ALTER TABLE ONLY public.post_photos
     ADD CONSTRAINT post_photos_id_pk PRIMARY KEY (id);
 
 
@@ -1447,7 +1482,7 @@ ALTER TABLE ONLY post_photos
 -- Name: post_reviews post_reviews_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY post_reviews
+ALTER TABLE ONLY public.post_reviews
     ADD CONSTRAINT post_reviews_id_pk PRIMARY KEY (id);
 
 
@@ -1455,7 +1490,7 @@ ALTER TABLE ONLY post_reviews
 -- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY posts
+ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
 
 
@@ -1463,7 +1498,7 @@ ALTER TABLE ONLY posts
 -- Name: rewards rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY rewards
+ALTER TABLE ONLY public.rewards
     ADD CONSTRAINT rewards_pkey PRIMARY KEY (id);
 
 
@@ -1471,7 +1506,7 @@ ALTER TABLE ONLY rewards
 -- Name: store_addresses store_addresses_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_addresses
+ALTER TABLE ONLY public.store_addresses
     ADD CONSTRAINT store_addresses_id_pk PRIMARY KEY (id);
 
 
@@ -1479,7 +1514,7 @@ ALTER TABLE ONLY store_addresses
 -- Name: store_cuisines store_cuisines_store_id_cuisine_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_cuisines
+ALTER TABLE ONLY public.store_cuisines
     ADD CONSTRAINT store_cuisines_store_id_cuisine_id_pk UNIQUE (store_id, cuisine_id);
 
 
@@ -1487,7 +1522,7 @@ ALTER TABLE ONLY store_cuisines
 -- Name: store_group_stores store_group_stores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_group_stores
+ALTER TABLE ONLY public.store_group_stores
     ADD CONSTRAINT store_group_stores_pkey PRIMARY KEY (group_id, store_id);
 
 
@@ -1495,7 +1530,7 @@ ALTER TABLE ONLY store_group_stores
 -- Name: store_groups store_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_groups
+ALTER TABLE ONLY public.store_groups
     ADD CONSTRAINT store_groups_pkey PRIMARY KEY (id);
 
 
@@ -1503,7 +1538,7 @@ ALTER TABLE ONLY store_groups
 -- Name: stores stores_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY stores
+ALTER TABLE ONLY public.stores
     ADD CONSTRAINT stores_id_pk PRIMARY KEY (id);
 
 
@@ -1511,7 +1546,7 @@ ALTER TABLE ONLY stores
 -- Name: suburbs suburbs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY suburbs
+ALTER TABLE ONLY public.suburbs
     ADD CONSTRAINT suburbs_pkey PRIMARY KEY (id);
 
 
@@ -1519,15 +1554,23 @@ ALTER TABLE ONLY suburbs
 -- Name: user_accounts user_accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY user_accounts
+ALTER TABLE ONLY public.user_accounts
     ADD CONSTRAINT user_accounts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_logins user_logins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_logins
+    ADD CONSTRAINT user_logins_pkey PRIMARY KEY (name, key);
 
 
 --
 -- Name: user_profiles user_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY user_profiles
+ALTER TABLE ONLY public.user_profiles
     ADD CONSTRAINT user_profiles_pkey PRIMARY KEY (user_account_id);
 
 
@@ -1535,7 +1578,7 @@ ALTER TABLE ONLY user_profiles
 -- Name: user_rewards user_rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY user_rewards
+ALTER TABLE ONLY public.user_rewards
     ADD CONSTRAINT user_rewards_pkey PRIMARY KEY (user_account_id, reward_id);
 
 
@@ -1543,306 +1586,336 @@ ALTER TABLE ONLY user_rewards
 -- Name: cities_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX cities_id_uindex ON cities USING btree (id);
+CREATE UNIQUE INDEX cities_id_uindex ON public.cities USING btree (id);
 
 
 --
 -- Name: cities_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX cities_name ON cities USING btree (name);
+CREATE INDEX cities_name ON public.cities USING btree (name);
 
 
 --
 -- Name: countries_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX countries_id_uindex ON countries USING btree (id);
+CREATE UNIQUE INDEX countries_id_uindex ON public.countries USING btree (id);
 
 
 --
 -- Name: countries_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX countries_name ON countries USING btree (name);
+CREATE INDEX countries_name ON public.countries USING btree (name);
 
 
 --
 -- Name: districts_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX districts_id_uindex ON districts USING btree (id);
+CREATE UNIQUE INDEX districts_id_uindex ON public.districts USING btree (id);
 
 
 --
 -- Name: districts_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX districts_name ON districts USING btree (name);
+CREATE INDEX districts_name ON public.districts USING btree (name);
 
 
 --
 -- Name: locations_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX locations_name ON locations USING btree (name);
+CREATE INDEX locations_name ON public.locations USING btree (name);
 
 
 --
 -- Name: post_photos_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX post_photos_id_uindex ON post_photos USING btree (id);
+CREATE UNIQUE INDEX post_photos_id_uindex ON public.post_photos USING btree (id);
 
 
 --
 -- Name: post_photos_photo_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX post_photos_photo_index ON post_photos USING btree (photo);
+CREATE INDEX post_photos_photo_index ON public.post_photos USING btree (photo);
 
 
 --
 -- Name: post_photos_post_id_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX post_photos_post_id_index ON post_photos USING btree (post_id);
+CREATE INDEX post_photos_post_id_index ON public.post_photos USING btree (post_id);
 
 
 --
 -- Name: posts_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX posts_id_uindex ON posts USING btree (id);
+CREATE UNIQUE INDEX posts_id_uindex ON public.posts USING btree (id);
 
 
 --
 -- Name: rewards_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX rewards_id_uindex ON rewards USING btree (id);
+CREATE UNIQUE INDEX rewards_id_uindex ON public.rewards USING btree (id);
 
 
 --
 -- Name: store_addresses_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX store_addresses_id_uindex ON store_addresses USING btree (id);
+CREATE UNIQUE INDEX store_addresses_id_uindex ON public.store_addresses USING btree (id);
 
 
 --
 -- Name: store_group_stores_group_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX store_group_stores_group_id_uindex ON store_group_stores USING btree (group_id);
+CREATE UNIQUE INDEX store_group_stores_group_id_uindex ON public.store_group_stores USING btree (group_id);
 
 
 --
 -- Name: store_group_stores_store_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX store_group_stores_store_id_uindex ON store_group_stores USING btree (store_id);
+CREATE UNIQUE INDEX store_group_stores_store_id_uindex ON public.store_group_stores USING btree (store_id);
 
 
 --
 -- Name: store_groups_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX store_groups_id_uindex ON store_groups USING btree (id);
+CREATE UNIQUE INDEX store_groups_id_uindex ON public.store_groups USING btree (id);
 
 
 --
 -- Name: store_ratings_cache_store_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX store_ratings_cache_store_id_uindex ON store_ratings_cache USING btree (store_id);
+CREATE UNIQUE INDEX store_ratings_cache_store_id_uindex ON public.store_ratings_cache USING btree (store_id);
 
 
 --
 -- Name: stores_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX stores_name ON stores USING btree (name);
+CREATE INDEX stores_name ON public.stores USING btree (name);
 
 
 --
 -- Name: suburbs_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX suburbs_name ON suburbs USING btree (name);
+CREATE INDEX suburbs_name ON public.suburbs USING btree (name);
+
+
+--
+-- Name: user_accounts_email; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX user_accounts_email ON public.user_accounts USING btree (email);
+
+
+--
+-- Name: user_accounts_email_confirmed_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX user_accounts_email_confirmed_index ON public.user_accounts USING btree (email_confirmed);
+
+
+--
+-- Name: user_accounts_email_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX user_accounts_email_index ON public.user_accounts USING btree (email);
 
 
 --
 -- Name: user_accounts_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX user_accounts_id_uindex ON user_accounts USING btree (id);
+CREATE UNIQUE INDEX user_accounts_id_uindex ON public.user_accounts USING btree (id);
 
 
 --
 -- Name: user_profiles_user_account_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX user_profiles_user_account_id_uindex ON user_profiles USING btree (user_account_id);
+CREATE UNIQUE INDEX user_profiles_user_account_id_uindex ON public.user_profiles USING btree (user_account_id);
 
 
 --
 -- Name: cities cities_district_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY cities
-    ADD CONSTRAINT cities_district_id_fkey FOREIGN KEY (district_id) REFERENCES districts(id);
+ALTER TABLE ONLY public.cities
+    ADD CONSTRAINT cities_district_id_fkey FOREIGN KEY (district_id) REFERENCES public.districts(id);
 
 
 --
 -- Name: districts districts_country_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY districts
-    ADD CONSTRAINT districts_country_id_fkey FOREIGN KEY (country_id) REFERENCES countries(id);
+ALTER TABLE ONLY public.districts
+    ADD CONSTRAINT districts_country_id_fkey FOREIGN KEY (country_id) REFERENCES public.countries(id);
 
 
 --
 -- Name: locations locations_suburb_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY locations
-    ADD CONSTRAINT locations_suburb_id_fkey FOREIGN KEY (suburb_id) REFERENCES suburbs(id);
+ALTER TABLE ONLY public.locations
+    ADD CONSTRAINT locations_suburb_id_fkey FOREIGN KEY (suburb_id) REFERENCES public.suburbs(id);
 
 
 --
 -- Name: post_photos post_photos_posts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY post_photos
-    ADD CONSTRAINT post_photos_posts_id_fk FOREIGN KEY (post_id) REFERENCES posts(id);
+ALTER TABLE ONLY public.post_photos
+    ADD CONSTRAINT post_photos_posts_id_fk FOREIGN KEY (post_id) REFERENCES public.posts(id);
 
 
 --
 -- Name: post_reviews post_reviews_2_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY post_reviews
-    ADD CONSTRAINT post_reviews_2_post_id_fkey FOREIGN KEY (post_id) REFERENCES posts(id);
+ALTER TABLE ONLY public.post_reviews
+    ADD CONSTRAINT post_reviews_2_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id);
 
 
 --
 -- Name: posts posts_posted_by_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY posts
-    ADD CONSTRAINT posts_posted_by_id_fkey FOREIGN KEY (posted_by_id) REFERENCES user_accounts(id);
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_posted_by_id_fkey FOREIGN KEY (posted_by_id) REFERENCES public.user_accounts(id);
 
 
 --
 -- Name: posts posts_store_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY posts
-    ADD CONSTRAINT posts_store_id_fkey FOREIGN KEY (store_id) REFERENCES stores(id);
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id);
 
 
 --
 -- Name: rewards rewards_store_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY rewards
-    ADD CONSTRAINT rewards_store_group_id_fkey FOREIGN KEY (store_group_id) REFERENCES store_groups(id);
+ALTER TABLE ONLY public.rewards
+    ADD CONSTRAINT rewards_store_group_id_fkey FOREIGN KEY (store_group_id) REFERENCES public.store_groups(id);
 
 
 --
 -- Name: rewards rewards_store_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY rewards
-    ADD CONSTRAINT rewards_store_id_fkey FOREIGN KEY (store_id) REFERENCES stores(id);
+ALTER TABLE ONLY public.rewards
+    ADD CONSTRAINT rewards_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id);
 
 
 --
 -- Name: store_addresses store_addresses_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_addresses
-    ADD CONSTRAINT store_addresses_stores_id_fk FOREIGN KEY (store_id) REFERENCES stores(id);
+ALTER TABLE ONLY public.store_addresses
+    ADD CONSTRAINT store_addresses_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
 
 
 --
 -- Name: store_cuisines store_cuisines_cuisines_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_cuisines
-    ADD CONSTRAINT store_cuisines_cuisines_id_fk FOREIGN KEY (cuisine_id) REFERENCES cuisines(id);
+ALTER TABLE ONLY public.store_cuisines
+    ADD CONSTRAINT store_cuisines_cuisines_id_fk FOREIGN KEY (cuisine_id) REFERENCES public.cuisines(id);
 
 
 --
 -- Name: store_cuisines store_cuisines_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_cuisines
-    ADD CONSTRAINT store_cuisines_stores_id_fk FOREIGN KEY (store_id) REFERENCES stores(id);
+ALTER TABLE ONLY public.store_cuisines
+    ADD CONSTRAINT store_cuisines_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
 
 
 --
 -- Name: store_group_stores store_group_stores_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_group_stores
-    ADD CONSTRAINT store_group_stores_group_id_fkey FOREIGN KEY (group_id) REFERENCES store_groups(id);
+ALTER TABLE ONLY public.store_group_stores
+    ADD CONSTRAINT store_group_stores_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.store_groups(id);
 
 
 --
 -- Name: store_group_stores store_group_stores_store_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_group_stores
-    ADD CONSTRAINT store_group_stores_store_id_fkey FOREIGN KEY (store_id) REFERENCES stores(id);
+ALTER TABLE ONLY public.store_group_stores
+    ADD CONSTRAINT store_group_stores_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id);
 
 
 --
 -- Name: store_ratings_cache store_ratings_cache_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY store_ratings_cache
-    ADD CONSTRAINT store_ratings_cache_stores_id_fk FOREIGN KEY (store_id) REFERENCES stores(id);
+ALTER TABLE ONLY public.store_ratings_cache
+    ADD CONSTRAINT store_ratings_cache_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
 
 
 --
 -- Name: suburbs suburbs_city_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY suburbs
-    ADD CONSTRAINT suburbs_city_id_fkey FOREIGN KEY (city_id) REFERENCES cities(id);
+ALTER TABLE ONLY public.suburbs
+    ADD CONSTRAINT suburbs_city_id_fkey FOREIGN KEY (city_id) REFERENCES public.cities(id);
+
+
+--
+-- Name: user_claims user_claims_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_claims
+    ADD CONSTRAINT user_claims_user_accounts_id_fk FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
+
+
+--
+-- Name: user_logins user_logins_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_logins
+    ADD CONSTRAINT user_logins_user_accounts_id_fk FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
 
 
 --
 -- Name: user_profiles user_profiles_user_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY user_profiles
-    ADD CONSTRAINT user_profiles_user_account_id_fkey FOREIGN KEY (user_account_id) REFERENCES user_accounts(id);
+ALTER TABLE ONLY public.user_profiles
+    ADD CONSTRAINT user_profiles_user_account_id_fkey FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
 
 
 --
 -- Name: user_rewards user_rewards_reward_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY user_rewards
-    ADD CONSTRAINT user_rewards_reward_id_fkey FOREIGN KEY (reward_id) REFERENCES rewards(id);
+ALTER TABLE ONLY public.user_rewards
+    ADD CONSTRAINT user_rewards_reward_id_fkey FOREIGN KEY (reward_id) REFERENCES public.rewards(id);
 
 
 --
 -- Name: user_rewards user_rewards_user_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY user_rewards
-    ADD CONSTRAINT user_rewards_user_account_id_fkey FOREIGN KEY (user_account_id) REFERENCES user_accounts(id);
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-GRANT ALL ON SCHEMA public TO PUBLIC;
+ALTER TABLE ONLY public.user_rewards
+    ADD CONSTRAINT user_rewards_user_account_id_fkey FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
 
 
 --
