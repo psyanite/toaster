@@ -1,4 +1,4 @@
-# 🍞 Toaster 0.2.0
+# 🍞 Toaster 1.0.0
 
 🐈 GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 

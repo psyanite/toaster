@@ -1,9 +1,9 @@
 {
-  "name": "web",
-  "version": "0.0.0",
+  "name": "toaster",
+  "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "8.11.2",
+    "node": ">=8.11",
     "npm": ">=3.10"
   },
   "browserslist": [
