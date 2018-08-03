@@ -30,7 +30,7 @@ addStore(name: String!): Store
 * Git
 * Babun
 * Yarn
-* Node
+* Node 8.11.3
 * Intellij
 * DataGrip
 * Android Studio
