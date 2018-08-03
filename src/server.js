@@ -109,13 +109,14 @@ app.get(
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
+// Removed __DEV__ from graphiql and pretty options https://github.com/graphql/express-graphql
 app.use(
   '/graphql',
   expressGraphQL(req => ({
     schema,
-    graphiql: __DEV__,
+    graphiql: true,
     rootValue: { request: req },
-    pretty: __DEV__,
+    pretty: true,
   })),
 );
 
