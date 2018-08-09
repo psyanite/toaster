@@ -7,8 +7,9 @@
 
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import * as AuthService from './utils/AuthService';
 import config from './config';
+import { UserAccount, UserClaim, UserLogin, UserProfile } from './data/models';
+import * as AuthService from './utils/AuthService';
 
 /**
  * Sign in with Facebook
@@ -21,8 +22,11 @@ passport.use(
       callbackURL: '/login/facebook/return',
       profileFields: ['displayName', 'name', 'email'],
       passReqToCallback: true,
+      enableProof: true,
     },
     (req, accessToken, refreshToken, profile, done) => {
+      /* eslint-disable no-underscore-dangle */
+
       const fooBar = async () => {
         /**
          * Check if there is an account linked with this Facebook account
@@ -32,8 +36,7 @@ passport.use(
             accessToken,
             profile,
           );
-          console.log(response);
-          done(null, { id: 123, email: '123' });
+          done(null, response);
         }
       };
 

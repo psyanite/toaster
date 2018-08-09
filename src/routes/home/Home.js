@@ -14,7 +14,7 @@ class Home extends React.Component {
     if (meId) {
       const meQuery = graphqlify({
         profileByUserAccountId: {
-          params: { userAccountId: meId },
+          params: { userAccountId: parseInt(meId, 10) },
           fields: {
             username: {},
             display_name: {},
@@ -40,7 +40,12 @@ class Home extends React.Component {
           {profile ? (
             <div>
               <h1>Welcome {profile.display_name}</h1>
-              <img src={profile.profile_picture} alt="meow" />
+              <img
+                src={profile.profile_picture}
+                alt="meow"
+                width="500"
+                height="500"
+              />
             </div>
           ) : (
             <div>

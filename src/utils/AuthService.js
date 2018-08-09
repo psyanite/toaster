@@ -9,7 +9,7 @@ const randomProfilePicture = () => 'https://imgur.com/HYz307Q.jpg';
 const fbProfilePicture = profileId =>
   `https://graph.facebook.com/${profileId}/picture?type=large`;
 
-export const consumeFacebookAuth = async (accessToken, fbProfile) => {
+export const consumeFacebookAuth = async (accessToken, profile) => {
   const loginName = 'facebook';
   const claimType = 'urn:facebook:access_token';
 
@@ -21,7 +21,7 @@ export const consumeFacebookAuth = async (accessToken, fbProfile) => {
         model: UserLogin,
         required: true,
         as: 'logins',
-        where: { name: loginName, key: fbProfile.id },
+        where: { name: loginName, key: profile.id },
       },
       {
         attributes: ['username', 'display_name', 'gender', 'profile_picture'],
@@ -32,33 +32,26 @@ export const consumeFacebookAuth = async (accessToken, fbProfile) => {
     ],
   });
 
-  console.log('AuthServices.findAllByLoginNameAndFbProfileId');
-  console.log(accounts);
-
   if (accounts.length) {
-    console.log('It is going to return:');
-    console.log(accounts[0].get({ plain: true }));
     // There exists an account linked to this Facebook account
     return accounts[0].get({ plain: true });
   }
-
-  console.log('Did not match fb login to an existing account');
-  console.log('Now creating new account');
-  console.log(fbProfile);
 
   // No account linked to this Facebook account
   // Create a new one
   const user = await UserAccount.create(
     {
-      email: fbProfile.email,
+      email: profile.email,
       emailConfirmed: true,
-      logins: [{ name: loginName, key: fbProfile.id }],
+      logins: [{ name: loginName, key: profile.id }],
       claims: [{ type: claimType, value: accessToken }],
       profile: {
-        display_name: fbProfile.name,
-        username: randomUsername(),
-        gender: fbProfile.gender,
-        profile_picture: randomProfilePicture(),
+        display_name: profile.displayName,
+        username: profile.displayName,
+        gender: profile.gender,
+        profile_picture: `https://graph.facebook.com/${
+          profile.id
+        }/picture?type=large`,
       },
     },
     {
@@ -69,9 +62,6 @@ export const consumeFacebookAuth = async (accessToken, fbProfile) => {
       ],
     },
   );
-
-  console.log('AuthServices created a new user');
-  console.log(user);
 
   return {
     id: user.id,
