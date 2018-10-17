@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.3
+-- Dumped from database version 10.5 (Ubuntu 10.5-1.pgdg14.04+1)
 -- Dumped by pg_dump version 10.3
 
 SET statement_timeout = 0;
@@ -16,14 +16,14 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -1126,6 +1126,8 @@ COPY public.cuisines (id, name) FROM stdin;
 2	Modern Australian
 3	Italian
 4	Brunch
+5	French
+6	Pizza
 \.
 
 
@@ -1211,6 +1213,11 @@ COPY public.store_addresses (id, store_id, address_first_line, address_second_li
 3	1	Level 2, Hawker Lane	Chatswood Westfield	1	Anderson Street	https://goo.gl/maps/GZxSRicabTu
 2	2	Level 1, Shop 11.04	Regent Place Arcade	487	George Street	https://goo.gl/maps/Ds7vagBoTu42
 1	3	Basement Level	\N	500	George Street	https://goo.gl/maps/njQmnE8NFi52
+4	4	\N	\N	22	Prince Street	https://goo.gl/maps/GZxSRicabTu
+5	5	\N	\N	67	Mitchell Street	https://goo.gl/maps/GZxSRicabTu
+6	6	\N	\N	36	Queen Street	https://goo.gl/maps/GZxSRicabTu
+7	7	\N	\N	71	Pyrmont Street	https://goo.gl/maps/GZxSRicabTu
+8	8	\N	\N	405	Victoria Street	https://goo.gl/maps/GZxSRicabTu
 \.
 
 
@@ -1224,6 +1231,11 @@ COPY public.store_cuisines (store_id, cuisine_id) FROM stdin;
 2	2
 3	1
 3	4
+4	1
+7	1
+8	1
+5	6
+6	5
 \.
 
 
@@ -1259,6 +1271,11 @@ COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_i
 3	Workshop Meowpresso	+61	288819222	4	1	1	https://b.zmtcdn.com/data/res_imagery/16562081_RESTAURANT_bf27f21b41f1ee074a931eae5d8f719b.jpg?fit=around%7C1200%3A464&crop=1200%3A464%3B0%2C0
 1	Dumplings & Co.	+61	296992235	5	2	1	https://b.zmtcdn.com/data/pictures/chains/2/16560902/528cc961dce573b97a5fddb55b406791.jpg
 2	Sokyo	+61	295258017	\N	1	1	https://b.zmtcdn.com/data/res_imagery/16564570_RESTAURANT_058971a49fafe87b9c772331b251b1fa.jpg
+4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg
+5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg
+6	Cie Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg
+7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg
+8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg
 \.
 
 
@@ -1269,6 +1286,8 @@ COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_i
 COPY public.suburbs (id, name, city_id) FROM stdin;
 1	CBD	1
 2	Chatswood	1
+3	Broken Hill	1
+4	Bathurst	1
 \.
 
 
@@ -1280,10 +1299,8 @@ COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
 2	\N	f
 3	\N	f
 4	\N	f
-25	\N	f
 1	psyneia@gmail.com	f
-27	\N	f
-28	\N	f
+37	\N	f
 \.
 
 
@@ -1292,10 +1309,8 @@ COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
 --
 
 COPY public.user_claims (user_account_id, type, value) FROM stdin;
-25	urn:facebook:access_token	EAADK73FfXU8BAEUgFQGtzIITgjEZA0xrHJo3YoV10zsGqGaC82CvYuK3SeR1l2Sh10HkCIStLkZC978lY3ULcz16xZAUP1Oyaq3pVjcaRT9mSuizjsFRo1SWfNviblCGu6hbZBZCHtAShV2qrJtppYxyvyDNCgwq4VgraNGjiLhqc4RXRHwsLZATi9GsKwXELNCNrllJHb5odpJl0hN1sG
-1	urn:facebook:access_token	EAADK73FfXU8BAAQbdMSeYoZCSl7pCDJw9l8ReFrJsEgxtZBzdsE7ZAEwY8dgxYZBjJpZCpdKNlz9ZBSsZAudR0anLKENFxrfRN2cDTf5yDxHPvZBZCwwEHBYrTRG8aXbZCCZBgc4ZCCN989kPfqM0HsPckNJ06oMgfrSUw76N68D5EbGygZDZD
-27	urn:facebook:access_token	EAADK73FfXU8BAEviPw1AsUnZCqz3eDdObbSBnSxPZCTD7qYermWtLBu2kc30ZC2C9BCSZCrkQlAZCHH5BCB9gvxZCf5olZBqdTMlxbWWR0YZB1iMDMdLdLvLTVYQYodOofFnJ9jEGjd70WmJkE04KxAP046YkUgRUZAhTmpyACfYmrrVL7fOU1WrMLpmSc1rRZCj3hHX5EgR3CXAZDZD
-28	urn:facebook:access_token	EAADK73FfXU8BAIFRyv7ZBxhw1EI4rSxUvzKTKMDrcItnfpyPY97vWLPk1wGkgtsfpLBhgWHxEnPahBFvpaXYLmwMoNxdIASbu1OX57JJYN7sDAsgaUaq2qgChRHcrTEZCxjoi1jXhoeu2WEDOLcZBi6fH6H7EqVtgLeoa0bP8L8XHJ0gMu9VGRB5FgwKaLyIzKcnJvh7QZDZD
+1	urn:facebook:access_token	EAADK73FfXU8BABjZAXGZCMyXqsvdtZBOnNwT5Jp9RuVZAkNCGEUIM8m35ZAXAvI0rc5SZCU0finHCnwfiCVHHkGsTAv8eU9xPqG8ZCd9G3tQCDZAaSzA8DDVJfl9SrpG3WfBwLEqPKzZBYFeZAaoM4KH9GsF0hv6AiGYIxZCiEPzgISzwZDZD
+37	urn:facebook:access_token	EAADK73FfXU8BAIoyBEYZANQeZAMXVIzre1vFkAME0brRtMI3zQwX1HugsfYeVQZCyJApvDvZBBa70o8F1NCnsJl4poZClYj82CwKvtqSl4bB6ZCxsA1QfO4pqr0bK8lfZA92O6v5M3Pq61vfM9UOZBbbUceiNca8rCZAnJds9sfa3AoZBTxUqS70Ts
 \.
 
 
@@ -1304,8 +1319,8 @@ COPY public.user_claims (user_account_id, type, value) FROM stdin;
 --
 
 COPY public.user_logins (name, key, user_account_id) FROM stdin;
-facebook	134766764092722	25
 facebook	1672032292917116	1
+facebook	134766764092722	37
 \.
 
 
@@ -1315,12 +1330,10 @@ facebook	1672032292917116	1
 
 COPY public.user_profiles (user_account_id, username, display_name, profile_picture, gender) FROM stdin;
 4	leia	Leia	http://i.imgur.com/sjad1TX.jpg	\N
-2	curious_chloe	Curious Chloe	https://imgur.com/FErrGkO.jpg	\N
 3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	\N
 1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	\N
-25	smoldoggo	Luna Lytele	https://imgur.com/HYz307Q.jpg	male
-27	smoldoggo	\N	https://imgur.com/HYz307Q.jpg	\N
-28	smoldoggo	\N	https://imgur.com/HYz307Q.jpg	\N
+2	curious_chloe	Curious Chloe	https://imgur.com/AwS5vPC.jpg	\N
+37	Luna Lytele	Luna Lytele	https://graph.facebook.com/134766764092722/picture?type=large	\N
 \.
 
 
@@ -1399,7 +1412,7 @@ SELECT pg_catalog.setval('public.rewards_id_seq', 1, false);
 -- Name: store_addresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.store_addresses_id_seq', 3, true);
+SELECT pg_catalog.setval('public.store_addresses_id_seq', 8, true);
 
 
 --
@@ -1413,7 +1426,7 @@ SELECT pg_catalog.setval('public.store_groups_id_seq', 1, false);
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stores_id_seq', 3, true);
+SELECT pg_catalog.setval('public.stores_id_seq', 8, true);
 
 
 --
@@ -1916,6 +1929,13 @@ ALTER TABLE ONLY public.user_rewards
 
 ALTER TABLE ONLY public.user_rewards
     ADD CONSTRAINT user_rewards_user_account_id_fkey FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
+
+
+--
+-- Name: LANGUAGE plpgsql; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT ALL ON LANGUAGE plpgsql TO postgres;
 
 
 --
