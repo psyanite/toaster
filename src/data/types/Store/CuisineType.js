@@ -6,7 +6,7 @@ import {
   GraphQLString as String,
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Store, Cuisine } from '../models';
+import { Cuisine, Store } from '../../models/index';
 import StoreType from './StoreType';
 
 Cuisine.Stores = Cuisine.belongsToMany(Store, {

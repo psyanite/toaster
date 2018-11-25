@@ -28,7 +28,7 @@ const ContextType = {
  *
  *   const context = {
  *     history: createBrowserHistory(),
- *     store: createStore(),
+ *     userMutations: createStore(),
  *   };
  *
  *   ReactDOM.render(

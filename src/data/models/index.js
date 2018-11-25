@@ -5,9 +5,9 @@ import UserClaim from './User/UserClaim';
 import UserLogin from './User/UserLogin';
 import UserProfile from './User/UserProfile';
 
-import Store from './Store';
-
-import Cuisine from './Cuisine';
+import Store from './Store/Store';
+import Rating from './Store/Rating';
+import Cuisine from './Store/Cuisine';
 
 import Country from './Location/Country';
 import District from './Location/District';
@@ -32,6 +32,7 @@ export {
   UserLogin,
   UserProfile,
   Store,
+  Rating,
   Cuisine,
   Country,
   District,

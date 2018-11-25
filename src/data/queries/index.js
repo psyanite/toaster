@@ -1,6 +1,8 @@
 import { GraphQLObjectType as ObjectType } from 'graphql';
 import StoreQueries from './StoreQueries';
 import UserAccountQueries from './UserAccountQueries';
+import UserLoginQueries from './UserLoginQueries';
+import UserProfileQueries from './UserProfileQueries';
 import PostQueries from './PostQueries';
 import MeQueries from './MeQueries';
 
@@ -10,6 +12,8 @@ export default new ObjectType({
     {},
     StoreQueries,
     UserAccountQueries,
+    UserLoginQueries,
+    UserProfileQueries,
     PostQueries,
     MeQueries,
   ),

@@ -1,11 +1,7 @@
-import {
-  GraphQLList as List,
-  GraphQLNonNull as NonNull,
-  GraphQLInt as Int,
-} from 'graphql';
+import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { StoreType } from '../types';
 import { Store } from '../models';
+import StoreType from '../types/Store/StoreType';
 
 export default {
   allStores: {

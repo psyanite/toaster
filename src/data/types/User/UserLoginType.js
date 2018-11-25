@@ -1,7 +1,4 @@
-import {
-  GraphQLObjectType as ObjectType,
-  GraphQLString as String,
-} from 'graphql';
+import { GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
 import { UserAccount, UserLogin } from '../../models';
@@ -18,7 +15,7 @@ export default new ObjectType({
       type: UserAccountType,
       resolve: resolver(UserLogin.UserAccount),
     },
-    name: { type: String },
-    key: { type: String },
+    social_id: { type: String },
+    social_type: { type: String },
   }),
 });

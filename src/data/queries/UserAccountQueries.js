@@ -1,11 +1,9 @@
-import {
-  GraphQLList as List,
-  GraphQLNonNull as NonNull,
-  GraphQLInt as Int,
-} from 'graphql';
+/* eslint-disable no-param-reassign */
+import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { UserAccountType } from '../types';
 import { UserAccount } from '../models';
+import Post from '../models/Post/Post';
+import UserAccountType from '../types/User/UserAccountType';
 
 export default {
   allUserAccounts: {
@@ -16,12 +14,29 @@ export default {
   },
 
   userAccountById: {
-    type: new List(UserAccountType),
+    type: UserAccountType,
     args: {
       id: {
         type: new NonNull(Int),
       },
     },
     resolve: resolver(UserAccount),
+  },
+
+  userAccountByUsername: {
+    type: UserAccountType,
+    args: {
+      username: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: resolver(Post, {
+      before: (findOptions, args) => {
+        findOptions.where = {
+          username: args.username,
+        };
+        return findOptions;
+      },
+    }),
   },
 };

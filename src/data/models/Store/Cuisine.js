@@ -1,5 +1,5 @@
 import DataType from 'sequelize';
-import Model from '../sequelize';
+import Model from '../../sequelize';
 
 export default Model.define('cuisines', {
   id: {

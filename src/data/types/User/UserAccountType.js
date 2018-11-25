@@ -1,5 +1,6 @@
 import {
   GraphQLInt as Int,
+  GraphQLList as List,
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
@@ -8,6 +9,8 @@ import { resolver } from 'graphql-sequelize';
 
 import { UserAccount, UserClaim, UserLogin, UserProfile } from '../../models';
 import UserProfileType from './UserProfileType';
+import Post from '../../models/Post/Post';
+import PostType from '../Post/PostType';
 
 UserAccount.UserClaim = UserAccount.hasMany(UserClaim, {
   foreignKey: 'user_account_id',
@@ -21,6 +24,10 @@ UserAccount.UserProfile = UserAccount.hasOne(UserProfile, {
   foreignKey: 'user_account_id',
   as: 'profile',
 });
+UserAccount.Posts = UserAccount.hasMany(Post, {
+  foreignKey: 'posted_by_id',
+  as: 'posts',
+});
 
 export default new ObjectType({
   name: 'UserAccount',
@@ -30,6 +37,10 @@ export default new ObjectType({
     profile: {
       type: UserProfileType,
       resolve: resolver(UserAccount.UserProfile),
+    },
+    posts: {
+      type: new List(PostType),
+      resolve: resolver(UserAccount.Posts),
     },
   }),
 });

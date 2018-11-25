@@ -1,9 +1,4 @@
-import {
-  GraphQLInt as Int,
-  GraphQLNonNull as NonNull,
-  GraphQLObjectType as ObjectType,
-  GraphQLString as String,
-} from 'graphql';
+import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import { Location, Suburb } from '../../models';
 import SuburbType from './SuburbType';

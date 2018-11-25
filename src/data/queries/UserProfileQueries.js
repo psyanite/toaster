@@ -1,21 +1,21 @@
 /* eslint-disable no-param-reassign */
-import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, } from 'graphql';
+import { GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import UserProfileType from '../types/User/UserProfileType';
 import { UserProfile } from '../models';
+import UserProfileType from '../types/User/UserProfileType';
 
 export default {
-  profileByUserAccountId: {
-    type: new List(UserProfileType),
+  userProfileByUsername: {
+    type: UserProfileType,
     args: {
-      userAccountId: {
-        type: new NonNull(Int),
+      username: {
+        type: new NonNull(String),
       },
     },
     resolve: resolver(UserProfile, {
       before: (findOptions, args) => {
         findOptions.where = {
-          user_account_id: args.userAccountId,
+          username: args.username,
         };
         return findOptions;
       },

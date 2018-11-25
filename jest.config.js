@@ -22,7 +22,7 @@ module.exports = {
   // https://facebook.github.io/jest/docs/en/configuration.html#bail-boolean
   bail: false, // [boolean]
 
-  // The directory where Jest should store its cached dependency information.
+  // The directory where Jest should userMutations its cached dependency information.
   // https://facebook.github.io/jest/docs/en/configuration.html#cachedirectory-string
   // cacheDirectory: '/tmp/<path>', // [string]
 

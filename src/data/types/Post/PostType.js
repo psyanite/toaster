@@ -7,8 +7,8 @@ import {
 } from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Post, Store, UserAccount, PostPhoto, PostReview } from '../../models';
-import StoreType from '../StoreType';
+import { Post, PostPhoto, PostReview, Store, UserAccount } from '../../models';
+import StoreType from '../Store/StoreType';
 import UserAccountType from '../User/UserAccountType';
 import PostPhotoType from '../Post/PostPhotoType';
 import PostReviewType from '../Post/PostReviewType';
@@ -21,8 +21,8 @@ Post.PostReview = Post.hasOne(PostReview);
 const PostType = new EnumType({
   name: 'PostType',
   values: {
-    PHOTO: { value: 'photo' },
-    REVIEW: { value: 'review' },
+    photo: { value: 'photo' },
+    review: { value: 'review' },
   },
 });
 

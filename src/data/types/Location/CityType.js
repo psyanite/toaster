@@ -6,7 +6,7 @@ import {
   GraphQLString as String,
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Suburb, City, District } from '../../models';
+import { City, District, Suburb } from '../../models';
 import SuburbType from './SuburbType';
 import DistrictType from './DistrictType';
 

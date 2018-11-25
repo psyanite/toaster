@@ -1,7 +1,4 @@
-import {
-  GraphQLObjectType as ObjectType,
-  GraphQLString as String,
-} from 'graphql';
+import { GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
 import { UserAccount, UserProfile } from '../../models';

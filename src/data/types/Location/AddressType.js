@@ -1,12 +1,7 @@
-import {
-  GraphQLInt as Int,
-  GraphQLNonNull as NonNull,
-  GraphQLObjectType as ObjectType,
-  GraphQLString as String,
-} from 'graphql';
+import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import { Address, Store } from '../../models/index';
-import StoreType from '../StoreType';
+import StoreType from '../Store/StoreType';
 
 Address.Store = Address.belongsTo(Store, { foreignKey: 'store_id' });
 
