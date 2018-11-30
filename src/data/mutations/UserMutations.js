@@ -9,7 +9,6 @@ import UserLoginType from '../types/User/UserLoginType';
 
 const addUser = {
   type: UserLoginType,
-  description: 'Add a User',
   args: {
     username: {
       type: new NonNull(String),

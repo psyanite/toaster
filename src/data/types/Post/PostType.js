@@ -39,9 +39,7 @@ export default new ObjectType({
       type: UserAccountType,
       resolve: resolver(Post.UserAccount),
     },
-    posted_at: {
-      type: DateTime,
-    },
+    posted_at: { type: DateTime },
     post_photos: {
       type: new List(PostPhotoType),
       resolve: resolver(Post.PostPhotos),

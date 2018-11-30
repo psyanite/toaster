@@ -27,6 +27,18 @@ const Reward = sequelize.define('rewards', {
   store_group_id: {
     type: Sequelize.INTEGER,
   },
+
+  valid_from: {
+    type: Sequelize.DATEONLY,
+  },
+
+  expires_at: {
+    type: Sequelize.DATE,
+  },
+
+  promo_image: {
+    type: Sequelize.STRING,
+  },
 });
 
 export default Reward;

@@ -5,7 +5,6 @@ import StoreType from '../types/Store/StoreType';
 
 const addStore = {
   type: StoreType,
-  description: 'Add a Store',
   args: {
     name: {
       type: new NonNull(String),

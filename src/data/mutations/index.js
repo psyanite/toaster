@@ -4,7 +4,7 @@ import UserMutations from './UserMutations';
 
 const Mutation = new ObjectType({
   name: 'Meowtation',
-  description: 'Meowtation',
+  description: '🐈 Toaster Meowtations',
   fields: Object.assign({}, StoreMutations, UserMutations),
 });
 

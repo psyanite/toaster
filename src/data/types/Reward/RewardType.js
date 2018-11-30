@@ -5,6 +5,7 @@ import {
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
 } from 'graphql';
+import { GraphQLDate as Date } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
 import { Reward, Store, StoreGroup } from '../../models';
 import StoreType from '../Store/StoreType';
@@ -37,5 +38,8 @@ export default new ObjectType({
       type: StoreGroupType,
       resolve: resolver(Reward.StoreGroup),
     },
+    valid_from: { type: Date },
+    expires_at: { type: Date },
+    promo_image: { type: String },
   }),
 });

@@ -9,6 +9,7 @@ import RewardQueries from './RewardQueries';
 
 export default new ObjectType({
   name: 'Meowry',
+  description: '🐈 Toaster Meowries',
   fields: Object.assign(
     {},
     MeQueries,

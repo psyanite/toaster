@@ -1,26 +1,38 @@
-# 🍞 Toaster 1.0.0
+# 🍞 Toaster 1.1.0
 
 🐈 GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 
-### Queries
+### Meowries
 
 ```
-allStores: [Store]
-storeById(id: Int!): [Store]
-
-allUserAccounts: [UserAccount]
-userAccountById(id: Int!): [UserAccount]
-
+profileByUserAccountId(userAccountId: Int!): [UserProfile]
 allPosts: [Post]
 postById(id: Int!): [Post]
 postsByStoreId(storeId: Int!): [Post]
 postsByUserAccountId(userAccountId: Int!): [Post]
+allRewards: [Reward]
+allStores: [Store]
+storeById(id: Int!): [Store]
+allUserAccounts: [UserAccount]
+userAccountById(id: Int!): UserAccount
+userAccountByUsername(username: String!): UserAccount
+userLoginBy(socialType: String!socialId: String!): UserLogin
+userProfileByUsername(username: String!): UserProfile
 ```
 
 ### Meowtations
 
 ```
-addStore(name: String!): Store
+addStore(
+  name: String!): Store
+
+addUser(
+  username: String!
+  display_name: String!
+  email: String!
+  profile_picture: String!
+  social_id: String!
+  social_type: String!): UserLogin
 ```
 
 ### Development Tools
