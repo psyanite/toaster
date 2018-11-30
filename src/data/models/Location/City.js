@@ -1,24 +1,20 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define(
-  'cities',
-  {
-    id: {
-      type: DataType.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-
-    name: {
-      type: DataType.STRING(255),
-    },
-
-    district_id: {
-      type: DataType.INTEGER,
-    },
+const City = sequelize.define('cities', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-  {
-    indexes: [{ fields: ['name'] }],
+
+  name: {
+    type: Sequelize.STRING(255),
   },
-);
+
+  district_id: {
+    type: Sequelize.INTEGER,
+  },
+});
+
+export default City;

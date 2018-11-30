@@ -1,17 +1,19 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define('user_claims', {
+const UserClaim = sequelize.define('user_claims', {
   user_account_id: {
-    type: DataType.INTEGER,
+    type: Sequelize.INTEGER,
     primaryKey: true,
   },
 
   type: {
-    type: DataType.STRING,
+    type: Sequelize.STRING,
   },
 
   value: {
-    type: DataType.STRING,
+    type: Sequelize.STRING,
   },
 });
+
+export default UserClaim;

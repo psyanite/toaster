@@ -6,6 +6,7 @@ import UserLogin from './User/UserLogin';
 import UserProfile from './User/UserProfile';
 
 import Store from './Store/Store';
+import StoreGroup from './Store/StoreGroup';
 import Rating from './Store/Rating';
 import Cuisine from './Store/Cuisine';
 
@@ -20,6 +21,8 @@ import Post from './Post/Post';
 import PostPhoto from './Post/PostPhoto';
 import PostReview from './Post/PostReview';
 
+import Reward from './Reward/Reward';
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
@@ -32,6 +35,7 @@ export {
   UserLogin,
   UserProfile,
   Store,
+  StoreGroup,
   Rating,
   Cuisine,
   Country,
@@ -43,4 +47,5 @@ export {
   Post,
   PostPhoto,
   PostReview,
+  Reward,
 };

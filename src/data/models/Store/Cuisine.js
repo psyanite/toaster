@@ -1,14 +1,16 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define('cuisines', {
+const Cuisine = sequelize.define('cuisines', {
   id: {
-    type: DataType.INTEGER,
+    type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
 
   name: {
-    type: DataType.STRING(100),
+    type: Sequelize.STRING(100),
   },
 });
+
+export default Cuisine;

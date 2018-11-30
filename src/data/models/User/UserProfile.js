@@ -1,25 +1,27 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define('user_profiles', {
+const UserProfile = sequelize.define('user_profiles', {
   user_account_id: {
-    type: DataType.INTEGER,
+    type: Sequelize.INTEGER,
     primaryKey: true,
   },
 
   username: {
-    type: DataType.STRING(64),
+    type: Sequelize.STRING(64),
   },
 
   display_name: {
-    type: DataType.STRING(64),
+    type: Sequelize.STRING(64),
   },
 
   profile_picture: {
-    type: DataType.TEXT,
+    type: Sequelize.TEXT,
   },
 
   gender: {
-    type: DataType.STRING(50),
+    type: Sequelize.STRING(50),
   },
 });
+
+export default UserProfile;

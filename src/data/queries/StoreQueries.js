@@ -1,4 +1,8 @@
-import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, } from 'graphql';
+import {
+  GraphQLInt as Int,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import { Store } from '../models';
 import StoreType from '../types/Store/StoreType';

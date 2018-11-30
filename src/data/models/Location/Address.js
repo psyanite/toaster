@@ -1,34 +1,36 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define('store_addresses', {
+const Address = sequelize.define('store_addresses', {
   id: {
-    type: DataType.INTEGER,
+    type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
 
   store_id: {
-    type: DataType.INTEGER,
+    type: Sequelize.INTEGER,
   },
 
   address_first_line: {
-    type: DataType.STRING(100),
+    type: Sequelize.STRING(100),
   },
 
   address_second_line: {
-    type: DataType.STRING(100),
+    type: Sequelize.STRING(100),
   },
 
   address_street_number: {
-    type: DataType.STRING(20),
+    type: Sequelize.STRING(20),
   },
 
   address_street_name: {
-    type: DataType.STRING(50),
+    type: Sequelize.STRING(50),
   },
 
   google_url: {
-    type: DataType.STRING(255),
+    type: Sequelize.STRING(255),
   },
 });
+
+export default Address;

@@ -1,5 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, } from 'graphql';
+import {
+  GraphQLInt as Int,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import { Post } from '../models';
 import PostType from '../types/Post/PostType';

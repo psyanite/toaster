@@ -1,34 +1,38 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define('post_reviews', {
+const ScoreEnum = Sequelize.ENUM('bad', 'okay', 'good');
+
+const PostReview = sequelize.define('post_reviews', {
   id: {
-    type: DataType.INTEGER,
+    type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
 
   overall_score: {
-    type: DataType.ENUM('bad', 'okay', 'good'),
+    type: ScoreEnum,
   },
 
   taste_score: {
-    type: DataType.ENUM('bad', 'okay', 'good'),
+    type: ScoreEnum,
   },
 
   service_score: {
-    type: DataType.ENUM('bad', 'okay', 'good'),
+    type: ScoreEnum,
   },
 
   value_score: {
-    type: DataType.ENUM('bad', 'okay', 'good'),
+    type: ScoreEnum,
   },
 
   ambience_score: {
-    type: DataType.ENUM('bad', 'okay', 'good'),
+    type: ScoreEnum,
   },
 
   body: {
-    type: DataType.TEXT,
+    type: Sequelize.TEXT,
   },
 });
+
+export default PostReview;

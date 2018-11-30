@@ -1,28 +1,32 @@
 import Sequelize from 'sequelize';
 import sequelize from '../../sequelize';
 
-const Post = sequelize.define('posts', {
+const Reward = sequelize.define('rewards', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
 
+  name: {
+    type: Sequelize.STRING,
+  },
+
+  description: {
+    type: Sequelize.STRING,
+  },
+
   type: {
-    type: Sequelize.ENUM('review', 'photo'),
+    type: Sequelize.ENUM('one_time'),
   },
 
   store_id: {
     type: Sequelize.INTEGER,
   },
 
-  posted_by_id: {
+  store_group_id: {
     type: Sequelize.INTEGER,
-  },
-
-  posted_at: {
-    type: Sequelize.DATE,
   },
 });
 
-export default Post;
+export default Reward;

@@ -1,28 +1,24 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define(
-  'stores',
-  {
-    id: {
-      type: DataType.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-
-    name: {
-      type: DataType.STRING(50),
-    },
-
-    phone_number: {
-      type: DataType.STRING(20),
-    },
-
-    cover_image: {
-      type: DataType.TEXT,
-    },
+const Store = sequelize.define('stores', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-  {
-    indexes: [{ fields: ['name'] }],
+
+  name: {
+    type: Sequelize.STRING(50),
   },
-);
+
+  phone_number: {
+    type: Sequelize.STRING(20),
+  },
+
+  cover_image: {
+    type: Sequelize.TEXT,
+  },
+});
+
+export default Store;

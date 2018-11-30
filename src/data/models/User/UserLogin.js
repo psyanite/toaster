@@ -1,19 +1,21 @@
-import DataType from 'sequelize';
-import Model from '../../sequelize';
+import Sequelize from 'sequelize';
+import sequelize from '../../sequelize';
 
-export default Model.define('user_logins', {
+const UserLogin = sequelize.define('user_logins', {
   social_type: {
-    type: DataType.STRING(50),
+    type: Sequelize.STRING(50),
     primaryKey: true,
   },
 
   social_id: {
-    type: DataType.STRING(100),
+    type: Sequelize.STRING(100),
     primaryKey: true,
   },
 
   user_account_id: {
-    type: DataType.INTEGER,
+    type: Sequelize.INTEGER,
     primaryKey: true,
   },
 });
+
+export default UserLogin;

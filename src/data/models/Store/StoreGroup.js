@@ -1,20 +1,16 @@
 import Sequelize from 'sequelize';
 import sequelize from '../../sequelize';
 
-const PostPhoto = sequelize.define('post_photos', {
+const StoreGroup = sequelize.define('store_groups', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
 
-  post_id: {
-    type: Sequelize.INTEGER,
-  },
-
-  photo: {
-    type: Sequelize.TEXT,
+  name: {
+    type: Sequelize.STRING,
   },
 });
 
-export default PostPhoto;
+export default StoreGroup;

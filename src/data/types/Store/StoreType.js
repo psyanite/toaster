@@ -7,7 +7,14 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { Address, Cuisine, Location, Rating, Store, Suburb, } from '../../models/index';
+import {
+  Address,
+  Cuisine,
+  Location,
+  Rating,
+  Store,
+  Suburb,
+} from '../../models/index';
 import SuburbType from '../Location/SuburbType';
 import LocationType from '../Location/LocationType';
 import AddressType from '../Location/AddressType';

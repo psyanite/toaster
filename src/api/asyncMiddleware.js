@@ -1,4 +1,3 @@
-
 // Not currently used
 
 export default fn => (req, res, next) => {
