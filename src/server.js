@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import { graphql } from 'graphql';
-import expressGraphQL from 'express-graphql';
+import graphqlHTTP from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 import React from 'react';
@@ -113,7 +113,7 @@ app.get(
 // Removed __DEV__ from graphiql and pretty options https://github.com/graphql/express-graphql
 app.use(
   '/graphql',
-  expressGraphQL(req => ({
+  graphqlHTTP(req => ({
     schema,
     graphiql: true,
     rootValue: { request: req },

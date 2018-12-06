@@ -7,19 +7,14 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import {
-  Address,
-  Cuisine,
-  Location,
-  Rating,
-  Store,
-  Suburb,
-} from '../../models/index';
+import { Address, Cuisine, Location, Rating, Store, Suburb, UserAccount } from '../../models/index';
 import SuburbType from '../Location/SuburbType';
 import LocationType from '../Location/LocationType';
 import AddressType from '../Location/AddressType';
 import CuisineType from './CuisineType';
 import RatingType from './RatingType';
+import UserAccountType from '../User/UserAccountType';
+import Reward from '../../models/Reward/Reward';
 
 Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' });
 Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' });
@@ -31,6 +26,11 @@ Store.Cuisines = Store.belongsToMany(Cuisine, {
 Store.Rating = Store.hasOne(Rating, {
   through: 'store_ratings_cache',
   foreignKey: 'store_id',
+});
+Store.FavoritedBy = Store.belongsToMany(UserAccount, {
+  through: 'user_favorite_stores',
+  foreignKey: 'store_id',
+  as: 'favoritedBy',
 });
 
 export default new ObjectType({
@@ -59,6 +59,10 @@ export default new ObjectType({
     ratings: {
       type: RatingType,
       resolve: resolver(Store.Rating),
+    },
+    favorited_by: {
+      type: List(UserAccountType),
+      resolve: resolver(Store.FavoritedBy),
     },
   }),
 });

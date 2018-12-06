@@ -7,7 +7,7 @@ export default {
   allRewards: {
     type: new List(RewardType),
     resolve() {
-      return Reward.findAll({}).then(data => data);
+      return Reward.findAll().then(data => data);
     },
   },
 };

@@ -32,7 +32,7 @@ const Reward = sequelize.define('rewards', {
     type: Sequelize.DATEONLY,
   },
 
-  expires_at: {
+  valid_until: {
     type: Sequelize.DATE,
   },
 

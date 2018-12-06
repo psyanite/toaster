@@ -6,23 +6,37 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import UserProfileType from '../types/User/UserProfileType';
-import { UserProfile } from '../models';
+import { UserProfile, Store } from '../models';
+import StoreType from '../types/Store/StoreType';
 
 export default {
-  profileByUserAccountId: {
+  profileByUserId: {
     type: new List(UserProfileType),
     args: {
-      userAccountId: {
+      userId: {
         type: new NonNull(Int),
       },
     },
     resolve: resolver(UserProfile, {
       before: (findOptions, args) => {
         findOptions.where = {
-          user_account_id: args.userAccountId,
+          user_id: args.userId,
         };
         return findOptions;
       },
     }),
+  },
+  favoriteStores: {
+    type: new List(StoreType),
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { userId }) => {
+      const userProfile = await FavoriteStore.findAll({ where: { user_id: userId }, include: [ Store ]});
+      console.log(userProfile);
+      return userProfile;
+    }
   },
 };

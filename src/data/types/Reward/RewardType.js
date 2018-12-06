@@ -1,19 +1,25 @@
 import {
   GraphQLEnumType as EnumType,
-  GraphQLInt as Int,
+  GraphQLInt as Int, GraphQLList as List,
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
 } from 'graphql';
 import { GraphQLDate as Date } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Reward, Store, StoreGroup } from '../../models';
+import { Reward, Store, StoreGroup, UserAccount } from '../../models';
 import StoreType from '../Store/StoreType';
 import StoreGroupType from '../Store/StoreGroupType';
+import UserAccountType from '../User/UserAccountType';
 
 Reward.Store = Reward.belongsTo(Store, { foreignKey: 'store_id' });
 Reward.StoreGroup = Reward.belongsTo(StoreGroup, {
   foreignKey: 'store_group_id',
+});
+Reward.FavoritedBy = Reward.belongsToMany(UserAccount, {
+  through: 'user_favorite_stores',
+  foreignKey: 'user_id',
+  as: 'favoriteStores',
 });
 
 const RewardType = new EnumType({
@@ -39,7 +45,11 @@ export default new ObjectType({
       resolve: resolver(Reward.StoreGroup),
     },
     valid_from: { type: Date },
-    expires_at: { type: Date },
+    valid_until: { type: Date },
     promo_image: { type: String },
+    favorited_by: {
+      type: List(UserAccountType),
+      resolve: resolver(Reward.FavoritedBy),
+    },
   }),
 });

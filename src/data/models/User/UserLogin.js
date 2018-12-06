@@ -12,7 +12,7 @@ const UserLogin = sequelize.define('user_logins', {
     primaryKey: true,
   },
 
-  user_account_id: {
+  user_id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
   },

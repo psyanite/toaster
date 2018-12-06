@@ -1,11 +1,11 @@
-import { GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
+import { GraphQLObjectType as ObjectType, GraphQLString as String } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
 import { UserAccount, UserProfile } from '../../models';
 import UserAccountType from './UserAccountType';
 
 UserProfile.UserAccount = UserProfile.belongsTo(UserAccount, {
-  foreignKey: 'user_account_id',
+  foreignKey: 'user_id',
 });
 
 export default new ObjectType({

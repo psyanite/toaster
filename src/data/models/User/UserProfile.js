@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import sequelize from '../../sequelize';
 
 const UserProfile = sequelize.define('user_profiles', {
-  user_account_id: {
+  user_id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
   },

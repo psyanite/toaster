@@ -12,7 +12,7 @@ export default {
   allPosts: {
     type: new List(PostType),
     resolve() {
-      return Post.findAll({}).then(data => data);
+      return Post.findAll().then(data => data);
     },
   },
 
@@ -44,17 +44,17 @@ export default {
     }),
   },
 
-  postsByUserAccountId: {
+  postsByUserId: {
     type: new List(PostType),
     args: {
-      userAccountId: {
+      userId: {
         type: new NonNull(Int),
       },
     },
     resolve: resolver(Post, {
       before: (findOptions, args) => {
         findOptions.where = {
-          posted_by_id: args.userAccountId,
+          posted_by_id: args.userId,
         };
         findOptions.order = [['posted_at', 'ASC']];
         return findOptions;

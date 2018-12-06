@@ -11,22 +11,36 @@ import { UserAccount, UserClaim, UserLogin, UserProfile } from '../../models';
 import UserProfileType from './UserProfileType';
 import Post from '../../models/Post/Post';
 import PostType from '../Post/PostType';
+import Store from '../../models/Store/Store';
+import RewardType from '../Reward/RewardType';
+import StoreType from '../Store/StoreType';
+import Reward from '../../models/Reward/Reward';
 
 UserAccount.UserClaim = UserAccount.hasMany(UserClaim, {
-  foreignKey: 'user_account_id',
+  foreignKey: 'user_id',
   as: 'claims',
 });
 UserAccount.UserLogin = UserAccount.hasMany(UserLogin, {
-  foreignKey: 'user_account_id',
+  foreignKey: 'user_id',
   as: 'logins',
 });
 UserAccount.UserProfile = UserAccount.hasOne(UserProfile, {
-  foreignKey: 'user_account_id',
+  foreignKey: 'user_id',
   as: 'profile',
 });
 UserAccount.Posts = UserAccount.hasMany(Post, {
   foreignKey: 'posted_by_id',
   as: 'posts',
+});
+UserAccount.FavoriteRewards = UserAccount.belongsToMany(Reward, {
+  through: 'user_favorite_rewards',
+  foreignKey: 'user_id',
+  as: 'favoriteRewards',
+});
+UserAccount.FavoriteStores = UserAccount.belongsToMany(Store, {
+  through: 'user_favorite_stores',
+  foreignKey: 'user_id',
+  as: 'favoriteStores',
 });
 
 export default new ObjectType({
@@ -41,6 +55,14 @@ export default new ObjectType({
     posts: {
       type: new List(PostType),
       resolve: resolver(UserAccount.Posts),
+    },
+    favorite_rewards: {
+      type: List(RewardType),
+      resolve: resolver(UserAccount.FavoriteRewards),
+    },
+    favorite_stores: {
+      type: List(StoreType),
+      resolve: resolver(UserAccount.FavoriteStores),
     },
   }),
 });

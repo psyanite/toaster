@@ -5,7 +5,7 @@ import { UserAccount, UserLogin } from '../../models';
 import UserAccountType from './UserAccountType';
 
 UserLogin.UserAccount = UserLogin.belongsTo(UserAccount, {
-  foreignKey: 'user_account_id',
+  foreignKey: 'user_id',
 });
 
 export default new ObjectType({

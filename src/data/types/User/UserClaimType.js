@@ -5,7 +5,7 @@ import { UserAccount, UserClaim } from '../../models';
 import UserAccountType from './UserAccountType';
 
 UserClaim.UserAccount = UserClaim.belongsTo(UserAccount, {
-  foreignKey: 'user_account_id',
+  foreignKey: 'user_id',
 });
 
 export default new ObjectType({

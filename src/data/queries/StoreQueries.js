@@ -11,7 +11,7 @@ export default {
   allStores: {
     type: new List(StoreType),
     resolve() {
-      return Store.findAll({}).then(data => data);
+      return Store.findAll().then(data => data);
     },
   },
 

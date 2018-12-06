@@ -14,7 +14,7 @@ export default {
   allUserAccounts: {
     type: new List(UserAccountType),
     resolve() {
-      return UserAccount.findAll({}).then(data => data);
+      return UserAccount.findAll().then(data => data);
     },
   },
 
