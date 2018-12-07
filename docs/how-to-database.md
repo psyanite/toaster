@@ -4,7 +4,7 @@
 * Right-click database
 * Dump with `pg_dump`
 * Path to pg_dump: `C:/Program Files/PostgreSQL/pg10/bin/pg_dump.exe`
-* Statements: Copy (*This is super mega importante.*)
+* Statements: Copy (*This is super mega importante*)
 * Database: burntoast
 * Schemas: <empty>
 * Tables: <empty>
