@@ -55,7 +55,7 @@ addUser(
 * Install PostgreSQL
 * Clone repository
 * Create `.env` file in root
-* Add configurations like such:
+* Add dotenv configurations like such:
 
 ```
 DATABASE_DIALECT = 'postgres'
@@ -66,7 +66,6 @@ DATABASE_USERNAME = 'postgres'
 DATABASE_PASSWORD = 'password'
 ```
 
-* More information available at [dotenv Github repository](https://github.com/motdotla/dotenv)
 * `psql -U postgres -f 'src/data/migrations/clean.sql'`
 * `psql -U postgres -d burntoast -f 'src/data/migrations/export.sql'`
 
