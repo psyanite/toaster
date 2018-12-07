@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.5 (Ubuntu 10.5-1.pgdg14.04+1)
+-- Dumped from database version 10.3
 -- Dumped by pg_dump version 10.3
 
 SET statement_timeout = 0;
@@ -105,6 +105,17 @@ CREATE TYPE public.enum_posts_type AS ENUM (
 
 
 ALTER TYPE public.enum_posts_type OWNER TO postgres;
+
+--
+-- Name: enum_rewards_type; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.enum_rewards_type AS ENUM (
+    'one_time'
+);
+
+
+ALTER TYPE public.enum_rewards_type OWNER TO postgres;
 
 --
 -- Name: post_type; Type: TYPE; Schema: public; Owner: postgres
@@ -389,10 +400,10 @@ CREATE TABLE public.post_reviews (
 ALTER TABLE public.post_reviews OWNER TO postgres;
 
 --
--- Name: post_reviews_2_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: post_reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.post_reviews_2_id_seq
+CREATE SEQUENCE public.post_reviews_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -401,13 +412,13 @@ CREATE SEQUENCE public.post_reviews_2_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.post_reviews_2_id_seq OWNER TO postgres;
+ALTER TABLE public.post_reviews_id_seq OWNER TO postgres;
 
 --
--- Name: post_reviews_2_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: post_reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.post_reviews_2_id_seq OWNED BY public.post_reviews.id;
+ALTER SEQUENCE public.post_reviews_id_seq OWNED BY public.post_reviews.id;
 
 
 --
@@ -453,14 +464,16 @@ ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
 CREATE TABLE public.rewards (
     id integer NOT NULL,
     name character varying(30) NOT NULL,
-    description character varying(100),
+    description character varying,
     type public.reward_type,
     store_id integer,
     store_group_id integer,
     valid_from date NOT NULL,
-    expires_at date,
+    valid_until date,
     promo_image text,
-    terms_and_conditions text
+    terms_and_conditions text,
+    is_active boolean DEFAULT false NOT NULL,
+    redeemlimit integer
 );
 
 
@@ -708,22 +721,46 @@ ALTER SEQUENCE public.user_accounts_id_seq OWNED BY public.user_accounts.id;
 --
 
 CREATE TABLE public.user_claims (
-    user_account_id integer NOT NULL,
-    type character varying(256),
-    value character varying(4000)
+    user_id integer NOT NULL,
+    type character varying(255),
+    value character varying(255)
 );
 
 
 ALTER TABLE public.user_claims OWNER TO postgres;
 
 --
+-- Name: user_favorite_rewards; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_favorite_rewards (
+    user_id integer NOT NULL,
+    reward_id integer NOT NULL
+);
+
+
+ALTER TABLE public.user_favorite_rewards OWNER TO postgres;
+
+--
+-- Name: user_favorite_stores; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_favorite_stores (
+    user_id integer NOT NULL,
+    store_id integer NOT NULL
+);
+
+
+ALTER TABLE public.user_favorite_stores OWNER TO postgres;
+
+--
 -- Name: user_logins; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.user_logins (
-    name character varying(50) NOT NULL,
-    key character varying(100) NOT NULL,
-    user_account_id integer NOT NULL
+    social_type character varying(50) NOT NULL,
+    social_id character varying(100) NOT NULL,
+    user_id integer NOT NULL
 );
 
 
@@ -734,8 +771,8 @@ ALTER TABLE public.user_logins OWNER TO postgres;
 --
 
 CREATE TABLE public.user_profiles (
-    user_account_id integer NOT NULL,
-    username character varying(64) NOT NULL,
+    user_id integer NOT NULL,
+    username character varying(64),
     display_name character varying(64),
     profile_picture text,
     gender character varying(50)
@@ -743,24 +780,6 @@ CREATE TABLE public.user_profiles (
 
 
 ALTER TABLE public.user_profiles OWNER TO postgres;
-
---
--- Name: user_rewards; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.user_rewards (
-    user_account_id integer NOT NULL,
-    reward_id integer NOT NULL,
-    redeem_count integer DEFAULT 0 NOT NULL,
-    code character varying(255) DEFAULT NULL::character varying,
-    state public.user_reward_state NOT NULL,
-    favorited_at date,
-    redeemed_at date,
-    expires_at date
-);
-
-
-ALTER TABLE public.user_rewards OWNER TO postgres;
 
 --
 -- Name: cities id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -808,7 +827,7 @@ ALTER TABLE ONLY public.post_photos ALTER COLUMN id SET DEFAULT nextval('public.
 -- Name: post_reviews id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.post_reviews ALTER COLUMN id SET DEFAULT nextval('public.post_reviews_2_id_seq'::regclass);
+ALTER TABLE ONLY public.post_reviews ALTER COLUMN id SET DEFAULT nextval('public.post_reviews_id_seq'::regclass);
 
 
 --
@@ -1147,6 +1166,16 @@ COPY public.districts (id, name, country_id) FROM stdin;
 COPY public.locations (id, name, suburb_id) FROM stdin;
 4	The Galleries	1
 5	Chatswood Westfield	2
+6	Darling Square	5
+7	Goulburn Street	1
+8	George Street	1
+9	Broadway	9
+10	Regent Place	1
+11	Chatswood Station	2
+12	Pitt Street Mall	1
+13	Harbourside	12
+14	Central Station	11
+15	Chatswood Chase	2
 \.
 
 
@@ -1174,10 +1203,10 @@ COPY public.post_photos (id, post_id, photo) FROM stdin;
 --
 
 COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score, value_score, ambience_score, body) FROM stdin;
-3	4	bad	okay	good	okay	good	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
-1	1	good	bad	bad	okay	okay	We came for the xialongbao (Shanghai soup dumplings) and weren't disappointed. Theses are some of the best. Fill in the order form and in a few, short moments the steamers will begin to arrive, carrying delicate dumplings, full of the tasty minced pork filling and that delicious soup. The rest of the menu is also fantastic. The only thing stopping me giving 5/5 is the price. It's pretty expensive, but certainly worth it for a special occasion. I doubt you will find better value in Sydney.
-4	8	okay	okay	okay	good	good	Lovely service breakfast open 7-4, nice area and food was ok , only thing have to say is a bit expensive . Have to go at weekend , a lot of fun and nice location for family Time
+3	4	good	okay	good	okay	good	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+1	1	bad	bad	bad	okay	okay	We came for the xialongbao (Shanghai soup dumplings) and weren't disappointed. These are some of the best I've ever had in my life. Fill in the order form and in a few, short moments the steamers will begin to arrive, carrying delicate dumplings, full of the tasty minced pork filling and that delicious soup. The rest of the menu is also fantastic. The only thing stopping me giving 5/5 is the price. It's pretty expensive, but certainly worth it for a special occasion. I doubt you will find better value in Sydney.
 2	2	okay	good	bad	okay	good	This is the first time I had Dumplings and Co, it was a really good experience. I was shocked to see the number of options available for vegetarians. The menu was easy to understand the food was very tasty. We reached here at 5:20 and the restaurant re-opened on time, which showcased good hospitality. We ordered for vegetarian wonton soup and a vegetarian fried rice with mushroom and truffle oil, our order was served very fast and both the dishes were really tasty. We paid $24 for both, which was a good deal as the portions were good in size.
+4	8	good	okay	okay	good	good	Lovely service breakfast open 7-4, nice area and food was alright, only thing have to say is it's a bit overpriced. It's better to go on the weekend, a lot of fun and nice location.
 \.
 
 
@@ -1201,7 +1230,13 @@ COPY public.posts (id, type, store_id, posted_by_id, posted_at) FROM stdin;
 -- Data for Name: rewards; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.rewards (id, name, description, type, store_id, store_group_id, valid_from, expires_at, promo_image, terms_and_conditions) FROM stdin;
+COPY public.rewards (id, name, description, type, store_id, store_group_id, valid_from, valid_until, promo_image, terms_and_conditions, is_active, redeemlimit) FROM stdin;
+2	Free Toppings! 🍮	Come enjoy our mouth-watering tasty teas, enjoy a free topping of your choice when you purchase any large drink.	one_time	\N	3	2018-11-01	2018-12-31	https://imgur.com/KMzxoYx.jpg	\N	f	\N
+3	Free Loaded Fries 🍟	8bit is all about the good times, with its wickedly delicious take on classic burgers, hotdogs, epic loaded fries and shakes. Come try one of our delicious burgers or hotdogs and get an epic loaded fries for free.	one_time	9	\N	2018-11-01	2018-12-31	https://imgur.com/3woCfTC.jpg	\N	f	\N
+5	Half Price Soup Dumplings 🥟	To celebrate our grand opening, order our signature soup dumplings for only half price when you spend over $25. Available both lunch and dinner.	one_time	21	\N	2018-12-25	2018-12-25	https://imgur.com/bjJ3S72.jpg	\N	f	\N
+6	$20 off $40 spend 💸	Enjoy our delicious wood-fired authentic Italian pizzas and hand-crafted pastas. Get $20 off when you spend over $40.	one_time	22	\N	2018-12-02	2018-12-02	https://imgur.com/tSE2cXf.jpg	\N	f	\N
+1	Double Mex Tuesday 🌯	Buy two regular or naked burritos and get the cheaper one for free. Add two drinks for only $2! Hurry, only available this Tuesday.	one_time	\N	4	2018-11-01	2018-12-31	https://imgur.com/tR1bD1v.jpg	\N	f	\N
+7	Free Coffee ☕	Purchase one of our finest authentic Kurtosh and receive any large coffee for free.	one_time	20	\N	2019-01-01	2019-12-01	https://imgur.com/9ydUqpJ.jpg	\N	f	\N
 \.
 
 
@@ -1244,6 +1279,16 @@ COPY public.store_cuisines (store_id, cuisine_id) FROM stdin;
 --
 
 COPY public.store_group_stores (group_id, store_id) FROM stdin;
+3	10
+3	11
+3	12
+3	13
+3	14
+3	15
+3	16
+4	17
+4	18
+4	19
 \.
 
 
@@ -1252,6 +1297,8 @@ COPY public.store_group_stores (group_id, store_id) FROM stdin;
 --
 
 COPY public.store_groups (id, name) FROM stdin;
+3	Coco Fresh Tea & Juice
+4	Mad Mex
 \.
 
 
@@ -1260,6 +1307,14 @@ COPY public.store_groups (id, name) FROM stdin;
 --
 
 COPY public.store_ratings_cache (store_id, heart_ratings, okay_ratings, burnt_ratings) FROM stdin;
+1	61	4	5
+2	165	29	16
+8	109	50	9
+4	22	2	2
+3	3	0	3
+7	67	88	4
+5	2	6	17
+6	1	1	0
 \.
 
 
@@ -1268,14 +1323,28 @@ COPY public.store_ratings_cache (store_id, heart_ratings, okay_ratings, burnt_ra
 --
 
 COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image) FROM stdin;
-3	Workshop Meowpresso	+61	288819222	4	1	1	https://b.zmtcdn.com/data/res_imagery/16562081_RESTAURANT_bf27f21b41f1ee074a931eae5d8f719b.jpg?fit=around%7C1200%3A464&crop=1200%3A464%3B0%2C0
-1	Dumplings & Co.	+61	296992235	5	2	1	https://b.zmtcdn.com/data/pictures/chains/2/16560902/528cc961dce573b97a5fddb55b406791.jpg
-2	Sokyo	+61	295258017	\N	1	1	https://b.zmtcdn.com/data/res_imagery/16564570_RESTAURANT_058971a49fafe87b9c772331b251b1fa.jpg
 4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg
 5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg
 6	Cie Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg
 7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg
 8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg
+15	CoCo Fresh Tea & Juice	+61	295511312	\N	8	1	https://imgur.com/KMzxoYx.jpg
+16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg
+10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg
+11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg
+12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg
+13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg
+14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg
+3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg
+9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg
+2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg
+1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg
+17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg
+18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg
+19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg
+20	Kurtosh House	+61	93562436	\N	12	1	http://insatiablemunchies.com/wp-content/uploads/2014/12/SAM_1062.jpg
+21	New Shanghai	+61	926761888	15	2	1	http://s3-ap-southeast-2.amazonaws.com/newshanghai2016/pages_bgs/items/000/000/052/original/NS2017_PIC_04.jpg
+22	Vapiano	+61	965511555	\N	1	1	https://res.cloudinary.com/scentre-group-au/image/fetch/c_fill,q_auto,g_faces:auto,w_2500,h_1071,f_auto/https://cam.scentregroup.io/m/5f0ea3430363225f
 \.
 
 
@@ -1288,6 +1357,14 @@ COPY public.suburbs (id, name, city_id) FROM stdin;
 2	Chatswood	1
 3	Broken Hill	1
 4	Bathurst	1
+5	Haymarket	1
+6	Town Hall	1
+7	Chinatown	1
+8	Ultimo	1
+9	Glebe	1
+10	Burwood	1
+11	Central	1
+12	Darlinghurst	1
 \.
 
 
@@ -1296,11 +1373,32 @@ COPY public.suburbs (id, name, city_id) FROM stdin;
 --
 
 COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
-2	\N	f
-3	\N	f
-4	\N	f
 1	psyneia@gmail.com	f
-37	\N	f
+36	Kurt14242@kurt.com	f
+38	Kurt14aa242@kurt.com	f
+39	Kurt14aa233342@kurt.com	f
+42	Kurt14aa233a342@kurt.com	f
+50	psyneiaaa@gmail.com	f
+45	151452@424.com	f
+2745	psyneidda@gmail.com	f
+43	psyneiaazza@gmail.com	f
+2751	aafefeze@fefe.com	f
+49	151aa4ss52@424.com	f
+51	fefee@fefe.com	f
+52	fefeze@fefe.com	f
+2752	aafefeze@fefe.com	f
+2753	psyneia@gmail.com	f
+2754	psyneia@gmail.com	f
+2755	psyneia@gmail.com	f
+2756	psyneia@gmail.com	f
+2757	psyneia@gmail.com	f
+2758	fefeze@fefe.com	f
+2759	psyanite@gmail.com	f
+2763	psyanite@gmail.com	f
+4	leia-the-slayer@gmail.com	f
+2	c.c.chloe@gmail.com	f
+3	annika_b@gmail.com	f
+37	moefinef@gmail.com	f
 \.
 
 
@@ -1308,9 +1406,31 @@ COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
 -- Data for Name: user_claims; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_claims (user_account_id, type, value) FROM stdin;
-1	urn:facebook:access_token	EAADK73FfXU8BABjZAXGZCMyXqsvdtZBOnNwT5Jp9RuVZAkNCGEUIM8m35ZAXAvI0rc5SZCU0finHCnwfiCVHHkGsTAv8eU9xPqG8ZCd9G3tQCDZAaSzA8DDVJfl9SrpG3WfBwLEqPKzZBYFeZAaoM4KH9GsF0hv6AiGYIxZCiEPzgISzwZDZD
-37	urn:facebook:access_token	EAADK73FfXU8BAIoyBEYZANQeZAMXVIzre1vFkAME0brRtMI3zQwX1HugsfYeVQZCyJApvDvZBBa70o8F1NCnsJl4poZClYj82CwKvtqSl4bB6ZCxsA1QfO4pqr0bK8lfZA92O6v5M3Pq61vfM9UOZBbbUceiNca8rCZAnJds9sfa3AoZBTxUqS70Ts
+COPY public.user_claims (user_id, type, value) FROM stdin;
+\.
+
+
+--
+-- Data for Name: user_favorite_rewards; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_favorite_rewards (user_id, reward_id) FROM stdin;
+1	3
+1	1
+2	2
+2	6
+2	5
+\.
+
+
+--
+-- Data for Name: user_favorite_stores; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_favorite_stores (user_id, store_id) FROM stdin;
+1	2
+1	3
+1	1
 \.
 
 
@@ -1318,9 +1438,30 @@ COPY public.user_claims (user_account_id, type, value) FROM stdin;
 -- Data for Name: user_logins; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_logins (name, key, user_account_id) FROM stdin;
-facebook	1672032292917116	1
+COPY public.user_logins (social_type, social_id, user_id) FROM stdin;
 facebook	134766764092722	37
+facebook	985872859375	36
+facebook	985872859ea375	38
+facebook	98587285922ea375	39
+facebook	985872859a22ea375	42
+facebook	1905457aaa732907903	43
+facebook	f3r32r32r3	45
+facebook	f3rs32rfsfs32r3	49
+facebook	124142100	51
+facebook	190545773efeefef2907903	50
+facebook	1241a42100	52
+facebook	1905457732907903z	2745
+facebook	zf2rf2	2751
+facebook	1241a4210z0	2752
+facebook	19aaaa07903	2753
+facebook	1csc07903	2754
+facebook	1905zz3	2755
+facebook	1asdsd	2756
+facebook	167203229291sddsds	2757
+google	1164677640327081754	2759
+facebook	1241a4aa2100	2758
+google	116467743640327081754	1
+facebook	1905457732907903	2
 \.
 
 
@@ -1328,20 +1469,11 @@ facebook	134766764092722	37
 -- Data for Name: user_profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_profiles (user_account_id, username, display_name, profile_picture, gender) FROM stdin;
-4	leia	Leia	http://i.imgur.com/sjad1TX.jpg	\N
-3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	\N
+COPY public.user_profiles (user_id, username, display_name, profile_picture, gender) FROM stdin;
 1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	\N
 2	curious_chloe	Curious Chloe	https://imgur.com/AwS5vPC.jpg	\N
-37	Luna Lytele	Luna Lytele	https://graph.facebook.com/134766764092722/picture?type=large	\N
-\.
-
-
---
--- Data for Name: user_rewards; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.user_rewards (user_account_id, reward_id, redeem_count, code, state, favorited_at, redeemed_at, expires_at) FROM stdin;
+3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	\N
+4	leia	Leia	https://imgur.com/CUVkwzY.jpg	\N
 \.
 
 
@@ -1377,7 +1509,7 @@ SELECT pg_catalog.setval('public.districts_id_seq', 1, true);
 -- Name: location_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.location_id_seq', 5, true);
+SELECT pg_catalog.setval('public.location_id_seq', 15, true);
 
 
 --
@@ -1388,10 +1520,10 @@ SELECT pg_catalog.setval('public.post_photos_id_seq', 5, true);
 
 
 --
--- Name: post_reviews_2_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: post_reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_reviews_2_id_seq', 3, true);
+SELECT pg_catalog.setval('public.post_reviews_id_seq', 1, false);
 
 
 --
@@ -1405,7 +1537,7 @@ SELECT pg_catalog.setval('public.posts_id_seq', 2, true);
 -- Name: rewards_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.rewards_id_seq', 1, false);
+SELECT pg_catalog.setval('public.rewards_id_seq', 7, true);
 
 
 --
@@ -1419,28 +1551,28 @@ SELECT pg_catalog.setval('public.store_addresses_id_seq', 8, true);
 -- Name: store_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.store_groups_id_seq', 1, false);
+SELECT pg_catalog.setval('public.store_groups_id_seq', 4, true);
 
 
 --
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stores_id_seq', 8, true);
+SELECT pg_catalog.setval('public.stores_id_seq', 22, true);
 
 
 --
 -- Name: suburbs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.suburbs_id_seq', 1, true);
+SELECT pg_catalog.setval('public.suburbs_id_seq', 12, true);
 
 
 --
 -- Name: user_accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_accounts_id_seq', 28, true);
+SELECT pg_catalog.setval('public.user_accounts_id_seq', 2763, true);
 
 
 --
@@ -1532,11 +1664,11 @@ ALTER TABLE ONLY public.store_cuisines
 
 
 --
--- Name: store_group_stores store_group_stores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: store_group_stores store_group_stores_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.store_group_stores
-    ADD CONSTRAINT store_group_stores_pkey PRIMARY KEY (group_id, store_id);
+    ADD CONSTRAINT store_group_stores_unique UNIQUE (group_id, store_id);
 
 
 --
@@ -1572,11 +1704,27 @@ ALTER TABLE ONLY public.user_accounts
 
 
 --
+-- Name: user_claims user_claims_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_claims
+    ADD CONSTRAINT user_claims_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: user_favorite_stores user_favorite_stores_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_favorite_stores
+    ADD CONSTRAINT user_favorite_stores_pk PRIMARY KEY (user_id, store_id);
+
+
+--
 -- Name: user_logins user_logins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_logins
-    ADD CONSTRAINT user_logins_pkey PRIMARY KEY (name, key);
+    ADD CONSTRAINT user_logins_pkey PRIMARY KEY (social_type, social_id);
 
 
 --
@@ -1584,15 +1732,15 @@ ALTER TABLE ONLY public.user_logins
 --
 
 ALTER TABLE ONLY public.user_profiles
-    ADD CONSTRAINT user_profiles_pkey PRIMARY KEY (user_account_id);
+    ADD CONSTRAINT user_profiles_pkey PRIMARY KEY (user_id);
 
 
 --
--- Name: user_rewards user_rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_favorite_rewards user_rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.user_rewards
-    ADD CONSTRAINT user_rewards_pkey PRIMARY KEY (user_account_id, reward_id);
+ALTER TABLE ONLY public.user_favorite_rewards
+    ADD CONSTRAINT user_rewards_pkey PRIMARY KEY (user_id, reward_id);
 
 
 --
@@ -1687,20 +1835,6 @@ CREATE UNIQUE INDEX store_addresses_id_uindex ON public.store_addresses USING bt
 
 
 --
--- Name: store_group_stores_group_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX store_group_stores_group_id_uindex ON public.store_group_stores USING btree (group_id);
-
-
---
--- Name: store_group_stores_store_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX store_group_stores_store_id_uindex ON public.store_group_stores USING btree (store_id);
-
-
---
 -- Name: store_groups_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1729,13 +1863,6 @@ CREATE INDEX suburbs_name ON public.suburbs USING btree (name);
 
 
 --
--- Name: user_accounts_email; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX user_accounts_email ON public.user_accounts USING btree (email);
-
-
---
 -- Name: user_accounts_email_confirmed_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1747,20 +1874,6 @@ CREATE INDEX user_accounts_email_confirmed_index ON public.user_accounts USING b
 --
 
 CREATE INDEX user_accounts_email_index ON public.user_accounts USING btree (email);
-
-
---
--- Name: user_accounts_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX user_accounts_id_uindex ON public.user_accounts USING btree (id);
-
-
---
--- Name: user_profiles_user_account_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX user_profiles_user_account_id_uindex ON public.user_profiles USING btree (user_account_id);
 
 
 --
@@ -1796,11 +1909,11 @@ ALTER TABLE ONLY public.post_photos
 
 
 --
--- Name: post_reviews post_reviews_2_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: post_reviews post_reviews_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.post_reviews
-    ADD CONSTRAINT post_reviews_2_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id);
+    ADD CONSTRAINT post_reviews_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id);
 
 
 --
@@ -1892,11 +2005,27 @@ ALTER TABLE ONLY public.suburbs
 
 
 --
--- Name: user_claims user_claims_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_claims user_claims_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_claims
-    ADD CONSTRAINT user_claims_user_accounts_id_fk FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_claims_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_favorite_stores user_favorite_stores_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_favorite_stores
+    ADD CONSTRAINT user_favorite_stores_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+
+
+--
+-- Name: user_favorite_stores user_favorite_stores_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_favorite_stores
+    ADD CONSTRAINT user_favorite_stores_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
 
 
 --
@@ -1904,38 +2033,31 @@ ALTER TABLE ONLY public.user_claims
 --
 
 ALTER TABLE ONLY public.user_logins
-    ADD CONSTRAINT user_logins_user_accounts_id_fk FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_logins_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
 
 
 --
--- Name: user_profiles user_profiles_user_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_profiles user_profiles_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_profiles
-    ADD CONSTRAINT user_profiles_user_account_id_fkey FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
--- Name: user_rewards user_rewards_reward_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_favorite_rewards user_rewards_reward_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.user_rewards
+ALTER TABLE ONLY public.user_favorite_rewards
     ADD CONSTRAINT user_rewards_reward_id_fkey FOREIGN KEY (reward_id) REFERENCES public.rewards(id);
 
 
 --
--- Name: user_rewards user_rewards_user_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_favorite_rewards user_rewards_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.user_rewards
-    ADD CONSTRAINT user_rewards_user_account_id_fkey FOREIGN KEY (user_account_id) REFERENCES public.user_accounts(id);
-
-
---
--- Name: LANGUAGE plpgsql; Type: ACL; Schema: -; Owner: postgres
---
-
-GRANT ALL ON LANGUAGE plpgsql TO postgres;
+ALTER TABLE ONLY public.user_favorite_rewards
+    ADD CONSTRAINT user_rewards_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
 
 
 --
