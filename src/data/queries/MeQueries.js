@@ -35,7 +35,6 @@ export default {
     },
     resolve: async (_, { userId }) => {
       const userProfile = await FavoriteStore.findAll({ where: { user_id: userId }, include: [ Store ]});
-      console.log(userProfile);
       return userProfile;
     }
   },

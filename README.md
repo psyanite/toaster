@@ -80,3 +80,5 @@ DATABASE_PASSWORD = 'password'
 
 * [How to database](./docs/how-to-database.md)
 * [How to Heroku](./docs/how-to-heroku.md)
+* [How to postgres full text search](http://rachbelaid.com/postgres-full-text-search-is-good-enough/)
+* [How to sequelize full text search](https://medium.com/riipen-engineering/full-text-search-with-sequelize-and-postgresql-3572cb3093e7)

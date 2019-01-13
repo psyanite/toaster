@@ -7,7 +7,6 @@ import Store from '../models/Store/Store';
 import UserLogin from '../models/User/UserLogin';
 import UserAccount from '../models/User/UserAccount';
 import UserLoginType from '../types/User/UserLoginType';
-import UserProfileType from '../types/User/UserProfileType';
 import UserAccountType from '../types/User/UserAccountType';
 
 export default {

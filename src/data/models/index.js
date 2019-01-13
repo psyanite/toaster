@@ -4,6 +4,7 @@ import UserAccount from './User/UserAccount';
 import UserClaim from './User/UserClaim';
 import UserLogin from './User/UserLogin';
 import UserProfile from './User/UserProfile';
+import UserReward from './User/UserReward';
 
 import Store from './Store/Store';
 import StoreGroup from './Store/StoreGroup';
@@ -34,6 +35,7 @@ export {
   UserClaim,
   UserLogin,
   UserProfile,
+  UserReward,
   Store,
   StoreGroup,
   Rating,

@@ -1,11 +1,12 @@
 import { GraphQLObjectType as ObjectType } from 'graphql';
+import MeQueries from './MeQueries';
+import PostQueries from './PostQueries';
+import RewardQueries from './RewardQueries';
 import StoreQueries from './StoreQueries';
 import UserAccountQueries from './UserAccountQueries';
 import UserLoginQueries from './UserLoginQueries';
 import UserProfileQueries from './UserProfileQueries';
-import PostQueries from './PostQueries';
-import MeQueries from './MeQueries';
-import RewardQueries from './RewardQueries';
+import UserRewardQueries from './UserRewardQueries';
 
 export default new ObjectType({
   name: 'Meowry',
@@ -19,5 +20,6 @@ export default new ObjectType({
     UserAccountQueries,
     UserLoginQueries,
     UserProfileQueries,
+    UserRewardQueries,
   ),
 });
