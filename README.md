@@ -1,6 +1,11 @@
 # 🍞 Toaster 1.1.0
 
-🐈 GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
+✨ GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
+
+🔥 Check it out now! https://burntoast.herokuapp.com/graphql
+
+Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL database on the fly. One of the many amazing features of Toaster, is the search endpoint.
+
 
 ### Meowries
 
