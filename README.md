@@ -1,4 +1,4 @@
-# 🍞 Toaster 1.1.0
+# 🍞 Toaster 1.2.0
 
 ✨ GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 
@@ -6,38 +6,55 @@
 
 Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL database on the fly. One of the many amazing features of Toaster, is the search endpoint.
 
+<div align="center">
+  <img src="https://github.com/psyanite/toaster/blob/master/docs/images/allstores-query.png" width="600px"/>  
+</div>
+
 
 ### Meowries
 
 ```
-profileByUserAccountId(userAccountId: Int!): [UserProfile]
+profileByUserId(userId: Int!): [UserProfile]
+favoriteStores(userId: Int!): [Store]
 allPosts: [Post]
 postById(id: Int!): [Post]
 postsByStoreId(storeId: Int!): [Post]
-postsByUserAccountId(userAccountId: Int!): [Post]
+postsByUserId(userId: Int!): [Post]
 allRewards: [Reward]
 allStores: [Store]
 storeById(id: Int!): [Store]
+storesBySearch(query: String!): [Store]
 allUserAccounts: [UserAccount]
 userAccountById(id: Int!): UserAccount
 userAccountByUsername(username: String!): UserAccount
 userLoginBy(socialType: String!socialId: String!): UserLogin
 userProfileByUsername(username: String!): UserProfile
+allUserRewards: [UserReward]
+userRewardBy(userId: IntrewardId: Int): [UserReward]
 ```
 
 ### Meowtations
 
 ```
-addStore(
-  name: String!): Store
+addStore(name: String!): Store
 
 addUser(
   username: String!
-  display_name: String!
+  displayName: String!
   email: String!
-  profile_picture: String!
-  social_id: String!
-  social_type: String!): UserLogin
+  profilePicture: String!
+  socialId: String!
+  socialType: String!): UserLogin
+
+favoriteReward(userId: Int!rewardId: Int!): UserAccount
+
+unfavoriteReward(userId: Int!rewardId: Int!): UserAccount
+
+favoriteStore(userId: Int!storeId: Int!): UserAccount
+
+unfavoriteStore(userId: Int!storeId: Int!): UserAccount
+
+addUserReward(userId: Int!rewardId: Int!): UserReward
 ```
 
 ### Development Tools

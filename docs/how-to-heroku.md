@@ -1,20 +1,25 @@
-### How to deploy to Heroku
+### How to update version
+* Update README.md
+* Run `git tag 1.0.0`
+* Run `git push origin 1.0.0`
+* Run `git push upstream 1.0.0`
 
+
+### How to deploy to Heroku
 * Commit changes
+* Run `heroku login`
 * Run `yarn deploy-heroku`
-* Run `heroku open`
 
 
 ### How to update Heroku database
-
-* `heroku pg:reset DATABASE_URL --confirm burntoast`
-* `heroku pg:psql < 'src/data/migrations/export.sql'`
+* Ensure `export.sql` is up-to-date
+* Run `heroku pg:reset DATABASE_URL --confirm burntoast`
+* Run `heroku pg:psql < 'src/scripts/export.sql'`
 * Ignore any errors labelled `ERROR:  must be member of role "postgres"`
 * Check database
 
 
 ### How Heroku was setup
-
 * cd to project root directory
 * Run `heroku create`
 * Run `heroku addons:create heroku-postgresql:hobby-dev`

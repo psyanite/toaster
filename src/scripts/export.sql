@@ -30,6 +30,20 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
+-- Name: unaccent; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
+
+
+--
 -- Name: enum_post_reviews_ambience_score; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -619,8 +633,8 @@ CREATE TABLE public.stores (
     phone_country character varying(20),
     phone_number character varying(20),
     location_id integer,
-    suburb_id integer,
-    city_id integer,
+    suburb_id integer NOT NULL,
+    city_id integer NOT NULL,
     cover_image text
 );
 
@@ -780,6 +794,20 @@ CREATE TABLE public.user_profiles (
 
 
 ALTER TABLE public.user_profiles OWNER TO postgres;
+
+--
+-- Name: user_rewards; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_rewards (
+    user_id integer NOT NULL,
+    reward_id integer NOT NULL,
+    unique_code character varying(64) NOT NULL,
+    is_redeemed boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.user_rewards OWNER TO postgres;
 
 --
 -- Name: cities id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -1245,14 +1273,29 @@ COPY public.rewards (id, name, description, type, store_id, store_group_id, vali
 --
 
 COPY public.store_addresses (id, store_id, address_first_line, address_second_line, address_street_number, address_street_name, google_url) FROM stdin;
-3	1	Level 2, Hawker Lane	Chatswood Westfield	1	Anderson Street	https://goo.gl/maps/GZxSRicabTu
-2	2	Level 1, Shop 11.04	Regent Place Arcade	487	George Street	https://goo.gl/maps/Ds7vagBoTu42
-1	3	Basement Level	\N	500	George Street	https://goo.gl/maps/njQmnE8NFi52
-4	4	\N	\N	22	Prince Street	https://goo.gl/maps/GZxSRicabTu
-5	5	\N	\N	67	Mitchell Street	https://goo.gl/maps/GZxSRicabTu
-6	6	\N	\N	36	Queen Street	https://goo.gl/maps/GZxSRicabTu
-7	7	\N	\N	71	Pyrmont Street	https://goo.gl/maps/GZxSRicabTu
-8	8	\N	\N	405	Victoria Street	https://goo.gl/maps/GZxSRicabTu
+8	8	\N	\N	405	Victoria St	https://goo.gl/maps/GZxSRicabTu
+1	3	Basement Level	\N	500	George St	https://goo.gl/maps/njQmnE8NFi52
+4	4	\N	\N	22	Prince St	https://goo.gl/maps/GZxSRicabTu
+7	7	\N	\N	71	Pyrmont St	https://goo.gl/maps/GZxSRicabTu
+3	1	Level 2, Hawker Lane	Chatswood Westfield	1	Anderson St	https://goo.gl/maps/GZxSRicabTu
+6	6	\N	\N	36	Queen St	https://goo.gl/maps/GZxSRicabTu
+2	2	Level 1, Shop 11.04	Regent Place Arcade	487	George St	https://goo.gl/maps/Ds7vagBoTu42
+5	5	\N	\N	67	Mitchell St	https://goo.gl/maps/GZxSRicabTu
+18	11	\N	\N	605	George St	https://goo.gl/maps/GZxSRicabTu
+19	12	\N	\N	65-71	Grote St	https://goo.gl/maps/GZxSRicabTu
+20	13	Shop 2	\N	59	John Street	https://goo.gl/maps/GZxSRicabTu
+22	15	\N	\N	22	Chapel Rd	https://goo.gl/maps/GZxSRicabTu
+23	16	\N	\N	24	Help St	https://goo.gl/maps/GZxSRicabTu
+24	17	\N	\N	88-89	Queen St	https://goo.gl/maps/GZxSRicabTu
+25	18	Level 3, Shop 406a	Macquarie Centre	1	Waterloo Rd	https://goo.gl/maps/GZxSRicabTu
+26	19	Level 1 Food Court	MetCentre	273	George St	https://goo.gl/maps/GZxSRicabTu
+27	20	Westfield Warringah Mall	\N	1	Old Pittwater Rd	https://goo.gl/maps/GZxSRicabTu
+28	21	B38	Chatswood Chase Sydney	345	Victoria Ave	https://goo.gl/maps/GZxSRicabTu
+29	22	King St & York St	\N	77	King St	https://goo.gl/maps/GZxSRicabTu
+30	9		\N	51	Tumbalong Boulevard	https://goo.gl/maps/GZxSRicabTu
+17	10	\N	\N	861	George St	https://goo.gl/maps/GZxSRicabTu
+21	14	\N	\N	1	Victoria Ave	https://goo.gl/maps/GZxSRicabTu
+31	23	\N	\N	405	Victoria St	https://goo.gl/maps/GZxSRicabTu
 \.
 
 
@@ -1271,6 +1314,7 @@ COPY public.store_cuisines (store_id, cuisine_id) FROM stdin;
 8	1
 5	6
 6	5
+23	1
 \.
 
 
@@ -1342,9 +1386,10 @@ COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_i
 17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg
 18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg
 19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg
-20	Kurtosh House	+61	93562436	\N	12	1	http://insatiablemunchies.com/wp-content/uploads/2014/12/SAM_1062.jpg
-21	New Shanghai	+61	926761888	15	2	1	http://s3-ap-southeast-2.amazonaws.com/newshanghai2016/pages_bgs/items/000/000/052/original/NS2017_PIC_04.jpg
-22	Vapiano	+61	965511555	\N	1	1	https://res.cloudinary.com/scentre-group-au/image/fetch/c_fill,q_auto,g_faces:auto,w_2500,h_1071,f_auto/https://cam.scentregroup.io/m/5f0ea3430363225f
+23	The Grounds of Meowlexandria Cafe and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg
+20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg
+22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg
+21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg
 \.
 
 
@@ -1417,9 +1462,8 @@ COPY public.user_claims (user_id, type, value) FROM stdin;
 COPY public.user_favorite_rewards (user_id, reward_id) FROM stdin;
 1	3
 1	1
+2	3
 2	2
-2	6
-2	5
 \.
 
 
@@ -1431,6 +1475,9 @@ COPY public.user_favorite_stores (user_id, store_id) FROM stdin;
 1	2
 1	3
 1	1
+2	2
+2	3
+2	12
 \.
 
 
@@ -1474,6 +1521,16 @@ COPY public.user_profiles (user_id, username, display_name, profile_picture, gen
 2	curious_chloe	Curious Chloe	https://imgur.com/AwS5vPC.jpg	\N
 3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	\N
 4	leia	Leia	https://imgur.com/CUVkwzY.jpg	\N
+\.
+
+
+--
+-- Data for Name: user_rewards; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_rewards (user_id, reward_id, unique_code, is_redeemed) FROM stdin;
+2	7	N4CE	f
+1	1	CX1P	f
 \.
 
 
@@ -1544,7 +1601,7 @@ SELECT pg_catalog.setval('public.rewards_id_seq', 7, true);
 -- Name: store_addresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.store_addresses_id_seq', 8, true);
+SELECT pg_catalog.setval('public.store_addresses_id_seq', 31, true);
 
 
 --
@@ -1558,7 +1615,7 @@ SELECT pg_catalog.setval('public.store_groups_id_seq', 4, true);
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stores_id_seq', 22, true);
+SELECT pg_catalog.setval('public.stores_id_seq', 23, true);
 
 
 --
@@ -1574,6 +1631,41 @@ SELECT pg_catalog.setval('public.suburbs_id_seq', 12, true);
 
 SELECT pg_catalog.setval('public.user_accounts_id_seq', 2763, true);
 
+
+--
+-- Name: stores stores_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.stores
+    ADD CONSTRAINT stores_id_pk PRIMARY KEY (id);
+
+
+--
+-- Name: store_search; Type: MATERIALIZED VIEW; Schema: public; Owner: postgres
+--
+
+CREATE MATERIALIZED VIEW public.store_search AS
+ SELECT stores.id,
+    stores.name,
+    stores.phone_country,
+    stores.phone_number,
+    stores.location_id,
+    stores.suburb_id,
+    stores.city_id,
+    stores.cover_image,
+    ((((((((setweight(to_tsvector('english'::regconfig, public.unaccent((stores.name)::text)), 'a'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(locations.name, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (suburbs.name)::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (cities.name)::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_first_line, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_second_line, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_street_name, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, public.unaccent(COALESCE(string_agg((cuisines.name)::text, ' '::text), ''::text))), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_street_number, ''::character varying))::text), 'c'::"char")) AS document
+   FROM ((((((public.stores
+     LEFT JOIN public.locations ON ((stores.location_id = locations.id)))
+     JOIN public.suburbs ON ((stores.suburb_id = suburbs.id)))
+     JOIN public.cities ON ((stores.city_id = cities.id)))
+     LEFT JOIN public.store_cuisines ON ((store_cuisines.store_id = stores.id)))
+     LEFT JOIN public.cuisines ON ((store_cuisines.cuisine_id = cuisines.id)))
+     JOIN public.store_addresses ON ((store_addresses.store_id = stores.id)))
+  GROUP BY stores.id, locations.name, suburbs.name, cities.name, stores.cover_image, store_addresses.address_first_line, store_addresses.address_second_line, store_addresses.address_street_name, store_addresses.address_street_number
+  WITH NO DATA;
+
+
+ALTER TABLE public.store_search OWNER TO postgres;
 
 --
 -- Name: cities cities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
@@ -1680,14 +1772,6 @@ ALTER TABLE ONLY public.store_groups
 
 
 --
--- Name: stores stores_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.stores
-    ADD CONSTRAINT stores_id_pk PRIMARY KEY (id);
-
-
---
 -- Name: suburbs suburbs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1736,18 +1820,19 @@ ALTER TABLE ONLY public.user_profiles
 
 
 --
+-- Name: user_rewards user_rewards_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_rewards
+    ADD CONSTRAINT user_rewards_pk PRIMARY KEY (user_id, reward_id);
+
+
+--
 -- Name: user_favorite_rewards user_rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_favorite_rewards
     ADD CONSTRAINT user_rewards_pkey PRIMARY KEY (user_id, reward_id);
-
-
---
--- Name: cities_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX cities_id_uindex ON public.cities USING btree (id);
 
 
 --
@@ -1758,24 +1843,10 @@ CREATE INDEX cities_name ON public.cities USING btree (name);
 
 
 --
--- Name: countries_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX countries_id_uindex ON public.countries USING btree (id);
-
-
---
 -- Name: countries_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX countries_name ON public.countries USING btree (name);
-
-
---
--- Name: districts_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX districts_id_uindex ON public.districts USING btree (id);
 
 
 --
@@ -1793,13 +1864,6 @@ CREATE INDEX locations_name ON public.locations USING btree (name);
 
 
 --
--- Name: post_photos_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX post_photos_id_uindex ON public.post_photos USING btree (id);
-
-
---
 -- Name: post_photos_photo_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1814,38 +1878,17 @@ CREATE INDEX post_photos_post_id_index ON public.post_photos USING btree (post_i
 
 
 --
--- Name: posts_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX posts_id_uindex ON public.posts USING btree (id);
-
-
---
--- Name: rewards_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX rewards_id_uindex ON public.rewards USING btree (id);
-
-
---
--- Name: store_addresses_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX store_addresses_id_uindex ON public.store_addresses USING btree (id);
-
-
---
--- Name: store_groups_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX store_groups_id_uindex ON public.store_groups USING btree (id);
-
-
---
 -- Name: store_ratings_cache_store_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX store_ratings_cache_store_id_uindex ON public.store_ratings_cache USING btree (store_id);
+
+
+--
+-- Name: store_search_document_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX store_search_document_idx ON public.store_search USING btree (document);
 
 
 --
@@ -1874,6 +1917,13 @@ CREATE INDEX user_accounts_email_confirmed_index ON public.user_accounts USING b
 --
 
 CREATE INDEX user_accounts_email_index ON public.user_accounts USING btree (email);
+
+
+--
+-- Name: user_rewards_unique_code_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX user_rewards_unique_code_uindex ON public.user_rewards USING btree (unique_code);
 
 
 --
@@ -2053,11 +2103,34 @@ ALTER TABLE ONLY public.user_favorite_rewards
 
 
 --
+-- Name: user_rewards user_rewards_rewards_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_rewards
+    ADD CONSTRAINT user_rewards_rewards_id_fk FOREIGN KEY (reward_id) REFERENCES public.rewards(id);
+
+
+--
+-- Name: user_rewards user_rewards_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_rewards
+    ADD CONSTRAINT user_rewards_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+
+
+--
 -- Name: user_favorite_rewards user_rewards_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_favorite_rewards
     ADD CONSTRAINT user_rewards_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+
+
+--
+-- Name: store_search; Type: MATERIALIZED VIEW DATA; Schema: public; Owner: postgres
+--
+
+REFRESH MATERIALIZED VIEW public.store_search;
 
 
 --

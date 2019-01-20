@@ -1,5 +1,15 @@
-### How to export the database
+### How to connect to the database via Datagrip
+* Visit [Heroku](https://data.heroku.com/datastores/08663315-9dc4-4d18-81ba-827e25eb4ebf#administration)
+* Host: `ec2-54-163-237-249.compute-1.amazonaws.com`
+* Database: `d1dugrvvqelvff`
+* Port: `5432`
+* User: `sikvdmrgyocaly`
+* Password: Check the website
+* Go to the Advanced tab
+* ssl: `true`
+* sslfactory: `org.postgresql.ssl.NonValidatingFactory`
 
+### How to export the database
 * Open DataGrip
 * Right-click database
 * Dump with `pg_dump`
@@ -16,7 +26,6 @@
 * Commit changes
 
 ### How to Materialized View
-
 ```postgresql
 create materialized view store_search as
 SELECT stores.*,
