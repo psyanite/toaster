@@ -27,8 +27,12 @@
 
 ### How to Materialized View
 ```postgresql
+refresh materialized view store_search;
+
+drop materialized view store_search;
+
 create materialized view store_search as
-SELECT stores.*,
+select stores.*,
        (((((((setweight(to_tsvector('english'::regconfig, unaccent(stores.name)), 'A'::"char") ||
               setweight(to_tsvector('english'::regconfig, (COALESCE(locations.name, ''::character varying))::text), 'B'::"char")) ||
              setweight(to_tsvector('english'::regconfig, (suburbs.name)::text), 'B'::"char")) ||
@@ -36,26 +40,24 @@ SELECT stores.*,
            setweight(               to_tsvector('english'::regconfig,(COALESCE(store_addresses.address_first_line, ''::character varying))::text),'B'::"char")) ||
           setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_second_line, ''::character varying))::text), 'B'::"char")) ||
          setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_street_name, ''::character varying))::text), 'B'::"char")) ||
-         setweight(to_tsvector('english'::regconfig, (coalesce((string_agg(cuisines.name, ' ')), ''))), 'B'::"char") ||
-        setweight(to_tsvector('english'::regconfig,(COALESCE(store_addresses.address_street_number, ''::character varying))::text),'C'::"char")) AS document
-FROM ((((stores
-  LEFT JOIN locations ON ((stores.location_id = locations.id)))
-  JOIN suburbs ON ((stores.suburb_id = suburbs.id)))
-  JOIN cities ON ((stores.city_id = cities.id)))
-  LEFT JOIN store_cuisines ON ((store_cuisines.store_id = stores.id))
-  LEFT JOIN cuisines ON ((store_cuisines.cuisine_id = cuisines.id))
- JOIN store_addresses ON ((store_addresses.store_id = stores.id)))
-GROUP BY stores.id, locations.name, suburbs.name, cities.name, stores.cover_image, store_addresses.address_first_line, store_addresses.address_second_line, store_addresses.address_street_name, store_addresses.address_street_number;
-
-drop materialized view store_search;
+         setweight(to_tsvector('english'::regconfig, unaccent(coalesce((string_agg(cuisines.name, ' ')), ''))), 'B'::"char") ||
+        setweight(to_tsvector('english'::regconfig,(COALESCE(store_addresses.address_street_number, ''::character varying))::text),'C'::"char")) as document
+from ((((stores
+  left join locations on ((stores.location_id = locations.id)))
+  join suburbs on ((stores.suburb_id = suburbs.id)))
+  join cities on ((stores.city_id = cities.id)))
+  left join store_cuisines on ((store_cuisines.store_id = stores.id))
+  left join cuisines on ((store_cuisines.cuisine_id = cuisines.id))
+ join store_addresses on ((store_addresses.store_id = stores.id)))
+group by stores.id, locations.name, suburbs.name, cities.name, stores.cover_image, store_addresses.address_first_line, store_addresses.address_second_line, store_addresses.address_street_name, store_addresses.address_street_number;
 
 create index store_search_document_idx
-  on store_search (document);
+on store_search (document);
 
 select * from store_search;
 
-SELECT *
-          FROM store_search
-          WHERE document @@ to_tsquery('english', 'westfield')
-          ORDER BY ts_rank(document, to_tsquery('english', 'westfield')) DESC;
+select *
+from store_search
+where document @@ to_tsquery('english', 'westfield')
+order by ts_rank(document, to_tsquery('english', 'westfield')) desc;
 ```

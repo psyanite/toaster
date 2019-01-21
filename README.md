@@ -1,4 +1,4 @@
-# 🍞 Toaster 1.2.0
+# 🍞 Toaster 1.3.0
 
 ✨ GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 
@@ -88,8 +88,8 @@ DATABASE_USERNAME = 'postgres'
 DATABASE_PASSWORD = 'password'
 ```
 
-* `psql -U postgres -f 'src/data/migrations/clean.sql'`
-* `psql -U postgres -d burntoast -f 'src/data/migrations/export.sql'`
+* `psql -U postgres -f 'src/scripts/clean.sql'`
+* `psql -U postgres -d burntoast -f 'src/scripts/export.sql'`
 
 ### How to start the frakkin toaster
 
