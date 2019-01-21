@@ -635,7 +635,8 @@ CREATE TABLE public.stores (
     location_id integer,
     suburb_id integer NOT NULL,
     city_id integer NOT NULL,
-    cover_image text
+    cover_image text,
+    "order" integer DEFAULT 1 NOT NULL
 );
 
 
@@ -1366,30 +1367,30 @@ COPY public.store_ratings_cache (store_id, heart_ratings, okay_ratings, burnt_ra
 -- Data for Name: stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image) FROM stdin;
-4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg
-5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg
-6	Cie Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg
-7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg
-8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg
-15	CoCo Fresh Tea & Juice	+61	295511312	\N	8	1	https://imgur.com/KMzxoYx.jpg
-16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg
-10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg
-11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg
-12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg
-13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg
-14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg
-3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg
-9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg
-2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg
-1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg
-17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg
-18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg
-19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg
-23	The Grounds of Meowlexandria Cafe and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg
-20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg
-22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg
-21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg
+COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image, "order") FROM stdin;
+1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1
+11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg	14
+12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg	14
+13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg	14
+14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg	14
+15	CoCo Fresh Tea & Juice	+61	295511312	\N	8	1	https://imgur.com/KMzxoYx.jpg	14
+4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4
+2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2
+8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg	8
+16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg	14
+17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg	14
+18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg	14
+19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg	14
+10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg	14
+22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg	12
+7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7
+5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6
+20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg	10
+9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg	9
+6	Cié Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg	5
+21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg	11
+3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg	3
+23	Anastasia Café and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg	13
 \.
 
 
@@ -1464,6 +1465,8 @@ COPY public.user_favorite_rewards (user_id, reward_id) FROM stdin;
 1	1
 2	3
 2	2
+2	1
+2	7
 \.
 
 
@@ -1653,7 +1656,8 @@ CREATE MATERIALIZED VIEW public.store_search AS
     stores.suburb_id,
     stores.city_id,
     stores.cover_image,
-    ((((((((setweight(to_tsvector('english'::regconfig, public.unaccent((stores.name)::text)), 'a'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(locations.name, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (suburbs.name)::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (cities.name)::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_first_line, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_second_line, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_street_name, ''::character varying))::text), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, public.unaccent(COALESCE(string_agg((cuisines.name)::text, ' '::text), ''::text))), 'b'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_street_number, ''::character varying))::text), 'c'::"char")) AS document
+    stores."order",
+    ((((((((setweight(to_tsvector('english'::regconfig, public.unaccent((stores.name)::text)), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(locations.name, ''::character varying))::text), 'B'::"char")) || setweight(to_tsvector('english'::regconfig, (suburbs.name)::text), 'B'::"char")) || setweight(to_tsvector('english'::regconfig, (cities.name)::text), 'B'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_first_line, ''::character varying))::text), 'B'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_second_line, ''::character varying))::text), 'B'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_street_name, ''::character varying))::text), 'B'::"char")) || setweight(to_tsvector('english'::regconfig, public.unaccent(COALESCE(string_agg((cuisines.name)::text, ' '::text), ''::text))), 'B'::"char")) || setweight(to_tsvector('english'::regconfig, (COALESCE(store_addresses.address_street_number, ''::character varying))::text), 'C'::"char")) AS document
    FROM ((((((public.stores
      LEFT JOIN public.locations ON ((stores.location_id = locations.id)))
      JOIN public.suburbs ON ((stores.suburb_id = suburbs.id)))
@@ -1882,13 +1886,6 @@ CREATE INDEX post_photos_post_id_index ON public.post_photos USING btree (post_i
 --
 
 CREATE UNIQUE INDEX store_ratings_cache_store_id_uindex ON public.store_ratings_cache USING btree (store_id);
-
-
---
--- Name: store_search_document_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX store_search_document_idx ON public.store_search USING btree (document);
 
 
 --

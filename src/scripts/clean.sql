@@ -21,5 +21,6 @@ DROP DATABASE IF EXISTS burntoast;
 
 CREATE DATABASE burntoast WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'English_United States.1252' LC_CTYPE = 'English_United States.1252';
 
-
 ALTER DATABASE burntoast OWNER TO postgres;
+
+CREATE EXTENSION unaccent;
