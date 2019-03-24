@@ -33,7 +33,7 @@ const Reward = sequelize.define('rewards', {
   },
 
   valid_until: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATEONLY,
   },
 
   promo_image: {
