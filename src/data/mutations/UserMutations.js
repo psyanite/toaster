@@ -49,7 +49,7 @@ export default {
                 {
                   user_id: userAccount.id,
                   username,
-                  display_name: displayName,
+                  preferred_name: displayName,
                   profile_picture: profilePicture,
                 },
                 { transaction: t },

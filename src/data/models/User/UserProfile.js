@@ -11,7 +11,7 @@ const UserProfile = sequelize.define('user_profiles', {
     type: Sequelize.STRING(64),
   },
 
-  display_name: {
+  preferred_name: {
     type: Sequelize.STRING(64),
   },
 

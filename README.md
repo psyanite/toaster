@@ -12,7 +12,6 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
 
 
 ### Meowries
-
 ```
 profileByUserId(userId: Int!): [UserProfile]
 favoriteStores(userId: Int!): [Store]
@@ -34,7 +33,6 @@ userRewardBy(userId: IntrewardId: Int): [UserReward]
 ```
 
 ### Meowtations
-
 ```
 addStore(name: String!): Store
 
@@ -73,12 +71,10 @@ addUserReward(userId: Int!rewardId: Int!): UserReward
 * Git Kraken
 
 ### How to assemble
-
 * Install PostgreSQL
 * Clone repository
 * Create `.env` file in root
 * Add dotenv configurations like such:
-
 ```
 DATABASE_DIALECT = 'postgres'
 DATABSE_HOST = 'localhost'
@@ -87,19 +83,16 @@ DATABASE_NAME = 'burntoast'
 DATABASE_USERNAME = 'postgres'
 DATABASE_PASSWORD = 'password'
 ```
-
 * `psql -U postgres -f 'src/scripts/clean.sql'`
 * `psql -U postgres -d burntoast -f 'src/scripts/export.sql'`
 
 ### How to start the frakkin toaster
-
 * `yarn install`
 * `yarn start`
 * https://localhost:3000/graphql
 * Don't stick your knife in there
 
 ### More docos
-
 * [How to database](./docs/how-to-database.md)
 * [How to Heroku](./docs/how-to-heroku.md)
 * [How to postgres full text search](http://rachbelaid.com/postgres-full-text-search-is-good-enough/)

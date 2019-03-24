@@ -16,7 +16,7 @@ export default new ObjectType({
       resolve: resolver(UserProfile.UserAccount),
     },
     username: { type: String },
-    display_name: { type: String },
+    preferred_name: { type: String },
     profile_picture: { type: String },
     gender: { type: String },
   }),
