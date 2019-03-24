@@ -38,7 +38,7 @@ export default {
         findOptions.where = {
           store_id: args.storeId,
         };
-        findOptions.order = [['posted_at', 'ASC']];
+        findOptions.order = [['posted_at', 'DESC']];
         return findOptions;
       },
     }),
@@ -56,7 +56,7 @@ export default {
         findOptions.where = {
           posted_by_id: args.userId,
         };
-        findOptions.order = [['posted_at', 'ASC']];
+        findOptions.order = [['posted_at', 'DESC']];
         return findOptions;
       },
     }),
