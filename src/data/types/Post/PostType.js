@@ -18,11 +18,16 @@ Post.UserAccount = Post.belongsTo(UserAccount, { foreignKey: 'posted_by_id' });
 Post.PostPhotos = Post.hasMany(PostPhoto, { as: 'Photos' });
 Post.PostReview = Post.hasOne(PostReview);
 
-const PostType = new EnumType({
+export const PostTypeValues = Object.freeze({
+  Photo: 'photo',
+  Review: 'review',
+});
+
+export const PostType = new EnumType({
   name: 'PostType',
   values: {
-    photo: { value: 'photo' },
-    review: { value: 'review' },
+    photo: { value: PostTypeValues.Photo },
+    review: { value: PostTypeValues.Review },
   },
 });
 

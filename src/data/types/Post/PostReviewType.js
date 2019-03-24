@@ -11,7 +11,7 @@ import PostType from './PostType';
 
 PostReview.Post = PostReview.belongsTo(Post, { foreignKey: 'post_id' });
 
-const ScoreType = new EnumType({
+export const ScoreType = new EnumType({
   name: 'ScoreType',
   values: {
     bad: { value: 'bad' },
