@@ -22,7 +22,7 @@
 * Uncheck Clean Database, Add "IF EXISTS", Create database, and Data only
 * Out path: `C:/Desktop/export.sql`
 * Run
-* Replace `src/data/migrations/export.sql`
+* Replace `src/scripts/export.sql`
 * Commit changes
 
 ### How to Materialized View

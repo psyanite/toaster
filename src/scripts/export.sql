@@ -444,7 +444,7 @@ CREATE TABLE public.posts (
     type public.post_type NOT NULL,
     store_id integer NOT NULL,
     posted_by_id integer NOT NULL,
-    posted_at timestamp without time zone NOT NULL
+    posted_at timestamp with time zone NOT NULL
 );
 
 
@@ -745,6 +745,18 @@ CREATE TABLE public.user_claims (
 ALTER TABLE public.user_claims OWNER TO postgres;
 
 --
+-- Name: user_favorite_posts; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_favorite_posts (
+    user_id integer NOT NULL,
+    post_id integer NOT NULL
+);
+
+
+ALTER TABLE public.user_favorite_posts OWNER TO postgres;
+
+--
 -- Name: user_favorite_rewards; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -788,9 +800,11 @@ ALTER TABLE public.user_logins OWNER TO postgres;
 CREATE TABLE public.user_profiles (
     user_id integer NOT NULL,
     username character varying(64),
-    display_name character varying(64),
+    preferred_name character varying(64),
     profile_picture text,
-    gender character varying(50)
+    gender character varying(50),
+    firstname character varying(64),
+    surname character varying(64)
 );
 
 
@@ -804,7 +818,7 @@ CREATE TABLE public.user_rewards (
     user_id integer NOT NULL,
     reward_id integer NOT NULL,
     unique_code character varying(64) NOT NULL,
-    is_redeemed boolean DEFAULT false NOT NULL
+    redeemed_at timestamp with time zone
 );
 
 
@@ -1213,17 +1227,17 @@ COPY public.locations (id, name, suburb_id) FROM stdin;
 --
 
 COPY public.post_photos (id, post_id, photo) FROM stdin;
-1	1	https://b.zmtcdn.com/data/reviews_photos/4e2/768396f0d2f2240303be0853341a84e2_1459007636.jpg
-2	1	https://b.zmtcdn.com/data/reviews_photos/fd5/56b36df276a188e5ee74c617d24aefd5_1502800424.jpg
-3	3	https://b.zmtcdn.com/data/pictures/chains/0/18347530/62820c277b3ffaa51767bc0049cbc3af.jpg
-4	5	https://b.zmtcdn.com/data/pictures/chains/5/16564875/3c87693a4c32ce2fefb1c857829bc2fd.jpg
-5	6	https://b.zmtcdn.com/data/pictures/chains/6/17743836/d8686af57a0418c0cd2a872ed40787d4.jpg
-7	8	https://b.zmtcdn.com/data/reviews_photos/a96/f53dd28bdad35e606d482d0960aeda96_1514353691.jpg
-9	8	https://b.zmtcdn.com/data/reviews_photos/2ed/b36055b55461ef9585027f3ba10e32ed_1505181523.jpg
-10	8	https://b.zmtcdn.com/data/reviews_photos/8e6/9b664fd51279080febe34860481f48e6_1504497922.jpg
-11	8	https://b.zmtcdn.com/data/reviews_photos/138/1fe35c8b80841cc1f2d410fcdb109138_1508660297.jpg
-6	7	https://b.zmtcdn.com/data/reviews_photos/838/aa6d872963a952253080a923669f8838_1500286873.jpg
-8	8	https://b.zmtcdn.com/data/pictures/chains/9/15544559/70d596499a7550ca5ac625369abd78bc.png
+1	1	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1.jpg?alt=media&token=b4579999-e2c9-4ce9-8f62-4d57dc875bbf
+3	3	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F3.jpg?alt=media&token=200098a6-c78c-46a0-87d8-34aca27eb05f
+6	7	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F6.jpg?alt=media&token=034983dd-3220-41f4-80a2-97a7f373d1d1
+8	8	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F8.png?alt=media&token=056470e3-ba68-48c3-8af7-8436a57de31f
+5	6	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F5.jpg?alt=media&token=03e7c7f2-f778-4c12-b77a-95e5d98d8a5f
+7	8	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F7.jpg?alt=media&token=2cc4f40f-b96e-4c88-9b9f-e02f9fdbbe9e
+11	8	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F11.jpg?alt=media&token=73080047-07f6-497d-a0c5-d56dad81178e
+2	1	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F2.jpg?alt=media&token=7b9afbb8-e6d0-4d96-9865-3a14b96c52a0
+9	8	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F9.jpg?alt=media&token=97849536-1a97-42a8-afd6-e53ce3f606a7
+10	8	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F10.jpg?alt=media&token=80b65a35-2a15-45fd-a06c-81d3cbe432fa
+4	5	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F4.jpg?alt=media&token=78b0181c-42f9-44c2-b434-2e47aaaf6ce9
 \.
 
 
@@ -1244,14 +1258,14 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 --
 
 COPY public.posts (id, type, store_id, posted_by_id, posted_at) FROM stdin;
-7	photo	2	4	2017-07-12 12:12:23.453
-1	review	1	1	2017-01-19 15:04:20
-3	photo	2	1	2017-02-07 12:54:38.249
-8	review	3	4	2017-08-08 02:33:21.072
-5	photo	3	1	2017-05-06 07:58:09.777
-2	review	1	2	2017-01-25 09:10:55
-4	review	3	2	2017-02-17 22:22:02.385
-6	photo	2	3	2017-06-06 20:40:00.804
+7	photo	2	4	2018-07-12 22:12:23.453+10
+1	review	1	1	2019-01-20 02:04:20+11
+2	review	1	2	2018-01-25 20:10:55+11
+3	photo	2	1	2019-02-07 23:54:38.249+11
+5	photo	3	1	2018-05-06 17:58:09.777+10
+6	photo	2	3	2018-06-07 06:40:00.804+10
+8	review	3	4	2018-08-08 12:33:21.072+10
+4	review	3	2	2018-02-18 09:22:02.385+11
 \.
 
 
@@ -1445,6 +1459,7 @@ COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
 2	c.c.chloe@gmail.com	f
 3	annika_b@gmail.com	f
 37	moefinef@gmail.com	f
+2764	eddie-chae@gmail.com	f
 \.
 
 
@@ -1453,6 +1468,14 @@ COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
 --
 
 COPY public.user_claims (user_id, type, value) FROM stdin;
+\.
+
+
+--
+-- Data for Name: user_favorite_posts; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_favorite_posts (user_id, post_id) FROM stdin;
 \.
 
 
@@ -1512,6 +1535,7 @@ google	1164677640327081754	2759
 facebook	1241a4aa2100	2758
 google	116467743640327081754	1
 facebook	1905457732907903	2
+facebook	111999111999	2764
 \.
 
 
@@ -1519,11 +1543,12 @@ facebook	1905457732907903	2
 -- Data for Name: user_profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_profiles (user_id, username, display_name, profile_picture, gender) FROM stdin;
-1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	\N
-2	curious_chloe	Curious Chloe	https://imgur.com/AwS5vPC.jpg	\N
-3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	\N
-4	leia	Leia	https://imgur.com/CUVkwzY.jpg	\N
+COPY public.user_profiles (user_id, username, preferred_name, profile_picture, gender, firstname, surname) FROM stdin;
+2	curious_chloe	Chloe	https://imgur.com/AwS5vPC.jpg	female	Chloe	Lee
+1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	female	Luna	Lytele
+3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	female	Annika	McIntyre
+4	leia	Leia	https://imgur.com/CUVkwzY.jpg	female	Leia	Rochford
+2764	eddie_chae	Eddie	https://imgur.com/CUVkwzY.jpg	male	Edward	Chae
 \.
 
 
@@ -1531,9 +1556,9 @@ COPY public.user_profiles (user_id, username, display_name, profile_picture, gen
 -- Data for Name: user_rewards; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_rewards (user_id, reward_id, unique_code, is_redeemed) FROM stdin;
-2	7	N4CE	f
-1	1	CX1P	f
+COPY public.user_rewards (user_id, reward_id, unique_code, redeemed_at) FROM stdin;
+2	7	N4CE	\N
+1	1	CX1P	\N
 \.
 
 
@@ -1576,21 +1601,21 @@ SELECT pg_catalog.setval('public.location_id_seq', 15, true);
 -- Name: post_photos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_photos_id_seq', 5, true);
+SELECT pg_catalog.setval('public.post_photos_id_seq', 268, true);
 
 
 --
 -- Name: post_reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_reviews_id_seq', 1, false);
+SELECT pg_catalog.setval('public.post_reviews_id_seq', 103, true);
 
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.posts_id_seq', 2, true);
+SELECT pg_catalog.setval('public.posts_id_seq', 114, true);
 
 
 --
@@ -1632,7 +1657,7 @@ SELECT pg_catalog.setval('public.suburbs_id_seq', 12, true);
 -- Name: user_accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_accounts_id_seq', 2763, true);
+SELECT pg_catalog.setval('public.user_accounts_id_seq', 2764, true);
 
 
 --
@@ -1800,6 +1825,14 @@ ALTER TABLE ONLY public.user_claims
 
 
 --
+-- Name: user_favorite_posts user_favorite_posts_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_favorite_posts
+    ADD CONSTRAINT user_favorite_posts_pk PRIMARY KEY (user_id, post_id);
+
+
+--
 -- Name: user_favorite_stores user_favorite_stores_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1914,6 +1947,13 @@ CREATE INDEX user_accounts_email_confirmed_index ON public.user_accounts USING b
 --
 
 CREATE INDEX user_accounts_email_index ON public.user_accounts USING btree (email);
+
+
+--
+-- Name: user_rewards_redeemed_at_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX user_rewards_redeemed_at_index ON public.user_rewards USING btree (redeemed_at);
 
 
 --
@@ -2057,6 +2097,22 @@ ALTER TABLE ONLY public.suburbs
 
 ALTER TABLE ONLY public.user_claims
     ADD CONSTRAINT user_claims_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_favorite_posts user_favorite_posts_posts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_favorite_posts
+    ADD CONSTRAINT user_favorite_posts_posts_id_fk FOREIGN KEY (user_id) REFERENCES public.posts(id);
+
+
+--
+-- Name: user_favorite_posts user_favorite_posts_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_favorite_posts
+    ADD CONSTRAINT user_favorite_posts_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
 
 
 --
