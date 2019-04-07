@@ -42,6 +42,11 @@ UserAccount.FavoriteStores = UserAccount.belongsToMany(Store, {
   foreignKey: 'user_id',
   as: 'favoriteStores',
 });
+UserAccount.FavoritePosts = UserAccount.belongsToMany(Post, {
+  through: 'user_favorite_posts',
+  foreignKey: 'user_id',
+  as: 'favoritePosts',
+});
 
 export default new ObjectType({
   name: 'UserAccount',
@@ -63,6 +68,10 @@ export default new ObjectType({
     favorite_stores: {
       type: List(StoreType),
       resolve: resolver(UserAccount.FavoriteStores),
+    },
+    favorite_posts: {
+      type: List(PostType),
+      resolve: resolver(UserAccount.FavoritePosts),
     },
   }),
 });

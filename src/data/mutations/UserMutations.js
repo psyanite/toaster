@@ -4,6 +4,7 @@ import sequelize from '../sequelize';
 import UserProfile from '../models/User/UserProfile';
 import Reward from '../models/Reward/Reward';
 import Store from '../models/Store/Store';
+import Post from '../models/Post/Post';
 import UserLogin from '../models/User/UserLogin';
 import UserAccount from '../models/User/UserAccount';
 import UserLoginType from '../types/User/UserLoginType';
@@ -146,6 +147,46 @@ export default {
       if (store == null)  throw Error(`Could not find Store by storeId [${storeId}]`);
       await user.removeFavoriteStores(store);
       user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
+      return user;
+    }
+  },
+  favoritePost: {
+    type: UserAccountType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      postId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { userId, postId }) => {
+      let user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
+      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      const post = await Post.findByPk(postId);
+      if (post == null)  throw Error(`Could not find Post by postId [${postId}]`);
+      await user.addFavoritePosts(post);
+      user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
+      return user;
+    }
+  },
+  unfavoritePost: {
+    type: UserAccountType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      postId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { userId, postId }) => {
+      let user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
+      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      const post = await Post.findByPk(postId);
+      if (post == null)  throw Error(`Could not find Post by postId [${postId}]`);
+      await user.removeFavoritePosts(post);
+      user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       return user;
     }
   },
