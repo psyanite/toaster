@@ -118,6 +118,12 @@ app.use(
     graphiql: true,
     rootValue: { request: req },
     pretty: true,
+    formatError: error => ({
+      message: error.message,
+      locations: error.locations,
+      stack: error.stack ? error.stack.split('\n') : [],
+      path: error.path
+    })
   })),
 );
 

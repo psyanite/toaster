@@ -75,5 +75,28 @@ export default {
         return post;
       });
     }
+  },
+  deletePost: {
+    type: PostType,
+    args: {
+      postId: {
+        type: new NonNull(Int),
+      },
+      myId: {
+        type: new NonNull(Int)
+      }
+    },
+    resolve: async (
+      _,
+      { postId, myId },
+    ) => {
+      let post = await Post.findByPk(postId);
+      if (post == null) throw Error(`Could not find Post by postId [${postId}]`);
+      let user = await UserAccount.findByPk(myId);
+      if (user == null) throw Error(`Could not find UserAccount by userId [${myId}]`);
+      if (post.posted_by_id !== myId) throw Error(`You must be the owner of the post to delete the post`)
+      await post.destroy();
+      return post;
+    }
   }
 };

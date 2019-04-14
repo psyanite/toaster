@@ -21,13 +21,11 @@ if (config.env === config.ENV.development) {
       host: config.database.host,
       port: config.database.port,
       dialect: config.database.dialect,
-      operatorsAliases: Sequelize.Op,
       define,
     },
   );
 } else {
   sequelize = new Sequelize(config.database.url, {
-    operatorsAliases: Sequelize.Op,
     dialectOptions: {
       ssl: true,
     },
