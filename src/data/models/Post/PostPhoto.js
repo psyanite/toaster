@@ -12,7 +12,7 @@ const PostPhoto = sequelize.define('post_photos', {
     type: Sequelize.INTEGER,
   },
 
-  photo: {
+  url: {
     type: Sequelize.TEXT,
   },
 });

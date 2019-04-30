@@ -17,9 +17,9 @@ export default {
     },
     resolve: async (_, { userId, rewardId }) => {
       const user = await UserAccount.findByPk(userId);
-      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
       const reward = await Reward.findByPk(rewardId);
-      if (reward == null) throw Error(`Could not find Reward by rewardId [${rewardId}]`);
+      if (reward == null) throw Error(`Could not find Reward by rewardId: "${rewardId}"`);
       let uniqueCode = Randomize.generate({ length: 4, capitalization: 'uppercase' });
       const exists = UserReward.findAll({ where: { unique_code: uniqueCode }}).then(data => data);
       if (exists != null) uniqueCode = Randomize.generate({ length: 4, capitalization: 'uppercase' });

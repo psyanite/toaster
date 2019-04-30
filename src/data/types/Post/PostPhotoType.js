@@ -13,6 +13,6 @@ export default new ObjectType({
       type: PostType,
       resolve: resolver(PostPhoto.Post),
     },
-    photo: { type: String },
+    url: { type: String },
   }),
 });

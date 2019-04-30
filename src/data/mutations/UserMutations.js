@@ -82,9 +82,9 @@ export default {
     },
     resolve: async (_, { userId, rewardId }) => {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
-      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
       const reward = await Reward.findByPk(rewardId);
-      if (reward == null)  throw Error(`Could not find Reward by rewardId [${rewardId}]`);
+      if (reward == null)  throw Error(`Could not find Reward by rewardId: "${rewardId}"`);
       await user.addFavoriteRewards(reward);
       user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
       return user;
@@ -102,9 +102,9 @@ export default {
     },
     resolve: async (_, { userId, rewardId }) => {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
-      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
       const reward = await Reward.findByPk(rewardId);
-      if (reward == null)  throw Error(`Could not find Store by rewardId [${rewardId}]`);
+      if (reward == null)  throw Error(`Could not find Store by rewardId: "${rewardId}"`);
       await user.removeFavoriteRewards(reward);
       user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
       return user;
@@ -122,9 +122,9 @@ export default {
     },
     resolve: async (_, { userId, storeId }) => {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
-      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
       const store = await Store.findByPk(storeId);
-      if (store == null)  throw Error(`Could not find Store by storeId [${storeId}]`);
+      if (store == null)  throw Error(`Could not find Store by storeId: "${storeId}"`);
       await user.addFavoriteStores(store);
       user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
       return user;
@@ -142,9 +142,9 @@ export default {
     },
     resolve: async (_, { userId, storeId }) => {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
-      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
       const store = await Store.findByPk(storeId);
-      if (store == null)  throw Error(`Could not find Store by storeId [${storeId}]`);
+      if (store == null)  throw Error(`Could not find Store by storeId: "${storeId}"`);
       await user.removeFavoriteStores(store);
       user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
       return user;
@@ -162,9 +162,9 @@ export default {
     },
     resolve: async (_, { userId, postId }) => {
       let user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
-      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
       const post = await Post.findByPk(postId);
-      if (post == null)  throw Error(`Could not find Post by postId [${postId}]`);
+      if (post == null)  throw Error(`Could not find Post by postId: "${postId}"`);
       await user.addFavoritePosts(post);
       user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       return user;
@@ -182,9 +182,9 @@ export default {
     },
     resolve: async (_, { userId, postId }) => {
       let user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
-      if (user == null) throw Error(`Could not find UserAccount by userId [${userId}]`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
       const post = await Post.findByPk(postId);
-      if (post == null)  throw Error(`Could not find Post by postId [${postId}]`);
+      if (post == null)  throw Error(`Could not find Post by postId: "${postId}"`);
       await user.removeFavoritePosts(post);
       user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       return user;
