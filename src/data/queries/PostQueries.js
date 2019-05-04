@@ -37,6 +37,7 @@ export default {
       before: (findOptions, args) => {
         findOptions.where = {
           store_id: args.storeId,
+          hidden: false,
         };
         findOptions.order = [['posted_at', 'DESC']];
         return findOptions;
@@ -55,6 +56,7 @@ export default {
       before: (findOptions, args) => {
         findOptions.where = {
           posted_by_id: args.userId,
+          hidden: false,
         };
         findOptions.order = [['posted_at', 'DESC']];
         return findOptions;

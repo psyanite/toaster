@@ -4,6 +4,7 @@ import {
   GraphQLList as List,
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
+  GraphQLBoolean as Boolean,
 } from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
@@ -36,6 +37,7 @@ export default new ObjectType({
   fields: () => ({
     id: { type: new NonNull(Int) },
     type: { type: PostType },
+    hidden: { type: Boolean },
     store: {
       type: StoreType,
       resolve: resolver(Post.Store),

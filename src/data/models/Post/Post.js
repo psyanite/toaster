@@ -12,6 +12,10 @@ const Post = sequelize.define('posts', {
     type: Sequelize.ENUM('review', 'photo'),
   },
 
+  hidden: {
+    type: Sequelize.BOOLEAN,
+  },
+
   store_id: {
     type: Sequelize.INTEGER,
   },

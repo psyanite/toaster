@@ -10,6 +10,10 @@ const PostReview = sequelize.define('post_reviews', {
     primaryKey: true,
   },
 
+  post_id: {
+    type: Sequelize.INTEGER,
+  },
+
   overall_score: {
     type: ScoreEnum,
   },

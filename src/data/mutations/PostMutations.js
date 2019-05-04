@@ -1,4 +1,4 @@
-import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
+import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String, GraphQLBoolean as Boolean } from 'graphql';
 
 import sequelize from '../sequelize';
 import Store from '../models/Store/Store';
@@ -14,6 +14,9 @@ export default {
   addReviewPost: {
     type: PostType,
     args: {
+      hidden: {
+        type: Boolean,
+      },
       storeId: {
         type: new NonNull(Int),
       },
@@ -44,7 +47,7 @@ export default {
     },
     resolve: async (
       _,
-      { storeId, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos, postedById },
+      { hidden, storeId, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos, postedById },
     ) => {
       let store = await Store.findByPk(storeId);
       if (store == null) throw Error(`Could not find Store by storeId: "${storeId}"`);
@@ -53,6 +56,7 @@ export default {
       return sequelize.transaction(async t => {
         const post = await Post.create({
             type: PostTypeValues.Review,
+            hidden: hidden,
             store_id: storeId,
             posted_by_id: postedById,
           }, { transaction: t },
@@ -111,8 +115,9 @@ export default {
     ) => {
       let post = await Post.findByPk(id);
       if (post == null) throw Error(`Could not find Post by postId: "${id}"`);
+      let postReview = await PostReview.findOne({ where: { post_id: id }});
       return sequelize.transaction(async t => {
-        await post.update({
+        await postReview.update({
             overall_score: overallScore,
             taste_score: tasteScore,
             service_score: serviceScore,
