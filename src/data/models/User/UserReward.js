@@ -16,8 +16,8 @@ const UserReward = sequelize.define('user_rewards', {
     type: Sequelize.STRING,
   },
 
-  is_redeemed: {
-    type: Sequelize.BOOLEAN,
+  redeemed_at: {
+    type: Sequelize.DATE,
   },
 });
 
