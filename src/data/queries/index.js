@@ -1,4 +1,5 @@
 import { GraphQLObjectType as ObjectType } from 'graphql';
+import SearchQueries from './SearchQueries';
 import MeQueries from './MeQueries';
 import PostQueries from './PostQueries';
 import RewardQueries from './RewardQueries';
@@ -13,6 +14,7 @@ export default new ObjectType({
   description: '🐈 Toaster Meowries',
   fields: Object.assign(
     {},
+    SearchQueries,
     MeQueries,
     PostQueries,
     RewardQueries,

@@ -8,7 +8,7 @@ export default {
   allStores: {
     type: new List(StoreType),
     resolve() {
-      return Store.findAll({order: [['order', 'ASC']]}).then(data => data);
+      return Store.findAll({ order: [['order', 'ASC']] }).then(data => data);
     },
   },
 
@@ -30,15 +30,17 @@ export default {
       }
     },
     resolve: async (_, { query }) => {
+      const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
           SELECT *
           FROM store_search
           WHERE document @@ to_tsquery('english', :queryString)
+          OR unaccent(lower(name)) like unaccent(lower(:likeString))
           ORDER BY ts_rank(document, to_tsquery('english', :queryString)) DESC
         `, {
           model: Store,
-          replacements: { queryString: query.replace(/\s+/g, ' | ') }
+          replacements: { queryString: clean, likeString: `%${clean}%` }
         });
     }
   }

@@ -14,7 +14,6 @@ import AddressType from '../Location/AddressType';
 import CuisineType from './CuisineType';
 import RatingType from './RatingType';
 import UserAccountType from '../User/UserAccountType';
-import Reward from '../../models/Reward/Reward';
 
 Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' });
 Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' });

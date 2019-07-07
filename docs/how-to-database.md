@@ -26,13 +26,22 @@
 * Commit changes
 
 ### How to Materialized View
+
+#### store_search
 ```postgresql
 refresh materialized view store_search;
 
 drop materialized view store_search;
 
 create materialized view store_search as
-select stores.*,
+select stores.id,
+       stores.name,
+       stores.phone_country,
+       stores.phone_number,
+       stores.location_id,
+       stores.suburb_id,
+       stores.city_id,
+       stores.cover_image,
        (((((((setweight(to_tsvector('english'::regconfig, unaccent(stores.name)), 'A'::"char") ||
               setweight(to_tsvector('english'::regconfig, (COALESCE(locations.name, ''::character varying))::text), 'B'::"char")) ||
              setweight(to_tsvector('english'::regconfig, (suburbs.name)::text), 'B'::"char")) ||
@@ -61,3 +70,74 @@ from store_search
 where document @@ to_tsquery('english', 'westfield')
 order by ts_rank(document, to_tsquery('english', 'westfield')) desc;
 ```
+
+### city_locations
+```postgresql
+create materialized view city_locations as
+select
+  id,
+  name,
+  array_append(array_cat(suburbs, locations), name) as locations
+from
+    (select
+    c.id,
+    c.name,
+    array_agg(distinct s.name) as suburbs,
+    array_agg(distinct l.name) as locations
+from (
+    cities c
+        join suburbs s on c.id = s.city_id
+        join locations l on s.id = l.suburb_id
+)
+group by c.id) as view;
+
+drop materialized view city_locations;
+select * from city_locations;
+create index city_locations_document_idx on city_locations (document);
+```
+
+### cuisine_search
+```postgresql
+create materialized view cuisine_search as
+select 
+  name,
+  to_tsvector('english'::regconfig, unaccent(name)::text) as document
+from cuisines;
+
+select * from cuisine_search;
+drop materialized view cuisine_search;
+create index cuisines_search_document_idx on cuisine_search (document);
+```
+
+### location_search
+```postgresql
+create materialized view location_search as
+select
+    name,
+    description,
+    to_tsvector('english'::regconfig, unaccent(name)::text) as document
+from (
+   select c.name, d.name as description from cities c left join districts d on c.district_id = d.id
+   union
+   select s.name, c.name as description from suburbs s left join cities c on s.city_id = c.id
+   union
+   select l.name, concat_ws(', ',s.name,c.name) as description from locations l left join suburbs s on l.suburb_id = s.id left join cities c on s.city_id = c.id
+) as view;
+
+drop materialized view location_search;
+select * from location_search;
+create index location_search_document_idx on location_search (document);
+```
+
+### store_ratings_cache
+```postgresql
+select s.id,
+       sum(case when r.overall_score = 'good' then 1 else 0 end) as hearts,
+       sum(case when r.overall_score = 'okay' then 1 else 0 end) as okays,
+       sum(case when r.overall_score = 'bad' then 1 else 0 end)  as burnts
+from stores s
+         left join posts p on p.store_id = s.id
+         left join post_reviews r on r.post_id = p.id
+group by s.id;
+```
+
