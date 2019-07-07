@@ -3,6 +3,7 @@ import {
   GraphQLInt as Int,
   GraphQLList as List,
   GraphQLNonNull as NonNull,
+  GraphQLBoolean as Boolean,
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import { Post } from '../models';
@@ -32,13 +33,22 @@ export default {
       storeId: {
         type: new NonNull(Int),
       },
+      showHiddenPosts: {
+        type: new NonNull(Boolean),
+      },
     },
     resolve: resolver(Post, {
       before: (findOptions, args) => {
-        findOptions.where = {
-          store_id: args.storeId,
-          hidden: false,
-        };
+        if (args.showHiddenPosts) {
+          findOptions.where = {
+            store_id: args.storeId,
+          };
+        } else {
+          findOptions.where = {
+            store_id: args.storeId,
+            hidden: false,
+          };
+        }
         findOptions.order = [['posted_at', 'DESC']];
         return findOptions;
       },
@@ -51,13 +61,22 @@ export default {
       userId: {
         type: new NonNull(Int),
       },
+      showHiddenPosts: {
+        type: new NonNull(Boolean),
+      },
     },
     resolve: resolver(Post, {
       before: (findOptions, args) => {
-        findOptions.where = {
-          posted_by_id: args.userId,
-          hidden: false,
-        };
+        if (args.showHiddenPosts) {
+          findOptions.where = {
+            posted_by_id: args.userId,
+          };
+        } else {
+          findOptions.where = {
+            posted_by_id: args.userId,
+            hidden: false,
+          };
+        }
         findOptions.order = [['posted_at', 'DESC']];
         return findOptions;
       },

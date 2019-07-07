@@ -56,7 +56,7 @@ export default {
       return sequelize.transaction(async t => {
         const post = await Post.create({
             type: PostTypeValues.Review,
-            hidden: hidden,
+          hidden: hidden,
             store_id: storeId,
             posted_by_id: postedById,
           }, { transaction: t },
@@ -87,6 +87,9 @@ export default {
       id: {
         type: new NonNull(Int),
       },
+      hidden: {
+        type: new NonNull(Boolean),
+      },
       body: {
         type: String,
       },
@@ -111,12 +114,15 @@ export default {
     },
     resolve: async (
       _,
-      { id, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos },
+      { id, hidden, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos },
     ) => {
       let post = await Post.findByPk(id);
       if (post == null) throw Error(`Could not find Post by postId: "${id}"`);
       let postReview = await PostReview.findOne({ where: { post_id: id }});
       return sequelize.transaction(async t => {
+        await post.update({
+          hidden: hidden,
+        }, {transaction: t});
         await postReview.update({
             overall_score: overallScore,
             taste_score: tasteScore,
