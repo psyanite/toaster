@@ -6,8 +6,9 @@ import {
   GraphQLBoolean as Boolean,
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Post } from '../models';
+import { Post, Store } from '../models';
 import PostType from '../types/Post/PostType';
+import sequelize from '../sequelize';
 
 export default {
   allPosts: {
@@ -33,27 +34,51 @@ export default {
       storeId: {
         type: new NonNull(Int),
       },
-      showHiddenPosts: {
-        type: new NonNull(Boolean),
-      },
     },
-    resolve: resolver(Post, {
-      before: (findOptions, args) => {
-        if (args.showHiddenPosts) {
-          findOptions.where = {
-            store_id: args.storeId,
-          };
-        } else {
-          findOptions.where = {
-            store_id: args.storeId,
-            hidden: false,
-          };
-        }
-        findOptions.order = [['posted_at', 'DESC']];
-        return findOptions;
-      },
-    }),
+    resolve: async (_, { storeId }) => {
+      return await sequelize
+        .query(`
+          SELECT DISTINCT ON (posted_by_id, store_id)
+            *
+          FROM posts
+          WHERE store_id = :storeIdString
+          AND hidden = FALSE
+          ORDER BY posted_by_id, store_id, posted_at DESC
+        `, {
+          model: Post,
+          replacements: { storeIdString: storeId }
+        });
+    },
   },
+
+  // Find a way to prevent using the wrong API between public/storeAdmin/storeOwner/admin
+  // adminPostsByStoreId: {
+  //   type: new List(PostType),
+  //   args: {
+  //     storeId: {
+  //       type: new NonNull(Int),
+  //     },
+  //     showHiddenPosts: {
+  //       type: new NonNull(Boolean),
+  //     },
+  //   },
+  //   resolve: resolver(Post, {
+  //     before: (findOptions, args) => {
+  //       if (args.showHiddenPosts) {
+  //         findOptions.where = {
+  //           store_id: args.storeId,
+  //         };
+  //       } else {
+  //         findOptions.where = {
+  //           store_id: args.storeId,
+  //           hidden: false,
+  //         };
+  //       }
+  //       findOptions.order = [['posted_at', 'DESC']];
+  //       return findOptions;
+  //     },
+  //   }),
+  // },
 
   postsByUserId: {
     type: new List(PostType),
