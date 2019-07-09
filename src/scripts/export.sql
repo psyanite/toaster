@@ -443,7 +443,7 @@ CREATE TABLE public.posts (
     id integer NOT NULL,
     type public.post_type NOT NULL,
     store_id integer NOT NULL,
-    posted_by_id integer NOT NULL,
+    posted_by integer NOT NULL,
     posted_at timestamp with time zone NOT NULL
 );
 
@@ -1257,7 +1257,7 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.posts (id, type, store_id, posted_by_id, posted_at) FROM stdin;
+COPY public.posts (id, type, store_id, posted_by, posted_at) FROM stdin;
 7	photo	2	4	2018-07-12 22:12:23.453+10
 1	review	1	1	2019-01-20 02:04:20+11
 2	review	1	2	2018-01-25 20:10:55+11
@@ -2004,11 +2004,11 @@ ALTER TABLE ONLY public.post_reviews
 
 
 --
--- Name: posts posts_posted_by_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: posts posts_posted_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_posted_by_id_fkey FOREIGN KEY (posted_by_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT posts_posted_by_fkey FOREIGN KEY (posted_by) REFERENCES public.user_accounts(id);
 
 
 --

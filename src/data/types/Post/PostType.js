@@ -15,7 +15,7 @@ import PostPhotoType from '../Post/PostPhotoType';
 import PostReviewType from '../Post/PostReviewType';
 
 Post.Store = Post.belongsTo(Store, { foreignKey: 'store_id' });
-Post.UserAccount = Post.belongsTo(UserAccount, { foreignKey: 'posted_by_id' });
+Post.UserAccount = Post.belongsTo(UserAccount, { foreignKey: 'posted_by' });
 Post.PostPhotos = Post.hasMany(PostPhoto, { as: 'Photos' });
 Post.PostReview = Post.hasOne(PostReview);
 

@@ -38,12 +38,12 @@ export default {
     resolve: async (_, { storeId }) => {
       return await sequelize
         .query(`
-          SELECT DISTINCT ON (posted_by_id, store_id)
+          SELECT DISTINCT ON (posted_by, store_id)
             *
           FROM posts
           WHERE store_id = :storeIdString
           AND hidden = FALSE
-          ORDER BY posted_by_id, store_id, posted_at DESC
+          ORDER BY posted_by, store_id, posted_at DESC
         `, {
           model: Post,
           replacements: { storeIdString: storeId }
@@ -94,11 +94,11 @@ export default {
       before: (findOptions, args) => {
         if (args.showHiddenPosts) {
           findOptions.where = {
-            posted_by_id: args.userId,
+            posted_by: args.userId,
           };
         } else {
           findOptions.where = {
-            posted_by_id: args.userId,
+            posted_by: args.userId,
             hidden: false,
           };
         }

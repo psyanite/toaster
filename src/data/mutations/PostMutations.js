@@ -41,24 +41,24 @@ export default {
       photos: {
         type: new List(String),
       },
-      postedById: {
+      postedBy: {
         type: new NonNull(Int),
       },
     },
     resolve: async (
       _,
-      { hidden, storeId, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos, postedById },
+      { hidden, storeId, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos, postedBy },
     ) => {
       let store = await Store.findByPk(storeId);
       if (store == null) throw Error(`Could not find Store by storeId: "${storeId}"`);
-      let user = await UserAccount.findByPk(postedById);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${postedById}"`);
+      let user = await UserAccount.findByPk(postedBy);
+      if (user == null) throw Error(`Could not find UserAccount by userId: "${postedBy}"`);
       return sequelize.transaction(async t => {
         const post = await Post.create({
             type: PostTypeValues.Review,
           hidden: hidden,
             store_id: storeId,
-            posted_by_id: postedById,
+            posted_by: postedBy,
           }, { transaction: t },
         );
         await PostReview.create({
@@ -159,7 +159,7 @@ export default {
       if (post == null) throw Error(`Could not find Post by postId: "${postId}"`);
       let user = await UserAccount.findByPk(myId);
       if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
-      if (post.posted_by_id !== myId) throw Error(`You must be the owner of the post to delete the post`);
+      if (post.posted_by !== myId) throw Error(`You must be the owner of the post to delete the post`);
       await post.destroy();
       return post;
     }

@@ -29,7 +29,7 @@ UserAccount.UserProfile = UserAccount.hasOne(UserProfile, {
   as: 'profile',
 });
 UserAccount.Posts = UserAccount.hasMany(Post, {
-  foreignKey: 'posted_by_id',
+  foreignKey: 'posted_by',
   as: 'posts',
 });
 UserAccount.FavoriteRewards = UserAccount.belongsToMany(Reward, {
