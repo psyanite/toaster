@@ -1,12 +1,7 @@
 /* eslint-disable no-param-reassign */
-import {
-  GraphQLInt as Int,
-  GraphQLList as List,
-  GraphQLNonNull as NonNull,
-  GraphQLBoolean as Boolean,
-} from 'graphql';
+import { GraphQLBoolean as Boolean, GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Post, Store } from '../models';
+import { Post, Comment } from '../models';
 import PostType from '../types/Post/PostType';
 import sequelize from '../sequelize';
 
@@ -28,6 +23,18 @@ export default {
     resolve: resolver(Post),
   },
 
+  allPostsByStoreId: {
+    type: new List(PostType),
+    args: {
+      storeId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve (_, { storeId }) {
+      return Post.findAll({ where: { store_id: storeId }}).then(data => data);
+    }
+  },
+
   postsByStoreId: {
     type: new List(PostType),
     args: {
@@ -38,15 +45,13 @@ export default {
     resolve: async (_, { storeId }) => {
       return await sequelize
         .query(`
-          SELECT DISTINCT ON (posted_by, store_id)
-            *
+          SELECT DISTINCT ON (posted_by, store_id) *
           FROM posts
-          WHERE store_id = :storeIdString
-          AND hidden = FALSE
+          WHERE store_id = :storeIdString AND hidden = FALSE
           ORDER BY posted_by, store_id, posted_at DESC
         `, {
           model: Post,
-          replacements: { storeIdString: storeId }
+          replacements: { storeIdString: storeId },
         });
     },
   },

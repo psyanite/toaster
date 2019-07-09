@@ -1,8 +1,9 @@
 import { GraphQLObjectType as ObjectType } from 'graphql';
-import SearchQueries from './SearchQueries';
+import CommentQueries from './CommentQueries';
 import MeQueries from './MeQueries';
 import PostQueries from './PostQueries';
 import RewardQueries from './RewardQueries';
+import SearchQueries from './SearchQueries';
 import StoreQueries from './StoreQueries';
 import UserAccountQueries from './UserAccountQueries';
 import UserLoginQueries from './UserLoginQueries';
@@ -14,10 +15,11 @@ export default new ObjectType({
   description: '🐈 Toaster Meowries',
   fields: Object.assign(
     {},
-    SearchQueries,
+    CommentQueries,
     MeQueries,
     PostQueries,
     RewardQueries,
+    SearchQueries,
     StoreQueries,
     UserAccountQueries,
     UserLoginQueries,

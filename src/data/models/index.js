@@ -21,6 +21,8 @@ import Address from './Location/Address';
 import Post from './Post/Post';
 import PostPhoto from './Post/PostPhoto';
 import PostReview from './Post/PostReview';
+import Comment from './Post/Comment';
+import Reply from './Post/Reply';
 
 import Reward from './Reward/Reward';
 
@@ -49,5 +51,7 @@ export {
   Post,
   PostPhoto,
   PostReview,
+  Comment,
+  Reply,
   Reward,
 };

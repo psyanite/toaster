@@ -8,16 +8,18 @@ import {
 } from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Post, PostPhoto, PostReview, Store, UserAccount } from '../../models';
+import { Post, PostPhoto, PostReview, Store, UserAccount, Comment } from '../../models';
 import StoreType from '../Store/StoreType';
 import UserAccountType from '../User/UserAccountType';
 import PostPhotoType from '../Post/PostPhotoType';
 import PostReviewType from '../Post/PostReviewType';
+import CommentType from '../Post/CommentType';
 
 Post.Store = Post.belongsTo(Store, { foreignKey: 'store_id' });
 Post.UserAccount = Post.belongsTo(UserAccount, { foreignKey: 'posted_by' });
 Post.PostPhotos = Post.hasMany(PostPhoto, { as: 'Photos' });
 Post.PostReview = Post.hasOne(PostReview);
+Post.Comments = Post.hasMany(Comment, { as: 'Comments' });
 
 export const PostTypeValues = Object.freeze({
   Photo: 'photo',
@@ -54,6 +56,10 @@ export default new ObjectType({
     post_review: {
       type: PostReviewType,
       resolve: resolver(Post.PostReview),
+    },
+    comments: {
+      type: new List(CommentType),
+      resolve: resolver(Post.Comments),
     },
   }),
 });
