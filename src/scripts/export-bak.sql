@@ -2,6 +2,37 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 10.0
+-- Dumped by pg_dump version 10.0
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+SET row_security = off;
+
+DROP DATABASE IF EXISTS burntoast;
+--
+-- Name: burntoast; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE burntoast WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'English_United States.1252' LC_CTYPE = 'English_United States.1252';
+
+ALTER DATABASE burntoast OWNER TO postgres;
+
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
+
+
+--
+-- PostgreSQL database dump
+--
+
 -- Dumped from database version 10.3
 -- Dumped by pg_dump version 10.3
 
@@ -180,19 +211,6 @@ CREATE TYPE public.user_reward_state AS ENUM (
 
 
 ALTER TYPE public.user_reward_state OWNER TO postgres;
-
---
--- Name: f_unaccent(text); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.f_unaccent(text) RETURNS text
-    LANGUAGE sql IMMUTABLE
-    AS $_$
-SELECT public.unaccent('public.unaccent', $1)  -- schema-qualify function and dictionary
-$_$;
-
-
-ALTER FUNCTION public.f_unaccent(text) OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -552,6 +570,25 @@ CREATE MATERIALIZED VIEW public.location_search AS
 ALTER TABLE public.location_search OWNER TO postgres;
 
 --
+-- Name: posts; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.posts (
+    id integer NOT NULL,
+    type public.post_type NOT NULL,
+    store_id integer NOT NULL,
+    posted_by integer NOT NULL,
+    like_count integer DEFAULT 0 NOT NULL,
+    comment_count integer DEFAULT 0 NOT NULL,
+    hidden boolean DEFAULT true NOT NULL,
+    posted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.posts OWNER TO postgres;
+
+
+--
 -- Name: post_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -646,24 +683,6 @@ ALTER TABLE public.post_reviews_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.post_reviews_id_seq OWNED BY public.post_reviews.id;
 
-
---
--- Name: posts; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.posts (
-    id integer NOT NULL,
-    type public.post_type NOT NULL,
-    store_id integer NOT NULL,
-    posted_by integer NOT NULL,
-    like_count integer DEFAULT 0 NOT NULL,
-    comment_count integer DEFAULT 0 NOT NULL,
-    hidden boolean DEFAULT true NOT NULL,
-    posted_at timestamp with time zone
-);
-
-
-ALTER TABLE public.posts OWNER TO postgres;
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -1614,21 +1633,45 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 
 COPY public.posts (id, type, store_id, posted_by, like_count, comment_count, hidden, posted_at) FROM stdin;
 5	photo	3	1	0	0	f	2018-05-06 17:58:09.777+10
+131	review	4	2	0	0	f	2019-04-30 21:51:34.491+10
+8	review	3	4	0	0	f	2018-08-08 12:33:21.072+10
+1	review	1	1	0	0	f	2019-01-20 02:04:20+11
 120	review	4	2	0	0	f	2019-04-28 19:52:43.51+10
+3	photo	2	1	0	0	f	2019-02-07 23:54:38.249+11
+7	photo	2	4	0	0	f	2018-07-12 22:12:23.453+10
 132	review	4	2	0	0	f	2019-05-04 21:05:13.896+10
 4	review	3	2	0	0	f	2018-02-18 09:22:02.385+11
 6	photo	2	3	0	0	f	2018-06-07 06:40:00.804+10
 128	review	4	2	0	0	f	2019-04-30 21:03:09.316+10
-129	review	4	2	0	0	f	2019-04-30 21:08:14.289+10
-133	review	23	2	0	0	f	2019-07-07 16:03:48.854+10
-131	review	4	2	0	0	f	2019-04-30 21:51:34.491+10
-8	review	3	4	0	0	f	2018-08-08 12:33:21.072+10
-1	review	1	1	0	0	f	2019-01-20 02:04:20+11
-3	photo	2	1	0	0	f	2019-02-07 23:54:38.249+11
-7	photo	2	4	0	0	f	2018-07-12 22:12:23.453+10
 2	review	1	2	0	0	f	2018-01-25 20:10:55+11
 124	review	4	2	0	0	f	2019-04-29 21:51:11.993+10
+129	review	4	2	0	0	f	2019-04-30 21:08:14.289+10
+133	review	23	2	0	0	f	2019-07-07 16:03:48.854+10
 134	review	4	2	0	0	t	2019-07-07 21:39:08.342+10
+\.
+
+
+--
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.posts (id, type, store_id, posted_by, hidden, posted_at, like_count, comment_count) FROM stdin;
+5	photo	3	1	f	2018-05-06 17:58:09.777+10	0	0
+131	review	4	2	f	2019-04-30 21:51:34.491+10	0	0
+8	review	3	4	f	2018-08-08 12:33:21.072+10	0	0
+1	review	1	1	f	2019-01-20 02:04:20+11	0	0
+120	review	4	2	f	2019-04-28 19:52:43.51+10	0	0
+3	photo	2	1	f	2019-02-07 23:54:38.249+11	0	0
+7	photo	2	4	f	2018-07-12 22:12:23.453+10	0	0
+132	review	4	2	f	2019-05-04 21:05:13.896+10	0	0
+4	review	3	2	f	2018-02-18 09:22:02.385+11	0	0
+6	photo	2	3	f	2018-06-07 06:40:00.804+10	0	0
+128	review	4	2	f	2019-04-30 21:03:09.316+10	0	0
+2	review	1	2	f	2018-01-25 20:10:55+11	0	0
+124	review	4	2	f	2019-04-29 21:51:11.993+10	0	0
+129	review	4	2	f	2019-04-30 21:08:14.289+10	0	0
+133	review	23	2	f	2019-07-07 16:03:48.854+10	0	0
+134	review	4	2	t	2019-07-07 21:39:08.342+10	0	0
 \.
 
 
@@ -2237,11 +2280,11 @@ ALTER TABLE ONLY public.post_reviews
 
 
 --
--- Name: posts posts_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_pk PRIMARY KEY (id);
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
 
 
 --
@@ -2461,13 +2504,6 @@ CREATE INDEX post_photos_post_id_index ON public.post_photos USING btree (post_i
 --
 
 CREATE INDEX post_reviews_post_id_index ON public.post_reviews USING btree (post_id);
-
-
---
--- Name: posts_id_uindex; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX posts_id_uindex ON public.posts USING btree (id);
 
 
 --
