@@ -22,7 +22,9 @@ import Post from './Post/Post';
 import PostPhoto from './Post/PostPhoto';
 import PostReview from './Post/PostReview';
 import Comment from './Post/Comment';
+import CommentLike from './Post/CommentLike';
 import Reply from './Post/Reply';
+import ReplyLike from './Post/ReplyLike';
 
 import Reward from './Reward/Reward';
 
@@ -52,6 +54,8 @@ export {
   PostPhoto,
   PostReview,
   Comment,
+  CommentLike,
   Reply,
+  ReplyLike,
   Reward,
 };

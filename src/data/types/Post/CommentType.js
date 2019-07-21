@@ -1,27 +1,34 @@
-import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType, GraphQLString as String, GraphQLList as List } from 'graphql';
+import {
+  GraphQLInt as Int,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+  GraphQLObjectType as ObjectType,
+  GraphQLString as String
+} from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Post, Reply, UserAccount, Comment } from '../../models';
-import PostType from '../Post/PostType';
+import { Comment, CommentLike, Reply, UserAccount } from '../../models';
 import ReplyType from '../Post/ReplyType';
 import UserAccountType from '../User/UserAccountType';
+import CommentLikeType from './CommentLikeType';
 
-Comment.Post = Comment.belongsTo(Post, { foreignKey: 'post_id' });
+Comment.Replies = Comment.hasMany(Reply, { as: 'replies' });
+Comment.Likers = Comment.hasMany(CommentLike, { foreignKey: 'comment_id', as: 'likers' });
 Comment.UserAccount = Comment.belongsTo(UserAccount, { foreignKey: 'commented_by' });
-Comment.Replies = Comment.hasMany(Reply, { as: 'Replies' });
 
 export default new ObjectType({
   name: 'Comment',
   fields: () => ({
     id: { type: new NonNull(Int) },
-    post: {
-      type: PostType,
-      resolve: resolver(Comment.Post),
-    },
+    post_id: { type: new NonNull(Int) },
     body: { type: String },
     replies: {
       type: new List(ReplyType),
       resolve: resolver(Comment.Replies),
+    },
+    liked_by: {
+      type: new List(CommentLikeType),
+      resolve: resolver(Comment.Likers),
     },
     commented_by: {
       type: UserAccountType,
