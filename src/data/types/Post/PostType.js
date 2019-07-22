@@ -61,5 +61,7 @@ export default new ObjectType({
       type: new List(CommentType),
       resolve: resolver(Post.Comments),
     },
+    like_count: { type: new NonNull(Int) },
+    comment_count: { type: new NonNull(Int) },
   }),
 });

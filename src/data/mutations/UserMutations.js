@@ -167,6 +167,7 @@ export default {
       if (post == null)  throw Error(`Could not find Post by postId: "${postId}"`);
       await user.addFavoritePosts(post);
       user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
+      await post.increment('like_count');
       return user;
     }
   },
@@ -187,6 +188,7 @@ export default {
       if (post == null)  throw Error(`Could not find Post by postId: "${postId}"`);
       await user.removeFavoritePosts(post);
       user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
+      await post.decrement('like_count');
       return user;
     }
   },

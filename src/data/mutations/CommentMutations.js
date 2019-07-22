@@ -29,11 +29,13 @@ export default {
       if (post == null) throw Error(`Could not find Post by postId: "${postId}"`);
       let user = await UserAccount.findByPk(commentedBy);
       if (user == null) throw Error(`Could not find UserAccount by userId: "${commentedBy}"`);
-      return await Comment.create({
+      const comment = await Comment.create({
         post_id: postId,
         body: body,
         commented_by: commentedBy
       });
+      await post.increment('comment_count');
+      return comment;
     }
   },
   deleteComment: {
@@ -53,6 +55,7 @@ export default {
       if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
       if (comment.commented_by !== myId) throw Error(`You must be the owner of the comment to delete the comment`);
       await comment.destroy();
+      await Post.decrement('comment_count', { where: { id: comment.post_id }});
       return comment;
     }
   },

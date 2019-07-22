@@ -5,6 +5,7 @@ import PostQueries from './PostQueries';
 import RewardQueries from './RewardQueries';
 import SearchQueries from './SearchQueries';
 import StoreQueries from './StoreQueries';
+import TaskQueries from './TaskQueries';
 import UserAccountQueries from './UserAccountQueries';
 import UserLoginQueries from './UserLoginQueries';
 import UserProfileQueries from './UserProfileQueries';
@@ -21,6 +22,7 @@ export default new ObjectType({
     RewardQueries,
     SearchQueries,
     StoreQueries,
+    TaskQueries,
     UserAccountQueries,
     UserLoginQueries,
     UserProfileQueries,
