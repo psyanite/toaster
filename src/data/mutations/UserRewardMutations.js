@@ -17,13 +17,15 @@ export default {
     },
     resolve: async (_, { userId, rewardId }) => {
       const user = await UserAccount.findByPk(userId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${userId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
       const reward = await Reward.findByPk(rewardId);
-      if (reward == null) throw Error(`Could not find Reward by rewardId: "${rewardId}"`);
+      if (reward == null) throw Error(`Could not find Reward by rewardId: ${rewardId}`);
+      const exists = await UserReward.findOne({ where: { user_id: userId, reward_id: rewardId }});
+      if (exists != null) throw Error(`User ${userId} already has reward ${rewardId}`);
       let uniqueCode = Randomize.generate({ length: 4, capitalization: 'uppercase' });
-      const exists = UserReward.findAll({ where: { unique_code: uniqueCode }}).then(data => data);
-      if (exists != null) uniqueCode = Randomize.generate({ length: 4, capitalization: 'uppercase' });
-      return UserReward.create({
+      const uniqueCodeExists = await UserReward.findAll({ where: { unique_code: uniqueCode }}).then(data => data);
+      if (uniqueCodeExists != null) uniqueCode = Randomize.generate({ length: 4, capitalization: 'uppercase' });
+      return await UserReward.create({
         user_id: userId,
         reward_id: rewardId,
         unique_code: uniqueCode,

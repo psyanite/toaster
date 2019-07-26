@@ -26,9 +26,9 @@ export default {
     },
     resolve: async (_, { postId, body, commentedBy }) => {
       let post = await Post.findByPk(postId);
-      if (post == null) throw Error(`Could not find Post by postId: "${postId}"`);
+      if (post == null) throw Error(`Could not find Post by postId: ${postId}`);
       let user = await UserAccount.findByPk(commentedBy);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${commentedBy}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${commentedBy}`);
       const comment = await Comment.create({
         post_id: postId,
         body: body,
@@ -50,9 +50,9 @@ export default {
     },
     resolve: async (_, { myId, commentId }) => {
       let comment = await Comment.findByPk(commentId);
-      if (comment == null) throw Error(`Could not find Comment by commentId: "${commentId}"`);
+      if (comment == null) throw Error(`Could not find Comment by commentId: ${commentId}`);
       let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       if (comment.commented_by !== myId) throw Error(`You must be the owner of the comment to delete the comment`);
       await comment.destroy();
       await Post.decrement('comment_count', { where: { id: comment.post_id }});
@@ -74,9 +74,9 @@ export default {
     },
     resolve: async (_, { commentId, body, repliedBy }) => {
       let comment = await Comment.findByPk(commentId);
-      if (comment == null) throw Error(`Could not find Comment by commentId: "${commentId}"`);
+      if (comment == null) throw Error(`Could not find Comment by commentId: ${commentId}`);
       let user = await UserAccount.findByPk(repliedBy);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${repliedBy}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${repliedBy}`);
       return await Reply.create({
         comment_id: commentId,
         body: body,
@@ -96,9 +96,9 @@ export default {
     },
     resolve: async (_, { myId, replyId }) => {
       let reply = await Reply.findByPk(replyId);
-      if (reply == null) throw Error(`Could not find Reply by replyId: "${replyId}"`);
+      if (reply == null) throw Error(`Could not find Reply by replyId: ${replyId}`);
       let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       if (reply.replied_by !== myId) throw Error(`You must be the owner of the reply to delete the reply`);
       await reply.destroy();
       return reply;
@@ -116,9 +116,9 @@ export default {
     },
     resolve: async (_, { myId, commentId }) => {
       let comment = await Comment.findByPk(commentId);
-      if (comment == null) throw Error(`Could not find Comment by commentId: "${commentId}"`);
+      if (comment == null) throw Error(`Could not find Comment by commentId: ${commentId}`);
       let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       return await CommentLike.create({
         user_id: myId,
         comment_id: commentId,
@@ -137,11 +137,11 @@ export default {
     },
     resolve: async (_, { myId, commentId }) => {
       let comment = await Comment.findByPk(commentId);
-      if (comment == null) throw Error(`Could not find Comment by commentId: "${commentId}"`);
+      if (comment == null) throw Error(`Could not find Comment by commentId: ${commentId}`);
       let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       let like = await CommentLike.findOne({ where: { user_id: myId, comment_id: commentId }});
-      if (like == null) throw Error(`Could not find CommentLike by userId: "${myId}", commentId: "${commentId}"`);
+      if (like == null) throw Error(`Could not find CommentLike by userId: ${myId}, commentId: ${commentId}`);
       await like.destroy();
       return like;
     }
@@ -158,9 +158,9 @@ export default {
     },
     resolve: async (_, { myId, replyId }) => {
       let reply = await Reply.findByPk(replyId);
-      if (reply == null) throw Error(`Could not find Reply by replyId: "${replyId}"`);
+      if (reply == null) throw Error(`Could not find Reply by replyId: ${replyId}`);
       let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       return await ReplyLike.create({
         user_id: myId,
         reply_id: replyId,
@@ -179,11 +179,11 @@ export default {
     },
     resolve: async (_, { myId, replyId }) => {
       let reply = await Reply.findByPk(replyId);
-      if (reply == null) throw Error(`Could not find Reply by replyId: "${replyId}"`);
+      if (reply == null) throw Error(`Could not find Reply by replyId: ${replyId}`);
       let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       let like = await ReplyLike.findOne({ where: { user_id: myId, reply_id: replyId }});
-      if (like == null) throw Error(`Could not find ReplyLike by userId: "${myId}", commentId: "${replyId}"`);
+      if (like == null) throw Error(`Could not find ReplyLike by userId: ${myId}, commentId: ${replyId}`);
       await like.destroy();
       return like;
     }

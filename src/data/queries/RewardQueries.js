@@ -6,8 +6,8 @@ import RewardType from '../types/Reward/RewardType';
 export default {
   allRewards: {
     type: new List(RewardType),
-    resolve() {
-      return Reward.findAll().then(data => data);
-    },
+    resolve: async () => {
+      return await Reward.findAll({ where: { active: true, hidden: false} });
+    }
   },
 };

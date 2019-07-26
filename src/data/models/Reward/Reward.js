@@ -39,6 +39,18 @@ const Reward = sequelize.define('rewards', {
   promo_image: {
     type: Sequelize.STRING,
   },
+
+  active: {
+    type: Sequelize.BOOLEAN,
+  },
+
+  hidden: {
+    type: Sequelize.BOOLEAN,
+  },
+
+  redeem_limit: {
+    type: Sequelize.INTEGER,
+  },
 });
 
 export default Reward;

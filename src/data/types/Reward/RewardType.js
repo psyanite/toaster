@@ -1,9 +1,11 @@
 import {
   GraphQLEnumType as EnumType,
-  GraphQLInt as Int, GraphQLList as List,
+  GraphQLInt as Int,
+  GraphQLList as List,
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
+  GraphQLBoolean as Boolean,
 } from 'graphql';
 import { GraphQLDate as Date } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
@@ -47,6 +49,9 @@ export default new ObjectType({
     valid_from: { type: Date },
     valid_until: { type: Date },
     promo_image: { type: String },
+    active: { type: Boolean },
+    hidden: { type: Boolean },
+    redeem_limit: { type: Int },
     favorited_by: {
       type: List(UserAccountType),
       resolve: resolver(Reward.FavoritedBy),

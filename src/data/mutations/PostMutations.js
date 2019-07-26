@@ -50,9 +50,9 @@ export default {
       { hidden, storeId, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos, postedBy },
     ) => {
       let store = await Store.findByPk(storeId);
-      if (store == null) throw Error(`Could not find Store by storeId: "${storeId}"`);
+      if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
       let user = await UserAccount.findByPk(postedBy);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${postedBy}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${postedBy}`);
       return sequelize.transaction(async t => {
         const post = await Post.create({
             type: PostTypeValues.Review,
@@ -117,7 +117,7 @@ export default {
       { id, hidden, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos },
     ) => {
       let post = await Post.findByPk(id);
-      if (post == null) throw Error(`Could not find Post by postId: "${id}"`);
+      if (post == null) throw Error(`Could not find Post by postId: ${id}`);
       let postReview = await PostReview.findOne({ where: { post_id: id }});
       return sequelize.transaction(async t => {
         await post.update({
@@ -156,9 +156,9 @@ export default {
       { postId, myId },
     ) => {
       let post = await Post.findByPk(postId);
-      if (post == null) throw Error(`Could not find Post by postId: "${postId}"`);
+      if (post == null) throw Error(`Could not find Post by postId: ${postId}`);
       let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: "${myId}"`);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       if (post.posted_by !== myId) throw Error(`You must be the owner of the post to delete the post`);
       await post.destroy();
       return post;
@@ -176,7 +176,7 @@ export default {
       { id },
     ) => {
       let photo = await PostPhoto.findByPk(id);
-      if (photo == null) throw Error(`Could not find PostPhoto by id: "${id}"`);
+      if (photo == null) throw Error(`Could not find PostPhoto by id: ${id}`);
       await photo.destroy();
       return photo;
     }
