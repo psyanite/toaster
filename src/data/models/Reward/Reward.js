@@ -40,6 +40,10 @@ const Reward = sequelize.define('rewards', {
     type: Sequelize.STRING,
   },
 
+  terms_and_conditions: {
+    type: Sequelize.STRING,
+  },
+
   active: {
     type: Sequelize.BOOLEAN,
   },

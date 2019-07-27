@@ -49,6 +49,7 @@ export default new ObjectType({
     valid_from: { type: Date },
     valid_until: { type: Date },
     promo_image: { type: String },
+    terms_and_conditions: { type: String },
     active: { type: Boolean },
     hidden: { type: Boolean },
     redeem_limit: { type: Int },
