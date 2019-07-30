@@ -35,6 +35,7 @@ export default new ObjectType({
   name: 'Reward',
   fields: () => ({
     id: { type: new NonNull(Int) },
+    code: { type: String },
     name: { type: String },
     description: { type: String },
     type: { type: RewardType },

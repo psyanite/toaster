@@ -8,6 +8,10 @@ const Reward = sequelize.define('rewards', {
     primaryKey: true,
   },
 
+  code: {
+    type: Sequelize.STRING,
+  },
+
   name: {
     type: Sequelize.STRING,
   },

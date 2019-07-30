@@ -1,9 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull } from 'graphql';
-import { resolver } from 'graphql-sequelize';
-import { Reward, UserAccount, UserReward } from '../models';
+import { UserReward } from '../models';
 import UserRewardType from '../types/User/UserRewardType';
-import * as Randomize from 'randomstring';
 
 export default {
   allUserRewards: {
@@ -21,7 +19,7 @@ export default {
       },
     },
     resolve: async (_, { userId }) => {
-      return await UserReward.findAll({ where: { user_id: userId }})
+      return await UserReward.findAll({ where: { user_id: userId } })
     }
   },
 

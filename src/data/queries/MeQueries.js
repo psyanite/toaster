@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, } from 'graphql';
+import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import UserProfileType from '../types/User/UserProfileType';
-import { Store, UserProfile } from '../models';
+import { Store, UserProfile, UserReward } from '../models';
 import StoreType from '../types/Store/StoreType';
+import * as Randomize from 'randomstring';
 
 export default {
   profileByUserId: {
@@ -33,4 +34,11 @@ export default {
       return await FavoriteStore.findAll({ where: { user_id: userId }, include: [Store] });
     }
   },
+  meow: {
+    type: String,
+    resolve: async () => {
+      let uniqueCode = Randomize.generate({ length: 5, charset: 'bcdfghjklmnpqrtvwxBCDFGHJKLMNPQRTVWX23456789' });
+      return uniqueCode.toString();
+    }
+  }
 };
