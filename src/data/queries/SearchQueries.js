@@ -50,11 +50,11 @@ export default {
       const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
-          SELECT *
-          FROM cuisine_search
-          WHERE document @@ to_tsquery('english', :queryString)
-          OR unaccent(lower(name)) like unaccent(lower(:likeString))
-          ORDER BY ts_rank(document, to_tsquery('english', :queryString)) DESC
+          select *
+          from cuisine_search
+          where document @@ to_tsquery('english', :querystring)
+            or unaccent(lower(name)) like unaccent(lower(:likestring))
+          order by ts_rank(document, to_tsquery('english', :querystring)) desc
         `, {
           model: CuisineSearchResult,
           replacements: { queryString: clean, likeString: `%${clean}%` }
@@ -73,11 +73,11 @@ export default {
       const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
-          SELECT *
-          FROM location_search
-          WHERE document @@ to_tsquery('english', :queryString)
-          OR lower(name) like lower(:likeString)
-          ORDER BY ts_rank(document, to_tsquery('english', :queryString)) DESC
+          select *
+          from location_search
+          where document @@ to_tsquery('english', :querystring)
+            or lower(name) like lower(:likestring)
+          order by ts_rank(document, to_tsquery('english', :querystring)) desc
         `, {
           model: LocationSearchResult,
           replacements: { queryString: clean, likeString: `%${clean}%` }

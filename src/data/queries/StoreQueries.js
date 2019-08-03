@@ -33,11 +33,11 @@ export default {
       const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
-          SELECT *
-          FROM store_search
-          WHERE document @@ to_tsquery('english', :queryString)
-          OR unaccent(lower(name)) like unaccent(lower(:likeString))
-          ORDER BY ts_rank(document, to_tsquery('english', :queryString)) DESC
+          select *
+          from store_search
+          where document @@ to_tsquery('english', :querystring)
+            or unaccent(lower(name)) like unaccent(lower(:likestring))
+          order by ts_rank(document, to_tsquery('english', :querystring)) desc
         `, {
           model: Store,
           replacements: { queryString: clean, likeString: `%${clean}%` }

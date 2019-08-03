@@ -45,13 +45,13 @@ export default {
     resolve: async (_, { storeId }) => {
       return await sequelize
         .query(`
-          SELECT * FROM (
-            SELECT DISTINCT ON (posted_by, store_id) *
-            FROM posts
-            WHERE store_id = :storeId AND hidden = FALSE
-            ORDER BY posted_by, store_id, posted_at DESC
+          select * from (
+            select distinct on (posted_by, store_id) *
+            from posts
+            where store_id = :storeid and hidden = false
+            order by posted_by, store_id, posted_at desc
           ) t
-          ORDER BY posted_at DESC;
+          order by posted_at desc;
         `, {
           model: Post,
           replacements: { storeId: storeId },
