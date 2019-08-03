@@ -35,13 +35,19 @@ export default {
         .query(`
           select *
           from store_search
-          where document @@ to_tsquery('english', :querystring)
-            or unaccent(lower(name)) like unaccent(lower(:likestring))
+          where document @@ to_tsquery('english', :querystring) or unaccent(lower(name)) like unaccent(lower(:likestring))
           order by ts_rank(document, to_tsquery('english', :querystring)) desc
         `, {
           model: Store,
           replacements: { queryString: clean, likeString: `%${clean}%` }
         });
+    }
+  },
+
+  topStores: {
+    type: new List(StoreType),
+    resolve: async () => {
+      return await Store.findAll({ where: { rank: 1 } });
     }
   }
 };

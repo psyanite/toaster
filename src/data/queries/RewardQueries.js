@@ -10,6 +10,7 @@ export default {
       return await Reward.findAll({ where: { active: true, hidden: false } });
     }
   },
+
   rewardByCode: {
     type: RewardType,
     args: {
@@ -19,6 +20,13 @@ export default {
     },
     resolve: async (_, { code }) => {
       return await Reward.findOne({ where: { code: code } })
+    }
+  },
+
+  topRewards: {
+    type: new List(RewardType),
+    resolve: async() => {
+      return await Reward.findAll({ where: { rank: 1 }});
     }
   }
 };

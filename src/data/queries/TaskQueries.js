@@ -70,11 +70,9 @@ export default {
       const [, secondUpdate] = await sequelize
         .query(`
           update stores
-          set rank = rr.rank
+          set rank = (case when rr.valid_from < now() and now() < rr.valid_to then rr.rank else 99 end)
           from store_rankings rr
           where stores.id = rr.store_id
-            and rr.valid_from < now()
-            and now() < rr.valid_to
         `);
       const total = await Store.count();
       return `Updated ${firstUpdate.rowCount + secondUpdate.rowCount} stores out of ${total} stores`;
