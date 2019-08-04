@@ -16,10 +16,6 @@ const Post = sequelize.define('posts', {
     type: Sequelize.INTEGER,
   },
 
-  posted_by_user: {
-    type: Sequelize.INTEGER,
-  },
-
   posted_by: {
     type: Sequelize.INTEGER,
   },

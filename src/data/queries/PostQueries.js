@@ -48,9 +48,13 @@ export default {
           select * from (
             select distinct on (posted_by, store_id) *
             from posts
-            where store_id = :storeid and hidden = false
+            where store_id = :storeId and posted_by is not null and hidden = false
             order by posted_by, store_id, posted_at desc
-          ) t
+          ) a
+          union (
+            select * from posts
+            where store_id = :storeId and posted_by is null
+          )
           order by posted_at desc;
         `, {
           model: Post,
