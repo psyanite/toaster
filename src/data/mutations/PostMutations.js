@@ -81,6 +81,7 @@ export default {
       });
     }
   },
+
   updatePost: {
     type: PostType,
     args: {
@@ -141,6 +142,7 @@ export default {
       });
     }
   },
+
   deletePost: {
     type: PostType,
     args: {
@@ -164,6 +166,7 @@ export default {
       return post;
     }
   },
+
   deletePhoto: {
     type: PostPhotoType,
     args: {

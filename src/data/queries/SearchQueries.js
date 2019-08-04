@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import {
-  GraphQLList as List,
+  GraphQLInt as Int,
+  GraphQLList as List, GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
 } from 'graphql';
@@ -38,12 +39,11 @@ const LocationSearchResultType = new ObjectType({
 });
 
 export default {
-
   cuisinesBySearch: {
     type: new List(CuisineSearchResultType),
     args: {
       query: {
-        type: String,
+        type: new NonNull(String),
       },
     },
     resolve: async (_, { query }) => {
@@ -66,7 +66,7 @@ export default {
     type: new List(LocationSearchResultType),
     args: {
       query: {
-        type: String,
+        type: new NonNull(String),
       },
     },
     resolve: async (_, { query }) => {

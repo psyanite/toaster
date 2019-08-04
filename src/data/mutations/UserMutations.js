@@ -70,6 +70,7 @@ export default {
         )
         .then(result => result),
   },
+
   favoriteReward: {
     type: UserAccountType,
     args: {
@@ -90,6 +91,7 @@ export default {
       return user;
     }
   },
+
   unfavoriteReward: {
     type: UserAccountType,
     args: {
@@ -110,6 +112,7 @@ export default {
       return user;
     }
   },
+
   favoriteStore: {
     type: UserAccountType,
     args: {
@@ -130,6 +133,7 @@ export default {
       return user;
     }
   },
+
   unfavoriteStore: {
     type: UserAccountType,
     args: {
@@ -150,6 +154,7 @@ export default {
       return user;
     }
   },
+
   favoritePost: {
     type: UserAccountType,
     args: {
@@ -171,6 +176,7 @@ export default {
       return user;
     }
   },
+
   unfavoritePost: {
     type: UserAccountType,
     args: {

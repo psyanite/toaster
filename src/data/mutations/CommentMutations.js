@@ -38,6 +38,7 @@ export default {
       return comment;
     }
   },
+
   deleteComment: {
     type: CommentType,
     args: {
@@ -59,6 +60,7 @@ export default {
       return comment;
     }
   },
+
   addReply: {
     type: ReplyType,
     args: {
@@ -84,6 +86,7 @@ export default {
       });
     }
   },
+
   deleteReply: {
     type: ReplyType,
     args: {
@@ -104,6 +107,7 @@ export default {
       return reply;
     }
   },
+
   favoriteComment: {
     type: CommentLikeType,
     args: {
@@ -125,6 +129,7 @@ export default {
       });
     }
   },
+
   unfavoriteComment: {
     type: CommentLikeType,
     args: {
@@ -146,6 +151,7 @@ export default {
       return like;
     }
   },
+
   favoriteReply: {
     type: ReplyLikeType,
     args: {
@@ -167,6 +173,7 @@ export default {
       });
     }
   },
+
   unfavoriteReply: {
     type: ReplyLikeType,
     args: {
