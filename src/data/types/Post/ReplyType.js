@@ -7,12 +7,12 @@ import {
 } from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Reply, ReplyLike, UserAccount } from '../../models';
-import UserAccountType from '../User/UserAccountType';
+import { Reply, ReplyLike, UserProfile } from '../../models';
+import UserProfileType from '../User/UserProfileType';
 import ReplyLikeType from './ReplyLikeType';
 
 Reply.Likers = Reply.hasMany(ReplyLike, { foreignKey: 'reply_id', as: 'likers' });
-Reply.UserAccount = Reply.belongsTo(UserAccount, { foreignKey: 'replied_by' });
+Reply.UserProfile = Reply.belongsTo(UserProfile, { foreignKey: 'replied_by' });
 
 export default new ObjectType({
   name: 'Reply',
@@ -25,8 +25,8 @@ export default new ObjectType({
       resolve: resolver(Reply.Likers),
     },
     replied_by: {
-      type: UserAccountType,
-      resolve: resolver(Reply.UserAccount),
+      type: UserProfileType,
+      resolve: resolver(Reply.UserProfile),
     },
     replied_at: { type: DateTime },
   }),

@@ -52,9 +52,9 @@ export default {
         .query(`
           select *
           from cuisine_search
-          where document @@ to_tsquery('english', :querystring)
-            or unaccent(lower(name)) like unaccent(lower(:likestring))
-          order by ts_rank(document, to_tsquery('english', :querystring)) desc
+          where document @@ to_tsquery('english', :queryString)
+            or unaccent(lower(name)) like unaccent(lower(:likeString))
+          order by ts_rank(document, to_tsquery('english', :queryString)) desc
         `, {
           model: CuisineSearchResult,
           replacements: { queryString: clean, likeString: `%${clean}%` }
@@ -75,9 +75,9 @@ export default {
         .query(`
           select *
           from location_search
-          where document @@ to_tsquery('english', :querystring)
-            or lower(name) like lower(:likestring)
-          order by ts_rank(document, to_tsquery('english', :querystring)) desc
+          where document @@ to_tsquery('english', :queryString)
+            or lower(name) like lower(:likeString)
+          order by ts_rank(document, to_tsquery('english', :queryString)) desc
         `, {
           model: LocationSearchResult,
           replacements: { queryString: clean, likeString: `%${clean}%` }

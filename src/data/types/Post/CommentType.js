@@ -7,14 +7,14 @@ import {
 } from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Comment, CommentLike, Reply, UserAccount } from '../../models';
+import { Comment, CommentLike, Reply, UserProfile } from '../../models';
 import ReplyType from '../Post/ReplyType';
-import UserAccountType from '../User/UserAccountType';
+import UserProfileType from '../User/UserProfileType';
 import CommentLikeType from './CommentLikeType';
 
 Comment.Replies = Comment.hasMany(Reply, { as: 'replies' });
 Comment.Likers = Comment.hasMany(CommentLike, { foreignKey: 'comment_id', as: 'likers' });
-Comment.UserAccount = Comment.belongsTo(UserAccount, { foreignKey: 'commented_by' });
+Comment.UserProfile = Comment.belongsTo(UserProfile, { foreignKey: 'commented_by' });
 
 export default new ObjectType({
   name: 'Comment',
@@ -31,8 +31,8 @@ export default new ObjectType({
       resolve: resolver(Comment.Likers),
     },
     commented_by: {
-      type: UserAccountType,
-      resolve: resolver(Comment.UserAccount),
+      type: UserProfileType,
+      resolve: resolver(Comment.UserProfile),
     },
     commented_at: { type: DateTime },
   }),

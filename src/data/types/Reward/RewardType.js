@@ -9,16 +9,16 @@ import {
 } from 'graphql';
 import { GraphQLDate as Date } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Reward, Store, StoreGroup, UserAccount } from '../../models';
+import { Reward, Store, StoreGroup, UserProfile } from '../../models';
 import StoreType from '../Store/StoreType';
 import StoreGroupType from '../Store/StoreGroupType';
-import UserAccountType from '../User/UserAccountType';
+import UserProfileType from '../User/UserProfileType';
 
 Reward.Store = Reward.belongsTo(Store, { foreignKey: 'store_id' });
 Reward.StoreGroup = Reward.belongsTo(StoreGroup, {
   foreignKey: 'store_group_id',
 });
-Reward.FavoritedBy = Reward.belongsToMany(UserAccount, {
+Reward.FavoritedBy = Reward.belongsToMany(UserProfile, {
   through: 'user_favorite_stores',
   foreignKey: 'user_id',
   as: 'favoriteStores',
@@ -55,7 +55,7 @@ export default new ObjectType({
     hidden: { type: Boolean },
     redeem_limit: { type: Int },
     favorited_by: {
-      type: List(UserAccountType),
+      type: List(UserProfileType),
       resolve: resolver(Reward.FavoritedBy),
     },
   }),
