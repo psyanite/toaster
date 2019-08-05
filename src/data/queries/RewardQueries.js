@@ -3,8 +3,12 @@ import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, Grap
 import Reward from '../models/Reward/Reward';
 import RewardType from '../types/Reward/RewardType';
 import sequelize from '../sequelize';
+import Sequelize from 'sequelize';
+
+const Op = Sequelize.Op;
 
 export default {
+
   allRewards: {
     type: new List(RewardType),
     resolve: async () => {
@@ -39,15 +43,18 @@ export default {
       },
     },
     resolve: async (_, { storeId }) => {
-      return await sequelize
+      const [results] = await sequelize
         .query(`
-          select * from rewards r
-          join store_group_stores g on r.store_group_id = g.group_id
+          select id from rewards r
+          left join store_group_stores g on r.store_group_id = g.group_id
           where r.store_id = :storeId or g.store_id = :storeId;
-        `, {
-          model: Reward,
+          `, {
           replacements: { storeId: storeId }
         });
+      if (!results || results.length === 0) {
+        return null;
+      }
+      return await Reward.findAll({ where: {id: { [Op.in]: results.map(r => r.id) } } });
     }
   }
 };
