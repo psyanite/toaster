@@ -9,6 +9,7 @@ import UserLogin from '../models/User/UserLogin';
 import UserAccount from '../models/User/UserAccount';
 import UserLoginType from '../types/User/UserLoginType';
 import UserAccountType from '../types/User/UserAccountType';
+import UserProfileType from '../types/User/UserProfileType';
 
 export default {
   addUser: {
@@ -196,6 +197,39 @@ export default {
       user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       await post.decrement('like_count');
       return user;
+    }
+  },
+
+  setTagline: {
+    type: UserProfileType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      tagline: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { userId, tagline }) => {
+      let profile = await UserProfile.findByPk(userId);
+      if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
+      await profile.update({ tagline: tagline });
+      return profile;
+    }
+  },
+
+  deleteTagline: {
+    type: UserProfileType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { userId }) => {
+      let profile = await UserProfile.findByPk(userId);
+      if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
+      await profile.update({ tagline: null });
+      return profile;
     }
   },
 };

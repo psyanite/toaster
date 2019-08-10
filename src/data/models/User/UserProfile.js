@@ -22,6 +22,18 @@ const UserProfile = sequelize.define('user_profiles', {
   gender: {
     type: Sequelize.STRING(50),
   },
+
+  firstname: {
+    type: Sequelize.STRING(64),
+  },
+
+  surname: {
+    type: Sequelize.STRING(64),
+  },
+
+  tagline: {
+    type: Sequelize.STRING(64),
+  },
 });
 
 export default UserProfile;

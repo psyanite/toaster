@@ -11,7 +11,7 @@ UserProfile.UserAccount = UserProfile.belongsTo(UserAccount, {
 export default new ObjectType({
   name: 'UserProfile',
   fields: () => ({
-    user_id: { type: Int},
+    user_id: { type: Int },
     user_account: {
       type: UserAccountType,
       resolve: resolver(UserProfile.UserAccount),
@@ -20,5 +20,8 @@ export default new ObjectType({
     preferred_name: { type: String },
     profile_picture: { type: String },
     gender: { type: String },
+    firstname: { type: String },
+    surname: { type: String },
+    tagline: { type: String },
   }),
 });

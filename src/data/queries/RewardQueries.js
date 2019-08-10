@@ -52,7 +52,7 @@ export default {
           replacements: { storeId: storeId }
         });
       if (!results || results.length === 0) {
-        return null;
+        return [];
       }
       return await Reward.findAll({ where: {id: { [Op.in]: results.map(r => r.id) } } });
     }
