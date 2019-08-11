@@ -78,4 +78,38 @@ export default {
       return `Updated ${firstUpdate.rowCount + secondUpdate.rowCount} stores out of ${total} stores`;
     }
   },
+
+  updateStoreFollowerCount: {
+    type: String,
+    resolve: async () => {
+      const [, result] = await sequelize
+        .query(`
+          with counted as (
+           select store_id, count(*) as follow_count
+           from store_follows
+           group by store_id
+          )
+          update stores set follower_count = c.follow_count
+          from counted c where c.store_id = stores.id
+        `);
+      return `Updated follower counts for ${result.rowCount} stores`;
+    }
+  },
+
+  updateUserFollowerCount: {
+    type: String,
+    resolve: async () => {
+      const [, result] = await sequelize
+        .query(`
+          with counted as (
+           select user_id, count(*) as follow_count
+           from user_follows
+           group by user_id
+          )
+          update user_profiles set follower_count = c.follow_count
+          from counted c where c.user_id = user_profiles.user_id
+        `);
+      return `Updated follower counts for ${result.rowCount} user profiles`;
+    }
+  },
 };

@@ -10,6 +10,9 @@ import UserAccount from '../models/User/UserAccount';
 import UserLoginType from '../types/User/UserLoginType';
 import UserAccountType from '../types/User/UserAccountType';
 import UserProfileType from '../types/User/UserProfileType';
+import UserFollowType from '../types/User/UserFollowType';
+import UserFollow from '../models/User/UserFollow';
+import { UserReward } from '../models';
 
 export default {
   addUser: {
@@ -70,6 +73,47 @@ export default {
             ),
         )
         .then(result => result),
+  },
+
+  addUserFollower: {
+    type: UserFollowType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      followerId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { userId, followerId }) => {
+      const user = await UserAccount.findByPk(userId);
+      if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
+      const follower = await UserAccount.findByPk(followerId);
+      if (follower == null) throw Error(`Could not find UserAccount by followerId: ${followerId}`);
+      const exist = await UserFollow.findOne({ where: { user_id: userId, follower_id: followerId } });
+      if (exist != null) throw Error(`Follow already exists for userId: ${userId}, followerId: ${followerId}`);
+      const follow = await UserFollow.create({ user_id: userId, follower_id: followerId });
+      if (follow != null) await UserProfile.decrement('follower_count', { where: { user_id: userId }});
+      return follow;
+    }
+  },
+
+  deleteUserFollower: {
+    type: UserFollowType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      followerId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { userId, followerId }) => {
+      const exist = await UserFollow.findOne({ where: { user_id: userId, follower_id: followerId } });
+      if (exist == null) throw Error(`Could not find UserFollow for userId: ${userId}, followerId: ${followerId}`);
+      await exist.destroy();
+      return exist;
+    }
   },
 
   favoriteReward: {

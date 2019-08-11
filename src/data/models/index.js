@@ -2,11 +2,13 @@ import sequelize from '../sequelize';
 
 import UserAccount from './User/UserAccount';
 import UserClaim from './User/UserClaim';
+import UserFollow from './User/UserFollow';
 import UserLogin from './User/UserLogin';
 import UserProfile from './User/UserProfile';
 import UserReward from './User/UserReward';
 
 import Store from './Store/Store';
+import StoreFollow from './Store/StoreFollow';
 import StoreGroup from './Store/StoreGroup';
 import Rating from './Store/Rating';
 import Cuisine from './Store/Cuisine';
@@ -37,10 +39,12 @@ export default { sync };
 export {
   UserAccount,
   UserClaim,
+  UserFollow,
   UserLogin,
   UserProfile,
   UserReward,
   Store,
+  StoreFollow,
   StoreGroup,
   Rating,
   Cuisine,

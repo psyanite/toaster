@@ -51,6 +51,9 @@ export default new ObjectType({
       type: SuburbType,
       resolve: resolver(Store.Suburb),
     },
+    order: { type: Int },
+    rank: { type: Int },
+    follower_count: { type: Int },
     cuisines: {
       type: new List(CuisineType),
       resolve: resolver(Store.Cuisines),

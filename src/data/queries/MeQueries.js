@@ -5,6 +5,7 @@ import UserProfileType from '../types/User/UserProfileType';
 import { Store, UserProfile } from '../models';
 import StoreType from '../types/Store/StoreType';
 import * as Randomize from 'randomstring';
+import sequelize from '../sequelize';
 
 export default {
   profileByUserId: {
@@ -33,6 +34,44 @@ export default {
     },
     resolve: async (_, { userId }) => {
       return await FavoriteStore.findAll({ where: { user_id: userId }, include: [Store] });
+    }
+  },
+
+  followedUsers: {
+    type: new List(Int),
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      }
+    },
+    resolve: async (_, { userId }) => {
+      const [results] = await sequelize
+        .query(`
+          select user_id from user_follows where follower_id = :userId;
+        `, { replacements: { userId: userId } });
+      if (results == null) {
+        return [];
+      }
+      return  results.map(r => r.user_id);
+    }
+  },
+
+  followedStores: {
+    type: new List(Int),
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      }
+    },
+    resolve: async (_, { userId }) => {
+      const [results] = await sequelize
+        .query(`
+          select store_id from store_follows where follower_id = :userId;
+        `, { replacements: { userId: userId } });
+      if (results == null) {
+        return [];
+      }
+      return  results.map(r => r.store_id);
     }
   },
 

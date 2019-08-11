@@ -123,10 +123,7 @@ export default {
       if (comment == null) throw Error(`Could not find Comment by commentId: ${commentId}`);
       let user = await UserAccount.findByPk(myId);
       if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
-      return await CommentLike.create({
-        user_id: myId,
-        comment_id: commentId,
-      });
+      return await CommentLike.create({ user_id: myId, comment_id: commentId });
     }
   },
 
@@ -167,10 +164,7 @@ export default {
       if (reply == null) throw Error(`Could not find Reply by replyId: ${replyId}`);
       let user = await UserAccount.findByPk(myId);
       if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
-      return await ReplyLike.create({
-        user_id: myId,
-        reply_id: replyId,
-      });
+      return await ReplyLike.create({ user_id: myId, reply_id: replyId });
     }
   },
 

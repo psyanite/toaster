@@ -16,8 +16,32 @@ const Store = sequelize.define('stores', {
     type: Sequelize.STRING(20),
   },
 
+  location_id: {
+    type: Sequelize.INTEGER,
+  },
+
+  suburb_id: {
+    type: Sequelize.INTEGER,
+  },
+
+  city_id: {
+    type: Sequelize.INTEGER,
+  },
+
   cover_image: {
     type: Sequelize.TEXT,
+  },
+
+  order: {
+    type: Sequelize.INTEGER,
+  },
+
+  rank: {
+    type: Sequelize.INTEGER,
+  },
+
+  follower_count: {
+    type: Sequelize.INTEGER,
   },
 });
 
