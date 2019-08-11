@@ -232,4 +232,58 @@ export default {
       return profile;
     }
   },
+
+  setProfilePicture: {
+    type: UserProfileType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      picture: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { userId, picture }) => {
+      let profile = await UserProfile.findByPk(userId);
+      if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
+      await profile.update({ profile_picture: picture });
+      return profile;
+    }
+  },
+
+  setPreferredName: {
+    type: UserProfileType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      name: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { userId, name }) => {
+      let profile = await UserProfile.findByPk(userId);
+      if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
+      await profile.update({ preferred_name: name });
+      return profile;
+    }
+  },
+
+  setUsername: {
+    type: UserProfileType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      name: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { userId, name }) => {
+      let profile = await UserProfile.findByPk(userId);
+      if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
+      await profile.update({ username: name });
+      return profile;
+    }
+  },
 };
