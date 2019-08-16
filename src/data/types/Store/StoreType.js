@@ -39,6 +39,10 @@ export default new ObjectType({
     name: { type: String },
     phone_number: { type: String },
     cover_image: { type: String },
+    order: { type: Int },
+    rank: { type: Int },
+    follower_count: { type: Int },
+    review_count: { type: Int },
     address: {
       type: AddressType,
       resolve: resolver(Store.Address),
@@ -51,9 +55,6 @@ export default new ObjectType({
       type: SuburbType,
       resolve: resolver(Store.Suburb),
     },
-    order: { type: Int },
-    rank: { type: Int },
-    follower_count: { type: Int },
     cuisines: {
       type: new List(CuisineType),
       resolve: resolver(Store.Cuisines),

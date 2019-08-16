@@ -43,6 +43,10 @@ const Store = sequelize.define('stores', {
   follower_count: {
     type: Sequelize.INTEGER,
   },
+
+  review_count: {
+    type: Sequelize.INTEGER,
+  },
 });
 
 export default Store;

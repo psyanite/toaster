@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { UserAccount } from '../models';
+import { Post, UserProfile, UserAccount } from '../models';
 import UserAccountType from '../types/User/UserAccountType';
-import Post from '../models/Post/Post';
+import UserProfileType from '../types/User/UserProfileType';
 
 export default {
   allUserAccounts: {
@@ -30,20 +30,15 @@ export default {
     }),
   },
 
-  userAccountByUsername: {
-    type: UserAccountType,
+  userProfileByUsername: {
+    type: UserProfileType,
     args: {
       username: {
         type: new NonNull(String),
       },
     },
-    resolve: resolver(UserAccount, {
-      before: (findOptions, args) => {
-        findOptions.where = {
-          username: args.username,
-        };
-        return findOptions;
-      },
-    }),
+    resolve: async (_, { username }) => {
+      return await UserProfile.findOne({ where: { username: username } });
+    }
   },
 };

@@ -112,4 +112,27 @@ export default {
       return `Updated follower counts for ${result.rowCount} user profiles`;
     }
   },
+
+  updateReviewCount: {
+    type: String,
+    resolve: async () => {
+      const [, result] = await sequelize
+        .query(`
+          with counted as (
+            select posted_by, count(*) as count from
+            (
+                select posted_by, store_id
+                from posts
+                group by posted_by, store_id
+            ) as t
+            group by posted_by
+          )
+          update user_profiles
+          set store_count = c.count
+          from counted c
+          where c.posted_by = user_profiles.user_id;
+        `);
+      return `Updated store counts for ${result.rowCount} user profiles`;
+    }
+  },
 };

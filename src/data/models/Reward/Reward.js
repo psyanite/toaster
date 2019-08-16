@@ -9,7 +9,7 @@ const Reward = sequelize.define('rewards', {
   },
 
   code: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(12),
   },
 
   name: {

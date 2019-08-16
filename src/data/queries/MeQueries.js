@@ -6,6 +6,7 @@ import { Store, UserProfile } from '../models';
 import StoreType from '../types/Store/StoreType';
 import * as Randomize from 'randomstring';
 import sequelize from '../sequelize';
+import GeneralUtils from '../../utils/GeneralUtils';
 
 export default {
   profileByUserId: {
@@ -37,7 +38,7 @@ export default {
     }
   },
 
-  followedUsers: {
+  followedUserIds: {
     type: new List(Int),
     args: {
       userId: {
@@ -56,7 +57,7 @@ export default {
     }
   },
 
-  followedStores: {
+  followedStoreIds: {
     type: new List(Int),
     args: {
       userId: {
@@ -75,11 +76,10 @@ export default {
     }
   },
 
-  meow: {
+  generateCode: {
     type: String,
     resolve: async () => {
-      let uniqueCode = Randomize.generate({ length: 5, charset: 'bcdfghjklmnpqrtvwxBCDFGHJKLMNPQRTVWX23456789' });
-      return uniqueCode.toString();
+      return GeneralUtils.generateCode();
     }
   }
 };

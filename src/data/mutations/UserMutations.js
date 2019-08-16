@@ -12,7 +12,7 @@ import UserAccountType from '../types/User/UserAccountType';
 import UserProfileType from '../types/User/UserProfileType';
 import UserFollowType from '../types/User/UserFollowType';
 import UserFollow from '../models/User/UserFollow';
-import { UserReward } from '../models';
+import GeneralUtils from '../../utils/GeneralUtils';
 
 export default {
   addUser: {
@@ -56,6 +56,7 @@ export default {
                   username,
                   preferred_name: displayName,
                   profile_picture: profilePicture,
+                  code: GeneralUtils.generateCode(),
                 },
                 { transaction: t },
               );
@@ -93,7 +94,7 @@ export default {
       const exist = await UserFollow.findOne({ where: { user_id: userId, follower_id: followerId } });
       if (exist != null) throw Error(`Follow already exists for userId: ${userId}, followerId: ${followerId}`);
       const follow = await UserFollow.create({ user_id: userId, follower_id: followerId });
-      if (follow != null) await UserProfile.decrement('follower_count', { where: { user_id: userId }});
+      if (follow != null) await UserProfile.increment('follower_count', { where: { user_id: userId } });
       return follow;
     }
   },
@@ -112,6 +113,7 @@ export default {
       const exist = await UserFollow.findOne({ where: { user_id: userId, follower_id: followerId } });
       if (exist == null) throw Error(`Could not find UserFollow for userId: ${userId}, followerId: ${followerId}`);
       await exist.destroy();
+      await UserProfile.decrement('follower_count', { where: { user_id: userId } });
       return exist;
     }
   },
@@ -130,7 +132,7 @@ export default {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
       if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
       const reward = await Reward.findByPk(rewardId);
-      if (reward == null)  throw Error(`Could not find Reward by rewardId: ${rewardId}`);
+      if (reward == null) throw Error(`Could not find Reward by rewardId: ${rewardId}`);
       await user.addFavoriteRewards(reward);
       user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
       return user;
@@ -151,7 +153,7 @@ export default {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
       if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
       const reward = await Reward.findByPk(rewardId);
-      if (reward == null)  throw Error(`Could not find Store by rewardId: ${rewardId}`);
+      if (reward == null) throw Error(`Could not find Store by rewardId: ${rewardId}`);
       await user.removeFavoriteRewards(reward);
       user = await UserAccount.findByPk(userId, { include: ['favoriteRewards'] });
       return user;
@@ -172,7 +174,7 @@ export default {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
       if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
       const store = await Store.findByPk(storeId);
-      if (store == null)  throw Error(`Could not find Store by storeId: ${storeId}`);
+      if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
       await user.addFavoriteStores(store);
       user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
       return user;
@@ -193,7 +195,7 @@ export default {
       let user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
       if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
       const store = await Store.findByPk(storeId);
-      if (store == null)  throw Error(`Could not find Store by storeId: ${storeId}`);
+      if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
       await user.removeFavoriteStores(store);
       user = await UserAccount.findByPk(userId, { include: ['favoriteStores'] });
       return user;
@@ -214,7 +216,7 @@ export default {
       let user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
       const post = await Post.findByPk(postId);
-      if (post == null)  throw Error(`Could not find Post by postId: ${postId}`);
+      if (post == null) throw Error(`Could not find Post by postId: ${postId}`);
       await user.addFavoritePosts(post);
       user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       await post.increment('like_count');
@@ -236,7 +238,7 @@ export default {
       let user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       if (user == null) throw Error(`Could not find UserAccount by userId: ${userId}`);
       const post = await Post.findByPk(postId);
-      if (post == null)  throw Error(`Could not find Post by postId: ${postId}`);
+      if (post == null) throw Error(`Could not find Post by postId: ${postId}`);
       await user.removeFavoritePosts(post);
       user = await UserAccount.findByPk(userId, { include: ['favoritePosts'] });
       await post.decrement('like_count');
