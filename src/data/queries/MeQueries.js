@@ -4,7 +4,6 @@ import { resolver } from 'graphql-sequelize';
 import UserProfileType from '../types/User/UserProfileType';
 import { Store, UserProfile } from '../models';
 import StoreType from '../types/Store/StoreType';
-import * as Randomize from 'randomstring';
 import sequelize from '../sequelize';
 import GeneralUtils from '../../utils/GeneralUtils';
 

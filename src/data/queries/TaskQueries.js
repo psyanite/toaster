@@ -10,9 +10,9 @@ export default {
       const [, likeResult] = await sequelize
         .query(`
           with counted as (
-             select post_id, count(*) as like_count
-             from user_favorite_posts
-             group by post_id
+            select post_id, count(*) as like_count
+            from user_favorite_posts
+            group by post_id
           )
           update posts set like_count = c.like_count
           from counted c where c.post_id = posts.id
@@ -20,9 +20,9 @@ export default {
       const [, commentResult] = await sequelize
         .query(`
           with counted as (
-             select post_id, count(*) as comments_count
-             from comments
-             group by post_id
+            select post_id, count(*) as comments_count
+            from comments
+            group by post_id
           )
           update posts set comment_count = c.comments_count
           from counted c where c.post_id = posts.id
@@ -119,11 +119,10 @@ export default {
       const [, result] = await sequelize
         .query(`
           with counted as (
-            select posted_by, count(*) as count from
-            (
-                select posted_by, store_id
-                from posts
-                group by posted_by, store_id
+            select posted_by, count(*) as count from (
+              select posted_by, store_id
+              from posts
+              group by posted_by, store_id
             ) as t
             group by posted_by
           )
