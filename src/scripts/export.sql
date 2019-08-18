@@ -285,43 +285,6 @@ CREATE TABLE public.comments (
 ALTER TABLE public.comments OWNER TO postgres;
 
 --
--- Name: comments_replies; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.comments_replies (
-    id integer NOT NULL,
-    comment_id integer,
-    body character varying(255),
-    replied_by integer,
-    replied_at timestamp with time zone NOT NULL
-);
-
-
-ALTER TABLE public.comments_replies OWNER TO postgres;
-
---
--- Name: comments_replies_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.comments_replies_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.comments_replies_id_seq OWNER TO postgres;
-
---
--- Name: comments_replies_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.comments_replies_id_seq OWNED BY public.comments_replies.id;
-
-
---
 -- Name: countries; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -655,7 +618,7 @@ CREATE TABLE public.posts (
     id integer NOT NULL,
     type public.post_type NOT NULL,
     store_id integer NOT NULL,
-    posted_by integer NOT NULL,
+    posted_by integer,
     like_count integer DEFAULT 0 NOT NULL,
     comment_count integer DEFAULT 0 NOT NULL,
     hidden boolean DEFAULT true NOT NULL,
@@ -687,6 +650,20 @@ ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
 
 
 --
+-- Name: reward_rankings; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.reward_rankings (
+    reward_id integer NOT NULL,
+    rank integer NOT NULL,
+    valid_from timestamp with time zone NOT NULL,
+    valid_to timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.reward_rankings OWNER TO postgres;
+
+--
 -- Name: rewards; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -701,8 +678,11 @@ CREATE TABLE public.rewards (
     valid_until date,
     promo_image text,
     terms_and_conditions text,
-    is_active boolean DEFAULT false NOT NULL,
-    redeemlimit integer
+    active boolean DEFAULT false NOT NULL,
+    hidden boolean DEFAULT true NOT NULL,
+    redeem_limit integer,
+    code character varying(12) NOT NULL,
+    rank integer DEFAULT 99 NOT NULL
 );
 
 
@@ -780,6 +760,18 @@ CREATE TABLE public.store_cuisines (
 ALTER TABLE public.store_cuisines OWNER TO postgres;
 
 --
+-- Name: store_follows; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.store_follows (
+    store_id integer NOT NULL,
+    follower_id integer NOT NULL
+);
+
+
+ALTER TABLE public.store_follows OWNER TO postgres;
+
+--
 -- Name: store_group_stores; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -825,6 +817,20 @@ ALTER SEQUENCE public.store_groups_id_seq OWNED BY public.store_groups.id;
 
 
 --
+-- Name: store_rankings; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.store_rankings (
+    store_id integer NOT NULL,
+    rank integer NOT NULL,
+    valid_from timestamp with time zone NOT NULL,
+    valid_to timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.store_rankings OWNER TO postgres;
+
+--
 -- Name: store_ratings_cache; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -839,6 +845,18 @@ CREATE TABLE public.store_ratings_cache (
 ALTER TABLE public.store_ratings_cache OWNER TO postgres;
 
 --
+-- Name: store_tags; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.store_tags (
+    store_id integer NOT NULL,
+    tag_id integer NOT NULL
+);
+
+
+ALTER TABLE public.store_tags OWNER TO postgres;
+
+--
 -- Name: stores; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -851,7 +869,11 @@ CREATE TABLE public.stores (
     suburb_id integer NOT NULL,
     city_id integer NOT NULL,
     cover_image text,
-    "order" integer DEFAULT 1 NOT NULL
+    "order" integer DEFAULT 1 NOT NULL,
+    rank integer DEFAULT 99 NOT NULL,
+    follower_count integer DEFAULT 0 NOT NULL,
+    review_count integer DEFAULT 0 NOT NULL,
+    store_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -897,6 +919,40 @@ ALTER TABLE public.suburbs_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE public.suburbs_id_seq OWNED BY public.suburbs.id;
+
+
+--
+-- Name: tags; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tags (
+    id integer NOT NULL,
+    name character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.tags OWNER TO postgres;
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.tags_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tags_id_seq OWNER TO postgres;
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
 
 
 --
@@ -1007,6 +1063,18 @@ CREATE TABLE public.user_favorite_stores (
 ALTER TABLE public.user_favorite_stores OWNER TO postgres;
 
 --
+-- Name: user_follows; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_follows (
+    user_id integer NOT NULL,
+    follower_id integer NOT NULL
+);
+
+
+ALTER TABLE public.user_follows OWNER TO postgres;
+
+--
 -- Name: user_logins; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1030,7 +1098,10 @@ CREATE TABLE public.user_profiles (
     profile_picture text,
     gender character varying(50),
     firstname character varying(64),
-    surname character varying(64)
+    surname character varying(64),
+    tagline character varying(140) DEFAULT NULL::character varying,
+    follower_count integer DEFAULT 0 NOT NULL,
+    store_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -1069,13 +1140,6 @@ ALTER TABLE ONLY public.comment_replies ALTER COLUMN id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.comments ALTER COLUMN id SET DEFAULT nextval('public.post_comments_id_seq'::regclass);
-
-
---
--- Name: comments_replies id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.comments_replies ALTER COLUMN id SET DEFAULT nextval('public.comments_replies_id_seq'::regclass);
 
 
 --
@@ -1170,6 +1234,13 @@ ALTER TABLE ONLY public.suburbs ALTER COLUMN id SET DEFAULT nextval('public.subu
 
 
 --
+-- Name: tags id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id_seq'::regclass);
+
+
+--
 -- Name: user_accounts id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1198,6 +1269,9 @@ COPY public.comment_replies (id, comment_id, body, replied_by, replied_at) FROM 
 19	1	@curious_chloe that's so true	2	2019-07-21 16:16:10.225+10
 20	1	@curious_chloe so true	2	2019-07-21 16:36:43.647+10
 21	1	@curious_chloe hello kitty	2	2019-07-21 16:37:27.432+10
+24	53	@curious_chloe super meow meow	2	2019-07-28 15:36:16.436+10
+45	58	@curious_chloe a	2	2019-07-28 17:22:07.529+10
+46	58	@curious_chloe b	2	2019-07-28 17:22:15.68+10
 \.
 
 
@@ -1246,14 +1320,11 @@ COPY public.comments (id, post_id, body, commented_by, commented_at) FROM stdin;
 47	1	mafia 	2	2019-07-21 16:29:28.469+10
 48	1	robert	2	2019-07-21 16:30:43.893+10
 49	1	the list	2	2019-07-21 16:32:03.093+10
-\.
-
-
---
--- Data for Name: comments_replies; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.comments_replies (id, comment_id, body, replied_by, replied_at) FROM stdin;
+50	134	meow meow	1	2019-07-21 19:47:43.955+10
+52	134	ccc meow	1	2019-07-21 19:52:03.98+10
+53	133	hello kitty	2	2019-07-28 15:36:11.085+10
+57	2	hello kitty	2	2019-07-28 16:31:14.732+10
+58	2	a	2	2019-07-28 17:20:58.86+10
 \.
 
 
@@ -1561,10 +1632,6 @@ COPY public.locations (id, name, suburb_id) FROM stdin;
 --
 
 COPY public.post_photos (id, post_id, url) FROM stdin;
-276	120	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556445166787-9037.jpg?alt=media&token=952be934-7e11-4e52-a9fe-abd39d041614
-277	120	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556445166787-1131.jpg?alt=media&token=f41fc5fb-7724-46b3-8a13-481048fa75cf
-281	124	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556538664037-1453.jpg?alt=media&token=e3bca679-2723-42f3-ac73-4fa90b175c96
-292	128	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556622186176-1754.jpg?alt=media&token=3c6b192a-3ae7-4100-990a-6aaffb5440a9
 1	1	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1.jpg?alt=media&token=b4579999-e2c9-4ce9-8f62-4d57dc875bbf
 3	3	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F3.jpg?alt=media&token=200098a6-c78c-46a0-87d8-34aca27eb05f
 6	7	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F6.jpg?alt=media&token=034983dd-3220-41f4-80a2-97a7f373d1d1
@@ -1576,15 +1643,19 @@ COPY public.post_photos (id, post_id, url) FROM stdin;
 9	8	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F9.jpg?alt=media&token=97849536-1a97-42a8-afd6-e53ce3f606a7
 10	8	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F10.jpg?alt=media&token=80b65a35-2a15-45fd-a06c-81d3cbe432fa
 4	5	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F4.jpg?alt=media&token=78b0181c-42f9-44c2-b434-2e47aaaf6ce9
-299	128	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556622186176-903.jpg?alt=media&token=16b32919-2f22-440c-9a73-f19704954a57
-300	128	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556622186176-6390.jpg?alt=media&token=9c4cf0cb-6054-4deb-a8be-f4c030ce0c6f
-301	129	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556622258342-5012.jpg?alt=media&token=01810452-7a69-4716-9f09-1f12ef8f0d66
-304	131	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556625102279-3559.jpg?alt=media&token=2bb5c3f7-06e7-491b-8483-63eb56b6c583
-305	131	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556625102279-7148.jpg?alt=media&token=70c5d171-625b-4da3-8caf-0551ad9c9cc5
-306	131	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1556625102279-3539.jpg?alt=media&token=7973ff83-73c3-4f87-bd53-089f6446314a
 313	133	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1562479459447-2319.jpg?alt=media&token=1acb258e-fd33-4e0c-893e-8926bca37064
 314	133	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1562479459447-4805.jpg?alt=media&token=18573a40-4338-4af3-98b2-ff5dc2b498fa
 315	133	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1562479459447-5771.jpg?alt=media&token=74ada1e9-efdb-4ed4-8f21-02beb8a8ef3b
+317	136	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1563961603928-930.jpg?alt=media&token=839e90ec-a946-4e2b-970e-2360fd9b4509
+318	136	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1563961603928-2529.jpg?alt=media&token=be550656-ddb3-40fd-aea4-dffb6b04c9c0
+319	136	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1563961603928-4572.jpg?alt=media&token=01c3fe9e-49bc-45b3-b226-024d2b77f498
+320	136	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1563961603928-3184.jpg?alt=media&token=d48e55e6-c90c-4a9f-bc74-47b029598b33
+321	136	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1563961603928-528.jpg?alt=media&token=939ca1dc-af92-4734-9ba7-ec0adc3f37a8
+322	137	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1563961689546-2766.jpg?alt=media&token=0d9fa64f-4888-4dd5-82db-9fa3eb280bc9
+323	139	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564290835860-213.jpg?alt=media&token=544867e4-e56d-4f80-b903-03e0783bd391
+324	139	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564290835860-5932.jpg?alt=media&token=7756f735-3470-48f2-bbe5-0c8969da9c50
+325	142	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564901418449-1008.jpg?alt=media&token=b9126e6d-5e6d-410f-9067-296779e27fc9
+326	143	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
 \.
 
 
@@ -1599,12 +1670,12 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 4	8	good	okay	okay	good	good	Lovely service breakfast open 7-4, nice area and food was alright, only thing have to say is it's a bit overpriced. It's better to go on the weekend, a lot of fun and nice location.
 122	133	okay	bad	bad	okay	okay	So tasty, highly recommend.
 123	134	good	okay	bad	bad	bad	This was a pretty good experience, the staff was very attentive and friendly but not overly friendly. Would definitely go again 🌹
-113	124	bad	okay	okay	bad	bad	meow
-109	120	good	okay	okay	okay	bad	
-117	128	good	good	good	good	good	\N
-118	129	good	okay	okay	bad	bad	\N
-120	131	okay	okay	okay	okay	okay	meow mix
-121	132	bad	bad	bad	okay	okay	meow meow mix of the night before and after that we are looking to buy a new r you are not looking for an appointment to see you soon at least one of our products are you still there are any questions or concerns regarding my application for tee shirt and pants are the only time I will be a great time and money I owe you a copy of the population is not the intended recipient you
+125	136	good	okay	okay	good	good	\N
+126	137	bad	bad	bad	okay	okay	It was an interesting experience. I came here to chat with my girlfriend and we shared a bing soo. I love the flavours but it's not a lot of food. Pretty pricey but I think it's worth the money. It was really busy and we had to wait 30 minutes for a table for two on a Thursday night.
+128	139	good	good	okay	okay	good	\N
+131	143	okay	bad	okay	okay	good	Summer's finally here, thank goodness 🙏🙏🙏
+130	142	good	okay	okay	good	good	Come try our new menu item matcha and red bean bing soo 😋 Available for a limited time only, get in quick!
+134	146	okay	okay	bad	okay	okay	Buy One Get One Free!\r\nWe're doing an Anzac Day special. Buy any small or medium drink including coffee and get another one for FREE. Only available until the end of the day. For full terms and conditions see in store. Shout out your coworker or best friend and brighten up their day now! ☀️☀️☀️
 \.
 
 
@@ -1614,21 +1685,34 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 
 COPY public.posts (id, type, store_id, posted_by, like_count, comment_count, hidden, posted_at) FROM stdin;
 5	photo	3	1	0	0	f	2018-05-06 17:58:09.777+10
-120	review	4	2	0	0	f	2019-04-28 19:52:43.51+10
-132	review	4	2	0	0	f	2019-05-04 21:05:13.896+10
 4	review	3	2	0	0	f	2018-02-18 09:22:02.385+11
 6	photo	2	3	0	0	f	2018-06-07 06:40:00.804+10
-128	review	4	2	0	0	f	2019-04-30 21:03:09.316+10
-129	review	4	2	0	0	f	2019-04-30 21:08:14.289+10
-133	review	23	2	0	0	f	2019-07-07 16:03:48.854+10
-131	review	4	2	0	0	f	2019-04-30 21:51:34.491+10
 8	review	3	4	0	0	f	2018-08-08 12:33:21.072+10
-1	review	1	1	0	0	f	2019-01-20 02:04:20+11
-3	photo	2	1	0	0	f	2019-02-07 23:54:38.249+11
 7	photo	2	4	0	0	f	2018-07-12 22:12:23.453+10
-2	review	1	2	0	0	f	2018-01-25 20:10:55+11
-124	review	4	2	0	0	f	2019-04-29 21:51:11.993+10
-134	review	4	2	0	0	t	2019-07-07 21:39:08.342+10
+1	review	1	1	0	39	f	2019-01-20 02:04:20+11
+3	photo	2	1	1	0	f	2019-02-07 23:54:38.249+11
+137	review	3	5	0	0	f	2019-07-24 19:48:06.909+10
+136	review	3	3	0	0	f	2019-07-24 19:46:49.818+10
+133	review	23	2	0	2	f	2019-07-07 16:03:48.854+10
+2	review	1	2	0	2	f	2018-01-25 20:10:55+11
+142	review	4	\N	0	0	f	2019-08-04 16:50:14.116+10
+143	review	4	\N	0	0	f	2019-08-04 17:18:08.668+10
+139	review	4	2	1	0	f	2019-07-28 15:13:56.516+10
+146	review	3	\N	0	0	f	2019-08-18 15:53:54.409+10
+134	review	4	2	0	2	f	2019-07-07 21:39:08.342+10
+\.
+
+
+--
+-- Data for Name: reward_rankings; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.reward_rankings (reward_id, rank, valid_from, valid_to) FROM stdin;
+3	1	2019-08-01 00:00:00+10	2020-12-11 00:59:59+11
+2	1	2019-08-01 00:00:00+10	2020-08-01 23:59:59+10
+1	1	2019-08-01 00:00:00+10	2020-08-01 23:59:59+10
+6	1	2019-08-01 00:00:00+10	2020-08-01 23:59:59+10
+7	1	2019-08-01 00:00:00+10	2020-08-01 23:59:59+10
 \.
 
 
@@ -1636,13 +1720,15 @@ COPY public.posts (id, type, store_id, posted_by, like_count, comment_count, hid
 -- Data for Name: rewards; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.rewards (id, name, description, type, store_id, store_group_id, valid_from, valid_until, promo_image, terms_and_conditions, is_active, redeemlimit) FROM stdin;
-2	Free Toppings! 🍮	Come enjoy our mouth-watering tasty teas, enjoy a free topping of your choice when you purchase any large drink.	one_time	\N	3	2018-11-01	2018-12-31	https://imgur.com/KMzxoYx.jpg	\N	f	\N
-3	Free Loaded Fries 🍟	8bit is all about the good times, with its wickedly delicious take on classic burgers, hotdogs, epic loaded fries and shakes. Come try one of our delicious burgers or hotdogs and get an epic loaded fries for free.	one_time	9	\N	2018-11-01	2018-12-31	https://imgur.com/3woCfTC.jpg	\N	f	\N
-5	Half Price Soup Dumplings 🥟	To celebrate our grand opening, order our signature soup dumplings for only half price when you spend over $25. Available both lunch and dinner.	one_time	21	\N	2018-12-25	2018-12-25	https://imgur.com/bjJ3S72.jpg	\N	f	\N
-6	$20 off $40 spend 💸	Enjoy our delicious wood-fired authentic Italian pizzas and hand-crafted pastas. Get $20 off when you spend over $40.	one_time	22	\N	2018-12-02	2018-12-02	https://imgur.com/tSE2cXf.jpg	\N	f	\N
-1	Double Mex Tuesday 🌯	Buy two regular or naked burritos and get the cheaper one for free. Add two drinks for only $2! Hurry, only available this Tuesday.	one_time	\N	4	2018-11-01	2018-12-31	https://imgur.com/tR1bD1v.jpg	\N	f	\N
-7	Free Coffee ☕	Purchase one of our finest authentic Kurtosh and receive any large coffee for free.	one_time	20	\N	2019-01-01	2019-12-01	https://imgur.com/9ydUqpJ.jpg	\N	f	\N
+COPY public.rewards (id, name, description, type, store_id, store_group_id, valid_from, valid_until, promo_image, terms_and_conditions, active, hidden, redeem_limit, code, rank) FROM stdin;
+7	Free Coffee ☕	Purchase one of our finest authentic Kurtosh and receive any large coffee for free.	one_time	20	\N	2019-01-01	2019-12-01	https://imgur.com/9ydUqpJ.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	c9VXr	1
+1	Double Mex Tuesday 🌯	Buy two regular or naked burritos and get the cheaper one for free. Add two drinks for only $2! Hurry, only available this Tuesday.	one_time	\N	4	2018-11-01	2020-05-05	https://imgur.com/tR1bD1v.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	W6JVB	1
+6	$20 off $40 spend 💸	Enjoy our delicious wood-fired authentic Italian pizzas and hand-crafted pastas. Get $20 off when you spend over $40.	one_time	22	\N	2018-12-02	2020-05-05	https://imgur.com/tSE2cXf.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	9WRjf	1
+5	Half Price Soup Dumplings 🥟	To celebrate our grand opening, order our signature soup dumplings for only half price when you spend over $25. Available both lunch and dinner.	one_time	21	\N	2018-12-25	2020-07-09	https://imgur.com/bjJ3S72.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	JbgQP	99
+8	Tea Latte Tuesday ☕	Get together for Tea Latte Tuesday. Buy a Teavana Tea Latte & score another one for FREE to share!	one_time	3	\N	2019-01-01	2019-12-01	https://imgur.com/o4bRN3i.jpg	Every Tuesday, buy any size Teavana™ Tea Latte (Green Tea Latte, Chai Tea Latte, Vanilla Black Tea Latte, Peach Black Tea Latte or Full Leaf Tea Latte) and score another one for FREE to surprise a friend!\r\n\r\nFree beverage must be of equal or lesser value.\r\n\r\nFrappuccino® blended beverages are excluded.\r\n\r\nEnds 26 August 2019.	t	t	\N	4pPfr	99
+2	Free Toppings! 🍮	Come enjoy our mouth-watering tasty teas, enjoy a free topping of your choice when you purchase any large drink.	one_time	\N	3	2018-11-01	2020-08-23	https://imgur.com/KMzxoYx.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	WhCDD	1
+3	Free Loaded Fries 🍟	8bit is all about the good times, with its wickedly delicious take on classic burgers, hotdogs, epic loaded fries and shakes. Come try one of our delicious burgers or hotdogs and get an epic loaded fries for free.	one_time	9	\N	2018-11-01	2018-05-05	https://imgur.com/3woCfTC.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	RRW2h	1
+9	$3 Bagel 🥯	Nothing's better than a delicious bagel for a brighter start to the day, top it off with your favourite spread.	one_time	3	\N	2019-01-01	2019-12-01	https://imgur.com/yYaJYSI.jpg	Offer only available before 10am. \r\n\r\nEvery Tuesday, buy any size Teavana™ Tea Latte (Green Tea Latte, Chai Tea Latte, Vanilla Black Tea Latte, Peach Black Tea Latte or Full Leaf Tea Latte) and score another one for FREE to surprise a friend! \r\n\r\nFree beverage must be of equal or lesser value. \r\n\r\nFrappuccino® blended beverages are excluded. \r\n\r\nOffer ends 26 August 2019.\r\n	t	t	\N	BKKWL	99
 \.
 
 
@@ -1651,29 +1737,29 @@ COPY public.rewards (id, name, description, type, store_id, store_group_id, vali
 --
 
 COPY public.store_addresses (id, store_id, address_first_line, address_second_line, address_street_number, address_street_name, google_url) FROM stdin;
-8	8	\N	\N	405	Victoria St	https://goo.gl/maps/GZxSRicabTu
 1	3	Basement Level	\N	500	George St	https://goo.gl/maps/njQmnE8NFi52
-4	4	\N	\N	22	Prince St	https://goo.gl/maps/GZxSRicabTu
-7	7	\N	\N	71	Pyrmont St	https://goo.gl/maps/GZxSRicabTu
-3	1	Level 2, Hawker Lane	Chatswood Westfield	1	Anderson St	https://goo.gl/maps/GZxSRicabTu
-6	6	\N	\N	36	Queen St	https://goo.gl/maps/GZxSRicabTu
 2	2	Level 1, Shop 11.04	Regent Place Arcade	487	George St	https://goo.gl/maps/Ds7vagBoTu42
-5	5	\N	\N	67	Mitchell St	https://goo.gl/maps/GZxSRicabTu
-18	11	\N	\N	605	George St	https://goo.gl/maps/GZxSRicabTu
-19	12	\N	\N	65-71	Grote St	https://goo.gl/maps/GZxSRicabTu
-20	13	Shop 2	\N	59	John Street	https://goo.gl/maps/GZxSRicabTu
-22	15	\N	\N	22	Chapel Rd	https://goo.gl/maps/GZxSRicabTu
-23	16	\N	\N	24	Help St	https://goo.gl/maps/GZxSRicabTu
-24	17	\N	\N	88-89	Queen St	https://goo.gl/maps/GZxSRicabTu
-25	18	Level 3, Shop 406a	Macquarie Centre	1	Waterloo Rd	https://goo.gl/maps/GZxSRicabTu
-26	19	Level 1 Food Court	MetCentre	273	George St	https://goo.gl/maps/GZxSRicabTu
-27	20	Westfield Warringah Mall	\N	1	Old Pittwater Rd	https://goo.gl/maps/GZxSRicabTu
-28	21	B38	Chatswood Chase Sydney	345	Victoria Ave	https://goo.gl/maps/GZxSRicabTu
-29	22	King St & York St	\N	77	King St	https://goo.gl/maps/GZxSRicabTu
-30	9		\N	51	Tumbalong Boulevard	https://goo.gl/maps/GZxSRicabTu
-17	10	\N	\N	861	George St	https://goo.gl/maps/GZxSRicabTu
-21	14	\N	\N	1	Victoria Ave	https://goo.gl/maps/GZxSRicabTu
-31	23	\N	\N	405	Victoria St	https://goo.gl/maps/GZxSRicabTu
+7	7	\N	\N	71	Pyrmont St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+4	4	\N	\N	22	Prince St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+5	5	\N	\N	67	Mitchell St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+3	1	Level 2, Hawker Lane	Chatswood Westfield	1	Anderson St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+31	23	\N	\N	405	Victoria St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+28	21	B38	Chatswood Chase Sydney	345	Victoria Ave	https://goo.gl/maps/pfW97xQqbryhQiqEA
+29	22	King St & York St	\N	77	King St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+26	19	Level 1 Food Court	MetCentre	273	George St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+27	20	Westfield Warringah Mall	\N	1	Old Pittwater Rd	https://goo.gl/maps/pfW97xQqbryhQiqEA
+24	17	\N	\N	88-89	Queen St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+25	18	Level 3, Shop 406a	Macquarie Centre	1	Waterloo Rd	https://goo.gl/maps/pfW97xQqbryhQiqEA
+22	15	\N	\N	22	Chapel Rd	https://goo.gl/maps/pfW97xQqbryhQiqEA
+23	16	\N	\N	24	Help St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+20	13	Shop 2	\N	59	John Street	https://goo.gl/maps/pfW97xQqbryhQiqEA
+21	14	\N	\N	1	Victoria Ave	https://goo.gl/maps/pfW97xQqbryhQiqEA
+18	11	\N	\N	605	George St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+19	12	\N	\N	65-71	Grote St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+17	10	\N	\N	861	George St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+8	8	\N	\N	405	Victoria St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+6	6	\N	\N	36	Queen St	https://goo.gl/maps/pfW97xQqbryhQiqEA
+30	9	\N	\N	51	Tumbalong Boulevard	https://goo.gl/maps/pfW97xQqbryhQiqEA
 \.
 
 
@@ -1693,6 +1779,19 @@ COPY public.store_cuisines (store_id, cuisine_id) FROM stdin;
 5	6
 6	5
 23	1
+\.
+
+
+--
+-- Data for Name: store_follows; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.store_follows (store_id, follower_id) FROM stdin;
+5	2
+1	2
+2	2
+3	2
+4	2
 \.
 
 
@@ -1721,6 +1820,19 @@ COPY public.store_group_stores (group_id, store_id) FROM stdin;
 COPY public.store_groups (id, name) FROM stdin;
 3	Coco Fresh Tea & Juice
 4	Mad Mex
+\.
+
+
+--
+-- Data for Name: store_rankings; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.store_rankings (store_id, rank, valid_from, valid_to) FROM stdin;
+1	1	2019-08-02 06:19:51.174+10	2020-08-04 06:20:01.083+10
+2	1	2019-08-02 06:19:51.174+10	2020-08-04 06:20:01.083+10
+3	1	2019-08-02 06:19:51.174+10	2020-08-04 06:20:01.083+10
+4	1	2019-08-02 06:19:51.174+10	2020-08-04 06:20:01.083+10
+5	1	2019-08-02 06:19:51.174+10	2020-08-04 06:20:01.083+10
 \.
 
 
@@ -1756,33 +1868,91 @@ COPY public.store_ratings_cache (store_id, heart_ratings, okay_ratings, burnt_ra
 
 
 --
+-- Data for Name: store_tags; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.store_tags (store_id, tag_id) FROM stdin;
+1	4
+2	4
+6	4
+7	4
+22	4
+29	2
+10	2
+4	3
+5	3
+9	3
+17	3
+20	3
+21	3
+10	1
+23	1
+25	1
+26	1
+27	1
+29	1
+3	5
+4	5
+8	5
+23	5
+30	5
+3	6
+23	6
+25	6
+26	6
+27	6
+30	6
+8	6
+31	2
+32	2
+33	2
+34	2
+36	2
+37	1
+38	1
+\.
+
+
+--
 -- Data for Name: stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image, "order") FROM stdin;
-1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1
-11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg	14
-12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg	14
-13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg	14
-14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg	14
-15	CoCo Fresh Tea & Juice	+61	295511312	\N	8	1	https://imgur.com/KMzxoYx.jpg	14
-4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4
-2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2
-8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg	8
-16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg	14
-17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg	14
-18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg	14
-19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg	14
-10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg	14
-22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg	12
-7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7
-5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6
-20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg	10
-9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg	9
-6	Cié Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg	5
-21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg	11
-3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg	3
-23	Anastasia Café and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg	13
+COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image, "order", rank, follower_count, review_count, store_count) FROM stdin;
+22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg	12	99	0	0	0
+16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
+9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg	9	99	0	0	0
+7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7	99	0	0	0
+8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg	8	99	0	0	0
+14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
+21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg	11	99	0	0	0
+17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0
+13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
+15	CoCo Fresh Tea & Juice	+61	295511312	\N	8	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
+18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0
+19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0
+10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
+12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
+11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
+6	Cié Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg	5	99	0	0	0
+20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg	10	99	0	0	0
+2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2	1	0	3	0
+23	Anastasia Café and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg	13	99	0	1	0
+4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4	1	0	4	0
+3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg	3	1	0	5	0
+1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1	1	1	2	0
+5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6	1	1	0	0
+25	Bills	+61	998997123	\N	13	1	https://b.zmtcdn.com/data/reviews_photos/c28/5af30180b449cff001d2d41eb5cd2c28_1544341757.jpg	1	99	0	0	0
+26	Lorraine's Patisserie	+61	977551355	\N	13	1	https://b.zmtcdn.com/data/pictures/5/16566535/6f55afcd0e5c7b30645c4edae6303efc.jpg	1	99	0	0	0
+27	Flour & Stone	+61	291191111	\N	12	1	https://b.zmtcdn.com/data/pictures/6/16564656/4ded590717ab792f34cff33c9fde11e3.jpg	1	99	0	0	0
+29	Aqua S	+61	298897771	\N	13	1	https://b.zmtcdn.com/data/reviews_photos/dd9/6e036069be9cb6f5f230c17f0cfcadd9_1552339233.jpg	1	99	0	0	0
+30	Mecca Coffee Specialists	+61	298897771	\N	9	1	https://b.zmtcdn.com/data/reviews_photos/885/9275c0ec1e2ef00f4b0cd92852abc885_1477301450.jpg	1	99	0	0	0
+31	Bubble Nini	+61	295258017	4	1	1	https://b.zmtcdn.com/data/pictures/3/17745593/2a0d941a5c71cc9e6b1a67b336dfe2a6.jpg	1	99	0	0	0
+32	The Moment	+61	281898789	14	11	1	http://b.zmtcdn.com/data/reviews_photos/45e/9909395d1ccafe5e637890950810645e_1521863198.jpg	1	99	0	0	0
+33	Mr. Tea	+61	93562436	\N	12	1	https://b.zmtcdn.com/data/pictures/4/15547454/1a52ca1626e3070bfebb32d9ca568e2d.jpg	1	99	0	0	0
+34	Bean Code	+61	281898789	\N	4	1	https://b.zmtcdn.com/data/pictures/6/17742416/677976c7ecb967c9632e5e9005912994_featured_v2.jpg	1	99	0	0	0
+36	Koomi	+61	291111089	\N	7	1	https://b.zmtcdn.com/data/pictures/chains/6/17747176/a5738e150615432b80bcfbdb9e83f0f5.jpg	1	99	0	0	0
+37	Chapayum	+61	288819222	\N	13	1	https://b.zmtcdn.com/data/pictures/7/19018017/7c2119e91ec0f4e8c8bbb7302fa23e27.jpg	1	99	0	0	0
+38	Choux Love	+61	93562436	\N	1	1	https://b.zmtcdn.com/data/reviews_photos/372/13299ecd4b16d6b896a09836b1628372_1522897753.jpg	1	99	0	0	0
 \.
 
 
@@ -1791,7 +1961,6 @@ COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_i
 --
 
 COPY public.suburbs (id, name, city_id) FROM stdin;
-1	CBD	1
 2	Chatswood	1
 3	Broken Hill	1
 4	Bathurst	1
@@ -1803,6 +1972,22 @@ COPY public.suburbs (id, name, city_id) FROM stdin;
 10	Burwood	1
 11	Central	1
 12	Darlinghurst	1
+1	Sydney CBD	1
+13	Surry Hills	1
+\.
+
+
+--
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tags (id, name) FROM stdin;
+1	sweet
+2	bubble
+3	cheap
+4	fancy
+5	coffee
+6	brunch
 \.
 
 
@@ -1837,7 +2022,13 @@ COPY public.user_accounts (id, email, email_confirmed) FROM stdin;
 2	c.c.chloe@gmail.com	f
 3	annika_b@gmail.com	f
 37	moefinef@gmail.com	f
-2764	eddie-chae@gmail.com	f
+2764	eddie-huang@gmail.com	f
+5	hello-meow-meow@gmail.com	f
+2765	sophia_king@gmail.com	f
+2766	psyanite@gmail.com	f
+2767	psyanite@gmail.com	f
+2768	psyanite@gmail.com	f
+2769	pzyneia@gmail.com	f
 \.
 
 
@@ -1867,10 +2058,10 @@ COPY public.user_favorite_comments (user_id, comment_id) FROM stdin;
 --
 
 COPY public.user_favorite_posts (user_id, post_id) FROM stdin;
-2	2
 2	118
 2	132
 2	3
+2	139
 \.
 
 
@@ -1891,9 +2082,10 @@ COPY public.user_favorite_rewards (user_id, reward_id) FROM stdin;
 1	3
 1	1
 2	3
-2	2
-2	1
+2	5
 2	7
+2	2
+2	8
 \.
 
 
@@ -1906,8 +2098,27 @@ COPY public.user_favorite_stores (user_id, store_id) FROM stdin;
 1	3
 1	1
 2	2
-2	12
-2	3
+2	4
+2	1
+2	8
+2	22
+2	21
+2	6
+2	7
+2	5
+\.
+
+
+--
+-- Data for Name: user_follows; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_follows (user_id, follower_id) FROM stdin;
+2	1
+3	1
+1	2
+3	2
+4	2
 \.
 
 
@@ -1937,9 +2148,10 @@ facebook	1asdsd	2756
 facebook	167203229291sddsds	2757
 google	1164677640327081754	2759
 facebook	1241a4aa2100	2758
-google	116467743640327081754	1
 facebook	1905457732907903	2
 facebook	111999111999	2764
+google	sophia123	2765
+google	116467743640327081754	1
 \.
 
 
@@ -1947,12 +2159,14 @@ facebook	111999111999	2764
 -- Data for Name: user_profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_profiles (user_id, username, preferred_name, profile_picture, gender, firstname, surname) FROM stdin;
-2	curious_chloe	Chloe	https://imgur.com/AwS5vPC.jpg	female	Chloe	Lee
-1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	female	Luna	Lytele
-3	annika_b	Annika	https://imgur.com/RMEkwS7.jpg	female	Annika	McIntyre
-4	leia	Leia	https://imgur.com/CUVkwzY.jpg	female	Leia	Rochford
-2764	eddie_chae	Eddie	https://imgur.com/CUVkwzY.jpg	male	Edward	Chae
+COPY public.user_profiles (user_id, username, preferred_name, profile_picture, gender, firstname, surname, tagline, follower_count, store_count) FROM stdin;
+2764	eddie_chae	Eddie	https://imgur.com/CUVkwzY.jpg	male	Edward	Perry	\N	0	0
+2765	goldcoast.sophia	Sophia	https://imgur.com/ejg9ziF.jpg	female	Sophia	King	When a poet digs himself into a hole, he doesn't climb out. He digs deeper, enjoys the scenery, and comes out the other side enlightened.	0	0
+1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	female	Luna	Lytele	Avid traveller, big foodie. Ramen or die! 🍜	0	3
+3	annika_b	Annika	https://imgur.com/18N6fV3.jpg	female	Annika	McIntyre	🏹 Sagittarius\r\n🍜 Big Foodie\r\n📍 Tokyo, Amsterdam, Brooklyn	0	2
+5	evalicious	Eva	https://imgur.com/fFa9R1o.jpg	female	Eva	Seacrest	\N	0	1
+2	curious_chloe	Chloe	https://imgur.com/AwS5vPC.jpg	female	Chloe	Lee	🏹 Saggitarius\n✈ Tokyo, Amsterdam, and Brooklyn\n🏠 Living in Sydney\n🍜 Ramen, Pad Thai, and Boba is Lyf	0	4
+4	miss.leia	Leia	https://imgur.com/CUVkwzY.jpg	female	Leia	Rochford	When a poet digs himself into a hole, he doesn't climb out. He digs deeper, enjoys the scenery, and comes out the other side enlightened.	0	2
 \.
 
 
@@ -1963,6 +2177,11 @@ COPY public.user_profiles (user_id, username, preferred_name, profile_picture, g
 COPY public.user_rewards (user_id, reward_id, unique_code, redeemed_at) FROM stdin;
 2	7	N4CE	\N
 1	1	CX1P	\N
+2	9	0MYD	\N
+2	8	OK1O	\N
+2	3	IODE	\N
+2765	2	Y8Z2	\N
+2	1	5GVY	\N
 \.
 
 
@@ -1977,14 +2196,7 @@ SELECT pg_catalog.setval('public.cities_id_seq', 1, true);
 -- Name: comment_replies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.comment_replies_id_seq', 21, true);
-
-
---
--- Name: comments_replies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.comments_replies_id_seq', 1, false);
+SELECT pg_catalog.setval('public.comment_replies_id_seq', 46, true);
 
 
 --
@@ -2026,35 +2238,35 @@ SELECT pg_catalog.setval('public.location_id_seq', 15, true);
 -- Name: post_comments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_comments_id_seq', 49, true);
+SELECT pg_catalog.setval('public.post_comments_id_seq', 58, true);
 
 
 --
 -- Name: post_photos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_photos_id_seq', 316, true);
+SELECT pg_catalog.setval('public.post_photos_id_seq', 326, true);
 
 
 --
 -- Name: post_reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_reviews_id_seq', 124, true);
+SELECT pg_catalog.setval('public.post_reviews_id_seq', 134, true);
 
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.posts_id_seq', 135, true);
+SELECT pg_catalog.setval('public.posts_id_seq', 146, true);
 
 
 --
 -- Name: rewards_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.rewards_id_seq', 7, true);
+SELECT pg_catalog.setval('public.rewards_id_seq', 9, true);
 
 
 --
@@ -2075,21 +2287,28 @@ SELECT pg_catalog.setval('public.store_groups_id_seq', 4, true);
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stores_id_seq', 23, true);
+SELECT pg_catalog.setval('public.stores_id_seq', 38, true);
 
 
 --
 -- Name: suburbs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.suburbs_id_seq', 12, true);
+SELECT pg_catalog.setval('public.suburbs_id_seq', 13, true);
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.tags_id_seq', 6, true);
 
 
 --
 -- Name: user_accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_accounts_id_seq', 2764, true);
+SELECT pg_catalog.setval('public.user_accounts_id_seq', 2769, true);
 
 
 --
@@ -2162,14 +2381,6 @@ ALTER TABLE public.store_search OWNER TO postgres;
 
 ALTER TABLE ONLY public.comment_replies
     ADD CONSTRAINT comment_replies_pk PRIMARY KEY (id);
-
-
---
--- Name: comments_replies comments_replies_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.comments_replies
-    ADD CONSTRAINT comments_replies_pkey PRIMARY KEY (id);
 
 
 --
@@ -2285,11 +2496,27 @@ ALTER TABLE ONLY public.store_groups
 
 
 --
+-- Name: store_tags store_tags_store_id_tag_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.store_tags
+    ADD CONSTRAINT store_tags_store_id_tag_id_pk UNIQUE (store_id, tag_id);
+
+
+--
 -- Name: suburbs suburbs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.suburbs
     ADD CONSTRAINT suburbs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tags tags_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_id_pk PRIMARY KEY (id);
 
 
 --
@@ -2506,6 +2733,34 @@ CREATE INDEX posts_type_index ON public.posts USING btree (type);
 
 
 --
+-- Name: reward_rankings_reward_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX reward_rankings_reward_id_uindex ON public.reward_rankings USING btree (reward_id);
+
+
+--
+-- Name: rewards_code_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX rewards_code_uindex ON public.rewards USING btree (code);
+
+
+--
+-- Name: store_follows_store_id_follower_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX store_follows_store_id_follower_uindex ON public.store_follows USING btree (store_id, follower_id);
+
+
+--
+-- Name: store_rankings_store_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX store_rankings_store_id_uindex ON public.store_rankings USING btree (store_id);
+
+
+--
 -- Name: store_ratings_cache_store_id_uindex; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -2562,6 +2817,13 @@ CREATE INDEX user_accounts_email_index ON public.user_accounts USING btree (emai
 
 
 --
+-- Name: user_follows_user_id_follower_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX user_follows_user_id_follower_uindex ON public.user_follows USING btree (user_id, follower_id);
+
+
+--
 -- Name: user_rewards_redeemed_at_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -2588,15 +2850,15 @@ ALTER TABLE ONLY public.cities
 --
 
 ALTER TABLE ONLY public.comment_replies
-    ADD CONSTRAINT comment_replies_comments_id_fk FOREIGN KEY (comment_id) REFERENCES public.comments(id);
+    ADD CONSTRAINT comment_replies_comments_id_fk FOREIGN KEY (comment_id) REFERENCES public.comments(id) ON DELETE CASCADE;
 
 
 --
--- Name: comment_replies comment_replies_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: comment_replies comment_replies_user_profiles_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.comment_replies
-    ADD CONSTRAINT comment_replies_user_accounts_id_fk FOREIGN KEY (replied_by) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT comment_replies_user_profiles_user_id_fk FOREIGN KEY (replied_by) REFERENCES public.user_profiles(user_id);
 
 
 --
@@ -2620,7 +2882,7 @@ ALTER TABLE ONLY public.locations
 --
 
 ALTER TABLE ONLY public.comments
-    ADD CONSTRAINT post_comments_posts_id_fk FOREIGN KEY (post_id) REFERENCES public.posts(id);
+    ADD CONSTRAINT post_comments_posts_id_fk FOREIGN KEY (post_id) REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
@@ -2628,7 +2890,7 @@ ALTER TABLE ONLY public.comments
 --
 
 ALTER TABLE ONLY public.comments
-    ADD CONSTRAINT post_comments_user_accounts_id_fk FOREIGN KEY (commented_by) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT post_comments_user_accounts_id_fk FOREIGN KEY (commented_by) REFERENCES public.user_profiles(user_id);
 
 
 --
@@ -2652,7 +2914,7 @@ ALTER TABLE ONLY public.post_reviews
 --
 
 ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_posted_by_id_fkey FOREIGN KEY (posted_by) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT posts_posted_by_id_fkey FOREIGN KEY (posted_by) REFERENCES public.user_profiles(user_id);
 
 
 --
@@ -2661,6 +2923,14 @@ ALTER TABLE ONLY public.posts
 
 ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id);
+
+
+--
+-- Name: reward_rankings reward_rankings_rewards_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reward_rankings
+    ADD CONSTRAINT reward_rankings_rewards_id_fk FOREIGN KEY (reward_id) REFERENCES public.rewards(id);
 
 
 --
@@ -2704,6 +2974,22 @@ ALTER TABLE ONLY public.store_cuisines
 
 
 --
+-- Name: store_follows store_follows_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.store_follows
+    ADD CONSTRAINT store_follows_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+
+
+--
+-- Name: store_follows store_follows_user_profiles_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.store_follows
+    ADD CONSTRAINT store_follows_user_profiles_user_id_fk FOREIGN KEY (follower_id) REFERENCES public.user_profiles(user_id);
+
+
+--
 -- Name: store_group_stores store_group_stores_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2720,11 +3006,35 @@ ALTER TABLE ONLY public.store_group_stores
 
 
 --
+-- Name: store_rankings store_rankings_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.store_rankings
+    ADD CONSTRAINT store_rankings_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+
+
+--
 -- Name: store_ratings_cache store_ratings_cache_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.store_ratings_cache
     ADD CONSTRAINT store_ratings_cache_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+
+
+--
+-- Name: store_tags store_tags_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.store_tags
+    ADD CONSTRAINT store_tags_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+
+
+--
+-- Name: store_tags store_tags_tag_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.store_tags
+    ADD CONSTRAINT store_tags_tag_id_fk FOREIGN KEY (tag_id) REFERENCES public.tags(id);
 
 
 --
@@ -2796,7 +3106,23 @@ ALTER TABLE ONLY public.user_favorite_stores
 --
 
 ALTER TABLE ONLY public.user_favorite_stores
-    ADD CONSTRAINT user_favorite_stores_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_favorite_stores_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id);
+
+
+--
+-- Name: user_follows user_follows_user_profiles_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_follows
+    ADD CONSTRAINT user_follows_user_profiles_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id);
+
+
+--
+-- Name: user_follows user_follows_user_profiles_user_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_follows
+    ADD CONSTRAINT user_follows_user_profiles_user_id_fk_2 FOREIGN KEY (follower_id) REFERENCES public.user_profiles(user_id);
 
 
 --
@@ -2844,7 +3170,7 @@ ALTER TABLE ONLY public.user_rewards
 --
 
 ALTER TABLE ONLY public.user_favorite_rewards
-    ADD CONSTRAINT user_rewards_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_rewards_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id);
 
 
 --
