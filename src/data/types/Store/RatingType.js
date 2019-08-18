@@ -3,7 +3,7 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
 } from 'graphql';
-import { Rating, Store } from '../../models/index';
+import { Rating, Store } from '../../models';
 
 Rating.Store = Rating.belongsTo(Store, {
   through: 'store_ratings_cache',

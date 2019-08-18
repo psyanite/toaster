@@ -4,6 +4,16 @@ import sequelize from '../sequelize';
 import { Store, Reward } from '../models';
 
 export default {
+  refreshMaterializedViews: {
+    type: String,
+    resolve: async () => {
+      await sequelize.query(`refresh materialized view location_search`);
+      await sequelize.query(`refresh materialized view cuisine_search`);
+      await sequelize.query(`refresh materialized view store_search`);
+      return `Updated materialized views location_search, cuisine_search, store_search`;
+    }
+  },
+
   updatePostLikeCommentCache: {
     type: String,
     resolve: async () => {

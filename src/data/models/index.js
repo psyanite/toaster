@@ -12,6 +12,7 @@ import StoreFollow from './Store/StoreFollow';
 import StoreGroup from './Store/StoreGroup';
 import Rating from './Store/Rating';
 import Cuisine from './Store/Cuisine';
+import Tag from './Store/Tag';
 
 import Country from './Location/Country';
 import District from './Location/District';
@@ -48,6 +49,7 @@ export {
   StoreGroup,
   Rating,
   Cuisine,
+  Tag,
   Country,
   District,
   City,

@@ -7,19 +7,24 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile } from '../../models/index';
+import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile, Tag } from '../../models';
 import SuburbType from '../Location/SuburbType';
 import LocationType from '../Location/LocationType';
 import AddressType from '../Location/AddressType';
 import CuisineType from './CuisineType';
 import RatingType from './RatingType';
 import UserProfileType from '../User/UserProfileType';
+import TagType from './TagType';
 
 Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' });
 Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' });
 Store.Address = Store.hasOne(Address);
 Store.Cuisines = Store.belongsToMany(Cuisine, {
   through: 'store_cuisines',
+  foreignKey: 'store_id',
+});
+Store.Tags = Store.belongsToMany(Tag, {
+  through: 'store_tags',
   foreignKey: 'store_id',
 });
 Store.Rating = Store.hasOne(Rating, {
@@ -58,6 +63,10 @@ export default new ObjectType({
     cuisines: {
       type: new List(CuisineType),
       resolve: resolver(Store.Cuisines),
+    },
+    tags: {
+      type: new List(TagType),
+      resolve: resolver(Store.Tags),
     },
     ratings: {
       type: RatingType,

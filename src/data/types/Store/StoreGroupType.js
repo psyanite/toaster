@@ -6,7 +6,7 @@ import {
   GraphQLString as String,
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Store, StoreGroup } from '../../models/index';
+import { Store, StoreGroup } from '../../models';
 import StoreType from './StoreType';
 
 StoreGroup.Stores = StoreGroup.belongsToMany(Store, {
