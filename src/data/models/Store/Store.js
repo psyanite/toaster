@@ -12,6 +12,10 @@ const Store = sequelize.define('stores', {
     type: Sequelize.STRING(50),
   },
 
+  phone_country: {
+    type: Sequelize.STRING(20),
+  },
+
   phone_number: {
     type: Sequelize.STRING(20),
   },
@@ -47,6 +51,22 @@ const Store = sequelize.define('stores', {
   review_count: {
     type: Sequelize.INTEGER,
   },
+
+  z_id: {
+    type: Sequelize.TEXT,
+  },
+
+  z_url: {
+    type: Sequelize.TEXT,
+  },
+
+  more_info: {
+    type: Sequelize.TEXT,
+  },
+
+  avg_cost: {
+    type: Sequelize.INTEGER,
+  }
 });
 
 export default Store;

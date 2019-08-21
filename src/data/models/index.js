@@ -8,8 +8,11 @@ import UserProfile from './User/UserProfile';
 import UserReward from './User/UserReward';
 
 import Store from './Store/Store';
+import StoreAddress from './Store/StoreAddress';
+import StoreCuisine from './Store/StoreCuisine';
 import StoreFollow from './Store/StoreFollow';
 import StoreGroup from './Store/StoreGroup';
+import StoreHour from './Store/StoreHour';
 import Rating from './Store/Rating';
 import Cuisine from './Store/Cuisine';
 import Tag from './Store/Tag';
@@ -45,8 +48,11 @@ export {
   UserProfile,
   UserReward,
   Store,
+  StoreAddress,
+  StoreCuisine,
   StoreFollow,
   StoreGroup,
+  StoreHour,
   Rating,
   Cuisine,
   Tag,

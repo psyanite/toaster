@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile, Tag } from '../../models';
+import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile, Tag, StoreHour } from '../../models';
 import SuburbType from '../Location/SuburbType';
 import LocationType from '../Location/LocationType';
 import AddressType from '../Location/AddressType';
@@ -15,12 +15,16 @@ import CuisineType from './CuisineType';
 import RatingType from './RatingType';
 import UserProfileType from '../User/UserProfileType';
 import TagType from './TagType';
+import StoreHourType from './StoreHourType';
 
 Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' });
 Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' });
 Store.Address = Store.hasOne(Address);
 Store.Cuisines = Store.belongsToMany(Cuisine, {
   through: 'store_cuisines',
+  foreignKey: 'store_id',
+});
+Store.Hours = Store.hasMany(StoreHour, {
   foreignKey: 'store_id',
 });
 Store.Tags = Store.belongsToMany(Tag, {
@@ -34,7 +38,7 @@ Store.Rating = Store.hasOne(Rating, {
 Store.FavoritedBy = Store.belongsToMany(UserProfile, {
   through: 'user_favorite_stores',
   foreignKey: 'store_id',
-  as: 'favoritedBy',
+  otherKey: 'user_id',
 });
 
 export default new ObjectType({
@@ -48,6 +52,10 @@ export default new ObjectType({
     rank: { type: Int },
     follower_count: { type: Int },
     review_count: { type: Int },
+    z_id: { type: String },
+    z_url: { type: String },
+    more_info: { type: String },
+    avg_cost: { type: Int },
     address: {
       type: AddressType,
       resolve: resolver(Store.Address),
@@ -59,6 +67,10 @@ export default new ObjectType({
     suburb: {
       type: SuburbType,
       resolve: resolver(Store.Suburb),
+    },
+    hours: {
+      type: new List(StoreHourType),
+      resolve: resolver(Store.Hours),
     },
     cuisines: {
       type: new List(CuisineType),

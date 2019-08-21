@@ -718,8 +718,8 @@ CREATE TABLE public.store_addresses (
     store_id integer NOT NULL,
     address_first_line character varying(100),
     address_second_line character varying(100),
-    address_street_number character varying(20) NOT NULL,
-    address_street_name character varying(50) NOT NULL,
+    address_street_number character varying(20),
+    address_street_name character varying(50),
     google_url character varying(255)
 );
 
@@ -817,6 +817,20 @@ ALTER SEQUENCE public.store_groups_id_seq OWNED BY public.store_groups.id;
 
 
 --
+-- Name: store_hours; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.store_hours (
+    store_id integer NOT NULL,
+    "order" integer NOT NULL,
+    dotw character varying(3) NOT NULL,
+    hours character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.store_hours OWNER TO postgres;
+
+--
 -- Name: store_rankings; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -873,7 +887,11 @@ CREATE TABLE public.stores (
     rank integer DEFAULT 99 NOT NULL,
     follower_count integer DEFAULT 0 NOT NULL,
     review_count integer DEFAULT 0 NOT NULL,
-    store_count integer DEFAULT 0 NOT NULL
+    store_count integer DEFAULT 0 NOT NULL,
+    z_id character varying(100),
+    z_url character varying(255),
+    more_info character varying(255),
+    avg_cost integer
 );
 
 
@@ -1253,6 +1271,7 @@ ALTER TABLE ONLY public.user_accounts ALTER COLUMN id SET DEFAULT nextval('publi
 
 COPY public.cities (id, name, district_id) FROM stdin;
 1	Sydney	1
+2	meow	1
 \.
 
 
@@ -1587,6 +1606,7 @@ COPY public.cuisines (id, name) FROM stdin;
 4	Brunch
 5	French
 6	Pizza
+8	Cafe
 \.
 
 
@@ -1624,6 +1644,7 @@ COPY public.locations (id, name, suburb_id) FROM stdin;
 13	Harbourside	12
 14	Central Station	11
 15	Chatswood Chase	2
+17	Super Hill	13
 \.
 
 
@@ -1656,6 +1677,60 @@ COPY public.post_photos (id, post_id, url) FROM stdin;
 324	139	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564290835860-5932.jpg?alt=media&token=7756f735-3470-48f2-bbe5-0c8969da9c50
 325	142	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564901418449-1008.jpg?alt=media&token=b9126e6d-5e6d-410f-9067-296779e27fc9
 326	143	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+328	147	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+329	148	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+330	149	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+331	150	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+332	151	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+333	152	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+334	153	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+335	154	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+336	155	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+337	156	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+338	157	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+339	158	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+340	159	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+341	160	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+342	161	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+343	162	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+344	163	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+345	164	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+346	165	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+347	166	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+348	167	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+349	168	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+350	169	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+351	170	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+352	171	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+353	172	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+354	173	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+355	174	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+356	175	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+357	176	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+358	177	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+359	178	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+360	179	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+361	180	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+362	181	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+363	182	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+364	183	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+365	184	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+366	185	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+367	186	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+368	187	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+369	188	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+370	189	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+371	190	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+372	191	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+373	192	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+374	193	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+375	194	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+376	195	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+377	196	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+378	197	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+379	198	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+380	199	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+381	210	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
 \.
 
 
@@ -1676,6 +1751,73 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 131	143	okay	bad	okay	okay	good	Summer's finally here, thank goodness 🙏🙏🙏
 130	142	good	okay	okay	good	good	Come try our new menu item matcha and red bean bing soo 😋 Available for a limited time only, get in quick!
 134	146	okay	okay	bad	okay	okay	Buy One Get One Free!\r\nWe're doing an Anzac Day special. Buy any small or medium drink including coffee and get another one for FREE. Only available until the end of the day. For full terms and conditions see in store. Shout out your coworker or best friend and brighten up their day now! ☀️☀️☀️
+135	147	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+136	148	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+137	149	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+138	150	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+139	151	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+140	152	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+141	153	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+142	154	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+143	155	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+144	156	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+145	157	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+146	158	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+147	159	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+148	160	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+149	161	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+150	162	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+151	163	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+152	164	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+153	165	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+154	166	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+155	167	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+156	168	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+157	169	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+158	170	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+159	171	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+160	172	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+161	173	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+162	174	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+163	175	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+164	176	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+165	177	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+166	178	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+167	179	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+168	180	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+169	181	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+170	182	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+171	183	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+172	184	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+173	185	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+174	186	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+175	187	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+176	188	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+177	189	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+178	190	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+179	191	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+180	191	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+181	192	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+182	193	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+183	194	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+184	195	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+185	194	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+186	195	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+187	196	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+188	197	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+189	198	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+190	199	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+191	200	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+192	201	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+193	202	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+194	203	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+195	204	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+196	205	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+197	206	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+198	207	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+199	208	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+200	209	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+201	210	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
 \.
 
 
@@ -1699,7 +1841,71 @@ COPY public.posts (id, type, store_id, posted_by, like_count, comment_count, hid
 143	review	4	\N	0	0	f	2019-08-04 17:18:08.668+10
 139	review	4	2	1	0	f	2019-07-28 15:13:56.516+10
 146	review	3	\N	0	0	f	2019-08-18 15:53:54.409+10
+147	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+148	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+149	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+150	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+151	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
 134	review	4	2	0	2	f	2019-07-07 21:39:08.342+10
+152	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+153	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+154	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+155	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+156	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+157	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+158	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+159	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+160	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+161	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+162	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+163	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+164	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+165	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+166	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+167	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+168	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+169	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+170	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+171	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+172	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+173	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+174	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+175	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+176	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+177	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+178	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+179	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+180	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+181	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+182	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+183	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+184	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+185	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+186	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+187	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+188	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+189	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+190	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+191	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+192	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+193	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+194	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+195	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+196	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+197	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+198	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+199	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+200	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+201	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+202	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+203	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+204	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+205	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+206	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+207	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+208	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+209	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+210	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
 \.
 
 
@@ -1760,6 +1966,7 @@ COPY public.store_addresses (id, store_id, address_first_line, address_second_li
 8	8	\N	\N	405	Victoria St	https://goo.gl/maps/pfW97xQqbryhQiqEA
 6	6	\N	\N	36	Queen St	https://goo.gl/maps/pfW97xQqbryhQiqEA
 30	9	\N	\N	51	Tumbalong Boulevard	https://goo.gl/maps/pfW97xQqbryhQiqEA
+50	60	\N	\N	83	Foveaux Street	\N
 \.
 
 
@@ -1779,6 +1986,8 @@ COPY public.store_cuisines (store_id, cuisine_id) FROM stdin;
 5	6
 6	5
 23	1
+60	2
+60	8
 \.
 
 
@@ -1820,6 +2029,21 @@ COPY public.store_group_stores (group_id, store_id) FROM stdin;
 COPY public.store_groups (id, name) FROM stdin;
 3	Coco Fresh Tea & Juice
 4	Mad Mex
+\.
+
+
+--
+-- Data for Name: store_hours; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.store_hours (store_id, "order", dotw, hours) FROM stdin;
+60	1	Mon	Closed
+60	2	Tue	5:30pm - 10pm
+60	3	Wed	5:30pm - 10pm
+60	4	Thu	5:30pm - 10pm
+60	5	Fri	11am-2pm, 5:30pm - 10pm
+60	6	Sat	Closed
+60	7	Sun	Closed
 \.
 
 
@@ -1917,42 +2141,43 @@ COPY public.store_tags (store_id, tag_id) FROM stdin;
 -- Data for Name: stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image, "order", rank, follower_count, review_count, store_count) FROM stdin;
-22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg	12	99	0	0	0
-16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
-9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg	9	99	0	0	0
-7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7	99	0	0	0
-8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg	8	99	0	0	0
-14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
-21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg	11	99	0	0	0
-17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0
-13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
-15	CoCo Fresh Tea & Juice	+61	295511312	\N	8	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
-18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0
-19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0
-10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
-12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
-11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0
-6	Cié Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg	5	99	0	0	0
-20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg	10	99	0	0	0
-2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2	1	0	3	0
-23	Anastasia Café and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg	13	99	0	1	0
-4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4	1	0	4	0
-3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg	3	1	0	5	0
-1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1	1	1	2	0
-5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6	1	1	0	0
-25	Bills	+61	998997123	\N	13	1	https://b.zmtcdn.com/data/reviews_photos/c28/5af30180b449cff001d2d41eb5cd2c28_1544341757.jpg	1	99	0	0	0
-26	Lorraine's Patisserie	+61	977551355	\N	13	1	https://b.zmtcdn.com/data/pictures/5/16566535/6f55afcd0e5c7b30645c4edae6303efc.jpg	1	99	0	0	0
-27	Flour & Stone	+61	291191111	\N	12	1	https://b.zmtcdn.com/data/pictures/6/16564656/4ded590717ab792f34cff33c9fde11e3.jpg	1	99	0	0	0
-29	Aqua S	+61	298897771	\N	13	1	https://b.zmtcdn.com/data/reviews_photos/dd9/6e036069be9cb6f5f230c17f0cfcadd9_1552339233.jpg	1	99	0	0	0
-30	Mecca Coffee Specialists	+61	298897771	\N	9	1	https://b.zmtcdn.com/data/reviews_photos/885/9275c0ec1e2ef00f4b0cd92852abc885_1477301450.jpg	1	99	0	0	0
-31	Bubble Nini	+61	295258017	4	1	1	https://b.zmtcdn.com/data/pictures/3/17745593/2a0d941a5c71cc9e6b1a67b336dfe2a6.jpg	1	99	0	0	0
-32	The Moment	+61	281898789	14	11	1	http://b.zmtcdn.com/data/reviews_photos/45e/9909395d1ccafe5e637890950810645e_1521863198.jpg	1	99	0	0	0
-33	Mr. Tea	+61	93562436	\N	12	1	https://b.zmtcdn.com/data/pictures/4/15547454/1a52ca1626e3070bfebb32d9ca568e2d.jpg	1	99	0	0	0
-34	Bean Code	+61	281898789	\N	4	1	https://b.zmtcdn.com/data/pictures/6/17742416/677976c7ecb967c9632e5e9005912994_featured_v2.jpg	1	99	0	0	0
-36	Koomi	+61	291111089	\N	7	1	https://b.zmtcdn.com/data/pictures/chains/6/17747176/a5738e150615432b80bcfbdb9e83f0f5.jpg	1	99	0	0	0
-37	Chapayum	+61	288819222	\N	13	1	https://b.zmtcdn.com/data/pictures/7/19018017/7c2119e91ec0f4e8c8bbb7302fa23e27.jpg	1	99	0	0	0
-38	Choux Love	+61	93562436	\N	1	1	https://b.zmtcdn.com/data/reviews_photos/372/13299ecd4b16d6b896a09836b1628372_1522897753.jpg	1	99	0	0	0
+COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image, "order", rank, follower_count, review_count, store_count, z_id, z_url, more_info, avg_cost) FROM stdin;
+22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg	12	99	0	0	0	\N	\N	\N	\N
+16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
+9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg	9	99	0	0	0	\N	\N	\N	\N
+7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7	99	0	0	0	\N	\N	\N	\N
+8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg	8	99	0	0	0	\N	\N	\N	\N
+14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
+21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg	11	99	0	0	0	\N	\N	\N	\N
+17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0	\N	\N	\N	\N
+13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
+15	CoCo Fresh Tea & Juice	+61	295511312	\N	8	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
+18	Mad Mex	+61	295511312	13	12	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0	\N	\N	\N	\N
+19	Mad Mex	+61	295511312	14	11	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0	\N	\N	\N	\N
+10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
+12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
+11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
+6	Cié Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg	5	99	0	0	0	\N	\N	\N	\N
+20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg	10	99	0	0	0	\N	\N	\N	\N
+2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2	1	0	3	0	\N	\N	\N	\N
+23	Anastasia Café and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg	13	99	0	1	0	\N	\N	\N	\N
+4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4	1	0	4	0	\N	\N	\N	\N
+3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg	3	1	0	5	0	\N	\N	\N	\N
+1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1	1	1	2	0	\N	\N	\N	\N
+5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6	1	1	0	0	\N	\N	\N	\N
+25	Bills	+61	998997123	\N	13	1	https://b.zmtcdn.com/data/reviews_photos/c28/5af30180b449cff001d2d41eb5cd2c28_1544341757.jpg	1	99	0	0	0	\N	\N	\N	\N
+26	Lorraine's Patisserie	+61	977551355	\N	13	1	https://b.zmtcdn.com/data/pictures/5/16566535/6f55afcd0e5c7b30645c4edae6303efc.jpg	1	99	0	0	0	\N	\N	\N	\N
+27	Flour & Stone	+61	291191111	\N	12	1	https://b.zmtcdn.com/data/pictures/6/16564656/4ded590717ab792f34cff33c9fde11e3.jpg	1	99	0	0	0	\N	\N	\N	\N
+29	Aqua S	+61	298897771	\N	13	1	https://b.zmtcdn.com/data/reviews_photos/dd9/6e036069be9cb6f5f230c17f0cfcadd9_1552339233.jpg	1	99	0	0	0	\N	\N	\N	\N
+30	Mecca Coffee Specialists	+61	298897771	\N	9	1	https://b.zmtcdn.com/data/reviews_photos/885/9275c0ec1e2ef00f4b0cd92852abc885_1477301450.jpg	1	99	0	0	0	\N	\N	\N	\N
+31	Bubble Nini	+61	295258017	4	1	1	https://b.zmtcdn.com/data/pictures/3/17745593/2a0d941a5c71cc9e6b1a67b336dfe2a6.jpg	1	99	0	0	0	\N	\N	\N	\N
+32	The Moment	+61	281898789	14	11	1	http://b.zmtcdn.com/data/reviews_photos/45e/9909395d1ccafe5e637890950810645e_1521863198.jpg	1	99	0	0	0	\N	\N	\N	\N
+33	Mr. Tea	+61	93562436	\N	12	1	https://b.zmtcdn.com/data/pictures/4/15547454/1a52ca1626e3070bfebb32d9ca568e2d.jpg	1	99	0	0	0	\N	\N	\N	\N
+34	Bean Code	+61	281898789	\N	4	1	https://b.zmtcdn.com/data/pictures/6/17742416/677976c7ecb967c9632e5e9005912994_featured_v2.jpg	1	99	0	0	0	\N	\N	\N	\N
+36	Koomi	+61	291111089	\N	7	1	https://b.zmtcdn.com/data/pictures/chains/6/17747176/a5738e150615432b80bcfbdb9e83f0f5.jpg	1	99	0	0	0	\N	\N	\N	\N
+37	Chapayum	+61	288819222	\N	13	1	https://b.zmtcdn.com/data/pictures/7/19018017/7c2119e91ec0f4e8c8bbb7302fa23e27.jpg	1	99	0	0	0	\N	\N	\N	\N
+38	Choux Love	+61	93562436	\N	1	1	https://b.zmtcdn.com/data/reviews_photos/372/13299ecd4b16d6b896a09836b1628372_1522897753.jpg	1	99	0	0	0	\N	\N	\N	\N
+60	Le Meow	+61	(02) 9211 3568	17	13	1	https://b.zmtcdn.com/data/reviews_photos/21e/cc0377b2af177b44aade56e1ed7eb21e_1542718407.jpg	1	99	0	0	0	sydney/le-meow-surry-hills	https://www.zomato.com/sydney/le-meow-surry-hills	Breakfast,Takeaway Available,No Alcohol Available	40
 \.
 
 
@@ -2164,9 +2389,9 @@ COPY public.user_profiles (user_id, username, preferred_name, profile_picture, g
 2765	goldcoast.sophia	Sophia	https://imgur.com/ejg9ziF.jpg	female	Sophia	King	When a poet digs himself into a hole, he doesn't climb out. He digs deeper, enjoys the scenery, and comes out the other side enlightened.	0	0
 1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	female	Luna	Lytele	Avid traveller, big foodie. Ramen or die! 🍜	0	3
 3	annika_b	Annika	https://imgur.com/18N6fV3.jpg	female	Annika	McIntyre	🏹 Sagittarius\r\n🍜 Big Foodie\r\n📍 Tokyo, Amsterdam, Brooklyn	0	2
-5	evalicious	Eva	https://imgur.com/fFa9R1o.jpg	female	Eva	Seacrest	\N	0	1
 2	curious_chloe	Chloe	https://imgur.com/AwS5vPC.jpg	female	Chloe	Lee	🏹 Saggitarius\n✈ Tokyo, Amsterdam, and Brooklyn\n🏠 Living in Sydney\n🍜 Ramen, Pad Thai, and Boba is Lyf	0	4
 4	miss.leia	Leia	https://imgur.com/CUVkwzY.jpg	female	Leia	Rochford	When a poet digs himself into a hole, he doesn't climb out. He digs deeper, enjoys the scenery, and comes out the other side enlightened.	0	2
+5	evalicious	Eva	https://imgur.com/fFa9R1o.jpg	female	Eva	Seacrest	\N	0	1
 \.
 
 
@@ -2189,7 +2414,7 @@ COPY public.user_rewards (user_id, reward_id, unique_code, redeemed_at) FROM std
 -- Name: cities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cities_id_seq', 1, true);
+SELECT pg_catalog.setval('public.cities_id_seq', 2, true);
 
 
 --
@@ -2210,7 +2435,7 @@ SELECT pg_catalog.setval('public.countries_id_seq', 240, true);
 -- Name: cuisines_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cuisines_id_seq', 4, true);
+SELECT pg_catalog.setval('public.cuisines_id_seq', 8, true);
 
 
 --
@@ -2231,7 +2456,7 @@ SELECT pg_catalog.setval('public.districts_id_seq', 1, true);
 -- Name: location_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.location_id_seq', 15, true);
+SELECT pg_catalog.setval('public.location_id_seq', 17, true);
 
 
 --
@@ -2245,21 +2470,21 @@ SELECT pg_catalog.setval('public.post_comments_id_seq', 58, true);
 -- Name: post_photos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_photos_id_seq', 326, true);
+SELECT pg_catalog.setval('public.post_photos_id_seq', 381, true);
 
 
 --
 -- Name: post_reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_reviews_id_seq', 134, true);
+SELECT pg_catalog.setval('public.post_reviews_id_seq', 201, true);
 
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.posts_id_seq', 146, true);
+SELECT pg_catalog.setval('public.posts_id_seq', 210, true);
 
 
 --
@@ -2273,7 +2498,7 @@ SELECT pg_catalog.setval('public.rewards_id_seq', 9, true);
 -- Name: store_addresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.store_addresses_id_seq', 31, true);
+SELECT pg_catalog.setval('public.store_addresses_id_seq', 50, true);
 
 
 --
@@ -2287,7 +2512,7 @@ SELECT pg_catalog.setval('public.store_groups_id_seq', 4, true);
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stores_id_seq', 38, true);
+SELECT pg_catalog.setval('public.stores_id_seq', 60, true);
 
 
 --
@@ -2796,6 +3021,13 @@ CREATE INDEX stores_suburb_id_index ON public.stores USING btree (suburb_id);
 
 
 --
+-- Name: stores_z_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX stores_z_id_uindex ON public.stores USING btree (z_id);
+
+
+--
 -- Name: suburbs_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -2954,7 +3186,7 @@ ALTER TABLE ONLY public.rewards
 --
 
 ALTER TABLE ONLY public.store_addresses
-    ADD CONSTRAINT store_addresses_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT store_addresses_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -2970,7 +3202,7 @@ ALTER TABLE ONLY public.store_cuisines
 --
 
 ALTER TABLE ONLY public.store_cuisines
-    ADD CONSTRAINT store_cuisines_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT store_cuisines_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -2978,7 +3210,7 @@ ALTER TABLE ONLY public.store_cuisines
 --
 
 ALTER TABLE ONLY public.store_follows
-    ADD CONSTRAINT store_follows_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT store_follows_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -3006,11 +3238,19 @@ ALTER TABLE ONLY public.store_group_stores
 
 
 --
+-- Name: store_hours store_hours_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.store_hours
+    ADD CONSTRAINT store_hours_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
+
+
+--
 -- Name: store_rankings store_rankings_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.store_rankings
-    ADD CONSTRAINT store_rankings_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT store_rankings_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -3018,7 +3258,7 @@ ALTER TABLE ONLY public.store_rankings
 --
 
 ALTER TABLE ONLY public.store_ratings_cache
-    ADD CONSTRAINT store_ratings_cache_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT store_ratings_cache_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -3026,7 +3266,7 @@ ALTER TABLE ONLY public.store_ratings_cache
 --
 
 ALTER TABLE ONLY public.store_tags
-    ADD CONSTRAINT store_tags_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT store_tags_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -3106,7 +3346,7 @@ ALTER TABLE ONLY public.user_favorite_stores
 --
 
 ALTER TABLE ONLY public.user_favorite_stores
-    ADD CONSTRAINT user_favorite_stores_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT user_favorite_stores_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
 
 
 --
