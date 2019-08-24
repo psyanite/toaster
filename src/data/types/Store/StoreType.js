@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile, Tag, StoreHour } from '../../models';
+import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile, Tag, StoreHour, City } from '../../models';
 import SuburbType from '../Location/SuburbType';
 import LocationType from '../Location/LocationType';
 import AddressType from '../Location/AddressType';
@@ -16,9 +16,11 @@ import RatingType from './RatingType';
 import UserProfileType from '../User/UserProfileType';
 import TagType from './TagType';
 import StoreHourType from './StoreHourType';
+import CityType from '../Location/CityType';
 
 Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' });
 Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' });
+Store.City = Store.belongsTo(City, { foreignKey: 'city_id' });
 Store.Address = Store.hasOne(Address);
 Store.Cuisines = Store.belongsToMany(Cuisine, {
   through: 'store_cuisines',
@@ -67,6 +69,10 @@ export default new ObjectType({
     suburb: {
       type: SuburbType,
       resolve: resolver(Store.Suburb),
+    },
+    city: {
+      type: CityType,
+      resolve: resolver(Store.City),
     },
     hours: {
       type: new List(StoreHourType),
