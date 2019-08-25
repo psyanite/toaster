@@ -1,4 +1,4 @@
-# 🍞 Toaster 3.0.1
+# 🍞 Toaster 3.0.2
 
 ✨ GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 
@@ -81,7 +81,8 @@ DATABSE_HOST = 'localhost'
 DATABASE_PORT = 5432
 DATABASE_NAME = 'burntoast'
 DATABASE_USERNAME = 'postgres'
-DATABASE_PASSWORD = 'password'
+DATABASE_PASSWORD = '???'
+BEARER = '???'
 ```
 * `psql -U postgres -f 'src/scripts/clean.sql'`
 * `psql -U postgres -d burntoast -f 'src/scripts/export.sql'`

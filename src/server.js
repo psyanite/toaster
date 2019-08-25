@@ -6,7 +6,6 @@ import bodyParser from 'body-parser';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import { graphql } from 'graphql';
 import graphqlHTTP from 'express-graphql';
-import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
@@ -16,7 +15,6 @@ import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
 import createFetch from './createFetch';
-import passport from './passport';
 import router from './router';
 import models from './data/models';
 import schema from './data/schema';
@@ -62,44 +60,44 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-app.use(passport.initialize());
+// app.use(passport.initialize());
 
 if (__DEV__) {
   app.enable('trust proxy');
 }
-app.get(
-  '/login/facebook',
-  passport.authenticate('facebook', {
-    scope: ['email', 'user_location'],
-    session: false,
-  }),
-);
-app.get(
-  '/login/facebook/return',
-  passport.authenticate('facebook', {
-    failureRedirect: '/login',
-    session: false,
-  }),
-  (req, res) => {
-    const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
-    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    res.cookie('user_account_id', req.user.id, {
-      maxAge: 1000 * expiresIn,
-      httpOnly: true,
-    });
-    const url = require('url');
-    res.redirect(
-      url.format({
-        pathname: '/me',
-        query: {
-          id_token: token,
-          user_account_id: req.user.id,
-        },
-      }),
-    );
-  },
-);
+// app.get(
+//   '/login/facebook',
+//   passport.authenticate('facebook', {
+//     scope: ['email', 'user_location'],
+//     session: false,
+//   }),
+// );
+// app.get(
+//   '/login/facebook/return',
+//   passport.authenticate('facebook', {
+//     failureRedirect: '/login',
+//     session: false,
+//   }),
+//   (req, res) => {
+//     const expiresIn = 60 * 60 * 24 * 180; // 180 days
+//     const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
+//     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+//     res.cookie('user_account_id', req.user.id, {
+//       maxAge: 1000 * expiresIn,
+//       httpOnly: true,
+//     });
+//     const url = require('url');
+//     res.redirect(
+//       url.format({
+//         pathname: '/me',
+//         query: {
+//           id_token: token,
+//           user_account_id: req.user.id,
+//         },
+//       }),
+//     );
+//   },
+// );
 
 
 //
@@ -108,25 +106,60 @@ app.get(
 // -----------------------------------------------------------------------------
 // app.use('/auth', apiRouters.authRouter);
 
+
+//
+// Authentication
+// -----------------------------------------------------------------------------
+// app.use((req, res, next) => {
+//   const auth = req.headers.authorization;
+//   if (req.method === 'GET' || req.headers.origin === 'http://localhost:3000') {
+//     next();
+//   } else if (!auth) {
+//     throw new Error('Missing bearer token');
+//   } else if (auth !== `Bearer ${config.api.bearer}`) {
+//     throw new Error('Invalid bearer token');
+//   }
+//   next();
+// });
+//
+
+
+
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
 // Removed __DEV__ from graphiql and pretty options https://github.com/graphql/express-graphql
 app.use(
   '/graphql',
-  graphqlHTTP(req => ({
-    schema,
-    graphiql: true,
-    rootValue: { request: req },
-    pretty: true,
-    // customFormatErrorFn: error => ({
-    //   message: error.message,
-    //   locations: error.locations,
-    //   stack: error.stack ? error.stack.split('\n') : [],
-    //   path: error.path
-    // })
-  })),
+  (req, res) => {
+    // const auth = req.headers.authorization;
+    // if (req.method === 'POST' && req.headers.origin !== 'http://localhost:3000') {
+    //   if (!auth) {
+    //     throw new Error('Missing bearer token');
+    //   } else if (auth !== `Bearer ${config.api.bearer}`) {
+    //     throw new Error('Invalid bearer token');
+    //   }
+    // }
+
+    graphqlHTTP(req => ({
+      schema,
+      graphiql: true,
+      rootValue: { request: req },
+      pretty: true,
+      // customFormatErrorFn: error => ({
+      //   message: error.message,
+      //   locations: error.locations,
+      //   stack: error.stack ? error.stack.split('\n') : [],
+      //   path: error.path
+      // })
+    }))(req, res)
+  }
 );
+app.use((err, req, res, next) => {
+  res.status(403).send({ 'errors': [{ 'message': err.message }] });
+});
+
+
 
 //
 // Register server-side rendering middleware

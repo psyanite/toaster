@@ -1943,30 +1943,30 @@ COPY public.rewards (id, name, description, type, store_id, store_group_id, vali
 --
 
 COPY public.store_addresses (id, store_id, address_first_line, address_second_line, address_street_number, address_street_name, google_url) FROM stdin;
-1	3	Basement Level	\N	500	George St	https://goo.gl/maps/njQmnE8NFi52
-2	2	Level 1, Shop 11.04	Regent Place Arcade	487	George St	https://goo.gl/maps/Ds7vagBoTu42
-7	7	\N	\N	71	Pyrmont St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-4	4	\N	\N	22	Prince St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-5	5	\N	\N	67	Mitchell St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-3	1	Level 2, Hawker Lane	Chatswood Westfield	1	Anderson St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-31	23	\N	\N	405	Victoria St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-28	21	B38	Chatswood Chase Sydney	345	Victoria Ave	https://goo.gl/maps/pfW97xQqbryhQiqEA
-29	22	King St & York St	\N	77	King St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-26	19	Level 1 Food Court	MetCentre	273	George St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-27	20	Westfield Warringah Mall	\N	1	Old Pittwater Rd	https://goo.gl/maps/pfW97xQqbryhQiqEA
-24	17	\N	\N	88-89	Queen St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-25	18	Level 3, Shop 406a	Macquarie Centre	1	Waterloo Rd	https://goo.gl/maps/pfW97xQqbryhQiqEA
-22	15	\N	\N	22	Chapel Rd	https://goo.gl/maps/pfW97xQqbryhQiqEA
-23	16	\N	\N	24	Help St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-20	13	Shop 2	\N	59	John Street	https://goo.gl/maps/pfW97xQqbryhQiqEA
-21	14	\N	\N	1	Victoria Ave	https://goo.gl/maps/pfW97xQqbryhQiqEA
-18	11	\N	\N	605	George St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-19	12	\N	\N	65-71	Grote St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-17	10	\N	\N	861	George St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-8	8	\N	\N	405	Victoria St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-6	6	\N	\N	36	Queen St	https://goo.gl/maps/pfW97xQqbryhQiqEA
-30	9	\N	\N	51	Tumbalong Boulevard	https://goo.gl/maps/pfW97xQqbryhQiqEA
-50	60	\N	\N	83	Foveaux Street	\N
+7	7	\N	\N	161	Castleraugh St	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+27	20	Darling Square	\N	18	Nicole Walk	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+29	22	\N	\N	158	Burns Bay Rd	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+31	23	\N	\N	405	Victoria St	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+28	21	B38	Chatswood Chase Sydney	345	Victoria Ave	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+26	19	Level 1 Food Court	MetCentre	273	George St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+24	17	\N	\N	88-89	Queen St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+25	18	Level 3, Shop 406a	Macquarie Centre	1	Waterloo Rd	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+22	15	\N	\N	22	Chapel Rd	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+21	14	\N	\N	1	Victoria Ave	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+23	16	\N	\N	24	Help St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+6	6	\N	\N	36	Queen St	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+30	9	\N	\N	51	Tumbalong Boulevard	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+17	10	\N	\N	861	George St	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+18	11	\N	\N	605	George St	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+19	12	\N	\N	65-71	Grote St	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+20	13	Shop 2	\N	59	John Street	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
+50	60	\N	\N	83	Foveaux Street	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+3	1	Level 1, Hawkers Lane Food	Chatswood Westfield	1	Anderson St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+2	2	Level G, The Darling	The Star	80	Pyrmont St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+1	3	Basement Level	The Star	500	George St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+5	5	\N	\N	50	Hunter St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+4	4	Shop 1	\N	276	Pitt St	https://www.google.com/maps/search/?api=1&query=crisp+cbd+the+passage+cbd+320+340+pitt+street+sydney
+8	8	NO. 1, Ground Floor	Sydney GPO Building	\N	Martin Pl	https://www.google.com/maps/search/?api=1&query=taste+of+shanghai+world+square+cbd
 \.
 
 
@@ -2142,11 +2142,8 @@ COPY public.store_tags (store_id, tag_id) FROM stdin;
 --
 
 COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image, "order", rank, follower_count, review_count, store_count, z_id, z_url, more_info, avg_cost) FROM stdin;
-22	Vapiano	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg	12	99	0	0	0	\N	\N	\N	\N
 16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
 9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg	9	99	0	0	0	\N	\N	\N	\N
-7	The Hungry Cartel	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7	99	0	0	0	\N	\N	\N	\N
-8	Higher Ground	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg	8	99	0	0	0	\N	\N	\N	\N
 14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
 21	New Shanghai	+61	926761888	15	2	1	https://imgur.com/RVrwxN7.jpg	11	99	0	0	0	\N	\N	\N	\N
 17	Mad Mex	+61	295511312	12	1	1	https://imgur.com/tR1bD1v.jpg	14	99	0	0	0	\N	\N	\N	\N
@@ -2158,13 +2155,10 @@ COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_i
 12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
 11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N
 6	Cié Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg	5	99	0	0	0	\N	\N	\N	\N
-20	Kurtosh House	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg	10	99	0	0	0	\N	\N	\N	\N
 2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2	1	0	3	0	\N	\N	\N	\N
 23	Anastasia Café and Eatery	+61	281565511	4	1	1	https://imgur.com/7xdUPm4.jpg	13	99	0	1	0	\N	\N	\N	\N
-4	Burn's Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4	1	0	4	0	\N	\N	\N	\N
 3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg	3	1	0	5	0	\N	\N	\N	\N
 1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1	1	1	2	0	\N	\N	\N	\N
-5	Red Sparrow Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6	1	1	0	0	\N	\N	\N	\N
 25	Bills	+61	998997123	\N	13	1	https://b.zmtcdn.com/data/reviews_photos/c28/5af30180b449cff001d2d41eb5cd2c28_1544341757.jpg	1	99	0	0	0	\N	\N	\N	\N
 26	Lorraine's Patisserie	+61	977551355	\N	13	1	https://b.zmtcdn.com/data/pictures/5/16566535/6f55afcd0e5c7b30645c4edae6303efc.jpg	1	99	0	0	0	\N	\N	\N	\N
 27	Flour & Stone	+61	291191111	\N	12	1	https://b.zmtcdn.com/data/pictures/6/16564656/4ded590717ab792f34cff33c9fde11e3.jpg	1	99	0	0	0	\N	\N	\N	\N
@@ -2178,6 +2172,12 @@ COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_i
 37	Chapayum	+61	288819222	\N	13	1	https://b.zmtcdn.com/data/pictures/7/19018017/7c2119e91ec0f4e8c8bbb7302fa23e27.jpg	1	99	0	0	0	\N	\N	\N	\N
 38	Choux Love	+61	93562436	\N	1	1	https://b.zmtcdn.com/data/reviews_photos/372/13299ecd4b16d6b896a09836b1628372_1522897753.jpg	1	99	0	0	0	\N	\N	\N	\N
 60	Le Meow	+61	(02) 9211 3568	17	13	1	https://b.zmtcdn.com/data/reviews_photos/21e/cc0377b2af177b44aade56e1ed7eb21e_1542718407.jpg	1	99	0	0	0	sydney/le-meow-surry-hills	https://www.zomato.com/sydney/le-meow-surry-hills	Breakfast,Takeaway Available,No Alcohol Available	40
+4	The Walrus Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4	1	0	4	0	\N	\N	\N	\N
+5	Frankie's Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6	1	1	0	0	\N	\N	\N	\N
+20	Kürtősh	+61	93562436	\N	12	1	https://imgur.com/q6gqaXm.jpg	10	99	0	0	0	\N	\N	\N	\N
+7	Pablo & Rusty's Sydney CBD	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7	99	0	0	0	\N	\N	\N	\N
+8	Maximus Cafe	+61	281565555	4	1	1	https://imgur.com/B3NiiYR.jpg	8	99	0	0	0	\N	\N	\N	\N
+22	Zapparellis Pizza	+61	965511555	\N	1	1	https://imgur.com/mCuCc8p.jpg	12	99	0	0	0	\N	\N	\N	\N
 \.
 
 
