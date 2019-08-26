@@ -75,7 +75,7 @@ export default {
         .query(`
           select *
           from location_search
-          where document @@ to_tsquery('english', :queryString)
+          where document @@ to_tsquery('english', :queryString) 
             or lower(name) like lower(:likeString)
           order by ts_rank(document, to_tsquery('english', :queryString)) desc
         `, {

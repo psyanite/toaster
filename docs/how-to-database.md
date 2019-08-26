@@ -71,6 +71,23 @@ where document @@ to_tsquery('english', 'westfield')
 order by ts_rank(document, to_tsquery('english', 'westfield')) desc;
 ```
 
+
+### rewards_search
+```postgresql
+create materialized view rewards_search as
+SELECT rewards.id,
+(
+       setweight(to_tsvector('english'::regconfig, unaccent((rewards.name)::text)), 'A'::"char") ||
+       setweight(to_tsvector('english'::regconfig, (coalesce(rewards.tags, ''::character varying))::text), 'A'::"char") ||
+       setweight(to_tsvector('english'::regconfig, (coalesce(s.name, ''::character varying))::text), 'B'::"char") ||
+       setweight(to_tsvector('english'::regconfig, (coalesce(sg.name, ''::character varying))::text), 'B'::"char")
+) AS document
+FROM rewards
+    LEFT JOIN stores s on rewards.store_id = s.id
+    LEFT JOIN store_groups sg on rewards.store_group_id = sg.id;
+```
+
+
 ### city_locations
 ```postgresql
 create materialized view city_locations as
@@ -140,4 +157,3 @@ from stores s
          left join post_reviews r on r.post_id = p.id
 group by s.id;
 ```
-

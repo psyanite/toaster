@@ -4,6 +4,8 @@ import Reward from '../models/Reward/Reward';
 import RewardType from '../types/Reward/RewardType';
 import sequelize from '../sequelize';
 import Sequelize from 'sequelize';
+import StoreType from '../types/Store/StoreType';
+import { Store } from '../models';
 
 const Op = Sequelize.Op;
 
@@ -56,5 +58,31 @@ export default {
       }
       return await Reward.findAll({ where: {id: { [Op.in]: results.map(r => r.id) } } });
     }
-  }
+  },
+
+  rewardsBySearch: {
+    type: new List(StoreType),
+    args: {
+      query: {
+        type: new NonNull(String),
+      }
+    },
+    resolve: async (_, { query }) => {
+      const clean = query.replace(/\s+/g, ' | ');
+      const [results] = await sequelize
+        .query(`
+          select id
+          from reward_search
+          where document @@ to_tsquery('english', :queryString) 
+            or unaccent(lower(name)) like unaccent(lower(:likeString))
+          order by ts_rank(document, to_tsquery('english', :queryString)) desc
+          `, {
+          replacements: { queryString: clean, likeString: `%${clean}%` }
+        });
+      if (!results || results.length === 0) {
+        return [];
+      }
+      return await Reward.findAll({ where: {id: { [Op.in]: results.map(r => r.id) } } });
+    }
+  },
 };

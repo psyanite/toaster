@@ -10,7 +10,8 @@ export default {
       await sequelize.query(`refresh materialized view location_search`);
       await sequelize.query(`refresh materialized view cuisine_search`);
       await sequelize.query(`refresh materialized view store_search`);
-      return `Updated materialized views location_search, cuisine_search, store_search`;
+      await sequelize.query(`refresh materialized view reward_search`);
+      return `Updated materialized views location_search, cuisine_search, store_search reward_search`;
     }
   },
 

@@ -35,7 +35,8 @@ export default {
         .query(`
           select *
           from store_search
-          where document @@ to_tsquery('english', :queryString) or unaccent(lower(name)) like unaccent(lower(:likeString))
+          where document @@ to_tsquery('english', :queryString) 
+            or unaccent(lower(name)) like unaccent(lower(:likeString))
           order by ts_rank(document, to_tsquery('english', :queryString)) desc
         `, {
           model: Store,
