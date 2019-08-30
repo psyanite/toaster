@@ -13,8 +13,20 @@ export default {
 
   allRewards: {
     type: new List(RewardType),
-    resolve: async () => {
-      return await Reward.findAll({ where: { active: true, hidden: false } });
+    args: {
+      limit: {
+        type: new NonNull(Int),
+      },
+      offset: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { limit, offset }) => {
+      return await Reward.findAll({
+        where: { active: true, hidden: false },
+        limit: limit,
+        offset: offset,
+      });
     }
   },
 

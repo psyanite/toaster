@@ -6,14 +6,30 @@ import FeedService, { Feed } from '../services/FeedService';
 const UserFeeds = new Map();
 let DefaultFeed = new Feed(null);
 
+const isExpired = (createdAt) => {
+  return createdAt < new Date(new Date() - 10*60000)
+};
+
+const slice = (feed, limit, offset) => {
+  return Array.from(feed).slice(offset).slice(0, limit);
+};
+
 export default {
   feedByDefault: {
     type: new List(PostType),
-    resolve: async () => {
-      if (DefaultFeed.posts == null || DefaultFeed.createdAt < new Date(new Date() - 10*60000)) {
+    args: {
+      limit: {
+        type: new NonNull(Int),
+      },
+      offset: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { limit, offset }) => {
+      if (!DefaultFeed.posts || isExpired(DefaultFeed.createdAt)) {
         DefaultFeed = await FeedService.getGenericFeed();
       }
-      return DefaultFeed.posts.values();
+      return slice(DefaultFeed.posts.values(), limit, offset);
     }
   },
 
@@ -23,22 +39,22 @@ export default {
       userId: {
         type: new NonNull(Int),
       },
+      limit: {
+        type: new NonNull(Int),
+      },
+      offset: {
+        type: new NonNull(Int),
+      },
     },
-    resolve: async (_, { userId }) => {
-      let exist = UserFeeds.get(userId);
+    resolve: async (_, { userId, limit, offset }) => {
+      let feed = UserFeeds.get(userId);
 
-      let feed;
-      if (!feed) {
+      if (!feed || isExpired(feed.createdAt)) {
         feed = await FeedService.getFeed(userId);
-      } else if (exist.createdAt < new Date(new Date() - 10*60000)) {
-        feed = await FeedService.getFeed(userId);
-      } else {
-        return exist.posts.values();
+        UserFeeds.set(userId, feed);
       }
 
-      UserFeeds.set(userId, feed);
-
-      return feed.posts.values();
+      return slice(feed.posts.values(), limit, offset);
     }
   }
 };

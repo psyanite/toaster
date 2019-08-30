@@ -6,13 +6,6 @@ import PostType from '../types/Post/PostType';
 import sequelize from '../sequelize';
 
 export default {
-  allPosts: {
-    type: new List(PostType),
-    resolve() {
-      return Post.findAll().then(data => data);
-    },
-  },
-
   postById: {
     type: new List(PostType),
     args: {
@@ -23,26 +16,20 @@ export default {
     resolve: resolver(Post),
   },
 
-  allPostsByStoreId: {
-    type: new List(PostType),
-    args: {
-      storeId: {
-        type: new NonNull(Int),
-      },
-    },
-    resolve (_, { storeId }) {
-      return Post.findAll({ where: { store_id: storeId }}).then(data => data);
-    }
-  },
-
   postsByStoreId: {
     type: new List(PostType),
     args: {
       storeId: {
         type: new NonNull(Int),
       },
+      limit: {
+        type: new NonNull(Int),
+      },
+      offset: {
+        type: new NonNull(Int),
+      },
     },
-    resolve: async (_, { storeId }) => {
+    resolve: async (_, { storeId, limit, offset }) => {
       return await sequelize
         .query(`
           select * from (
@@ -55,10 +42,12 @@ export default {
             select * from posts
             where store_id = :storeId and posted_by is null
           )
-          order by posted_at desc;
+          order by posted_at desc
+          limit :limitStr
+          offset :offsetStr
         `, {
           model: Post,
-          replacements: { storeId: storeId },
+          replacements: { storeId: storeId, limitStr: limit, offsetStr: offset},
         });
     },
   },
@@ -98,25 +87,25 @@ export default {
       userId: {
         type: new NonNull(Int),
       },
+      limit: {
+        type: new NonNull(Int),
+      },
+      offset: {
+        type: new NonNull(Int),
+      },
       showHiddenPosts: {
         type: new NonNull(Boolean),
       },
     },
-    resolve: resolver(Post, {
-      before: (findOptions, args) => {
-        if (args.showHiddenPosts) {
-          findOptions.where = {
-            posted_by: args.userId,
-          };
-        } else {
-          findOptions.where = {
-            posted_by: args.userId,
-            hidden: false,
-          };
-        }
-        findOptions.order = [['posted_at', 'DESC']];
-        return findOptions;
-      },
-    }),
+    resolve (_, { userId, limit, offset, showHiddenPosts }) {
+      let where = { posted_by: userId };
+      if (!showHiddenPosts) where.hidden = false;
+      return Post.findAll({
+        where: where,
+        limit: limit,
+        offset: offset,
+        order: [['posted_at', 'DESC']]
+      }).then(data => data);
+    },
   },
 };
