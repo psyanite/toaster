@@ -12,6 +12,10 @@ const Suburb = sequelize.define('suburbs', {
     type: Sequelize.STRING(255),
   },
 
+  postcode: {
+    type: Sequelize.INTEGER,
+  },
+
   city_id: {
     type: Sequelize.INTEGER,
   },

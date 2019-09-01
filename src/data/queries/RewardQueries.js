@@ -22,7 +22,7 @@ export default {
       },
     },
     resolve: async (_, { limit, offset }) => {
-      return await Reward.findAll({
+      return Reward.findAll({
         where: { active: true, hidden: false },
         limit: limit,
         offset: offset,
@@ -38,14 +38,14 @@ export default {
       },
     },
     resolve: async (_, { code }) => {
-      return await Reward.findOne({ where: { code: code } })
+      return Reward.findOne({ where: { code: code } });
     }
   },
 
   topRewards: {
     type: new List(RewardType),
     resolve: async () => {
-      return await Reward.findAll({ where: { rank: 1 } });
+      return Reward.findAll({ where: { rank: 1 } });
     }
   },
 
@@ -68,7 +68,7 @@ export default {
       if (!results || results.length === 0) {
         return [];
       }
-      return await Reward.findAll({ where: {id: { [Op.in]: results.map(r => r.id) } } });
+      return Reward.findAll({ where: { id: { [Op.in]: results.map(r => r.id) } } });
     }
   },
 
@@ -85,16 +85,16 @@ export default {
         .query(`
           select id
           from reward_search
-          where document @@ to_tsquery('english', :queryString) 
-            or unaccent(lower(name)) like unaccent(lower(:likeString))
-          order by ts_rank(document, to_tsquery('english', :queryString)) desc
+          where document @@ to_tsquery('english', :queryStr) 
+            or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          order by ts_rank(document, to_tsquery('english', :queryStr)) desc
           `, {
-          replacements: { queryString: clean, likeString: `%${clean}%` }
+          replacements: { queryStr: clean, likeStr: `%${clean}%` }
         });
       if (!results || results.length === 0) {
         return [];
       }
-      return await Reward.findAll({ where: {id: { [Op.in]: results.map(r => r.id) } } });
+      return Reward.findAll({ where: { id: { [Op.in]: results.map(r => r.id) } } });
     }
   },
 };

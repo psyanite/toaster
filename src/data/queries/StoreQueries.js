@@ -35,12 +35,12 @@ export default {
         .query(`
           select *
           from store_search
-          where document @@ to_tsquery('english', :queryString) 
-            or unaccent(lower(name)) like unaccent(lower(:likeString))
-          order by ts_rank(document, to_tsquery('english', :queryString)) desc
+          where document @@ to_tsquery('english', :queryStr) 
+            or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          order by ts_rank(document, to_tsquery('english', :queryStr)) desc
         `, {
           model: Store,
-          replacements: { queryString: clean, likeString: `%${clean}%` }
+          replacements: { queryStr: clean, likeStr: `%${clean}%` }
         });
     }
   },

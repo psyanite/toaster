@@ -25,6 +25,7 @@ export default new ObjectType({
       type: CityType,
       resolve: resolver(Suburb.City),
     },
+    postcode: { type: Int },
     locations: {
       type: new List(LocationType),
       resolve: resolver(Suburb.Locations),

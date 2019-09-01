@@ -38,7 +38,7 @@ export default {
       },
     },
     resolve: async (_, { username }) => {
-      return await UserProfile.findOne({ where: { username: username } });
+      return UserProfile.findOne({ where: { username: username } });
     }
   },
 };

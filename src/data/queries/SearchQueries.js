@@ -1,10 +1,5 @@
 /* eslint-disable no-param-reassign */
-import {
-  GraphQLInt as Int,
-  GraphQLList as List, GraphQLNonNull as NonNull,
-  GraphQLObjectType as ObjectType,
-  GraphQLString as String,
-} from 'graphql';
+import { GraphQLList as List, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
 import sequelize from '../sequelize';
 import Sequelize from 'sequelize';
 
@@ -50,14 +45,13 @@ export default {
       const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
-          select *
-          from cuisine_search
-          where document @@ to_tsquery('english', :queryString)
-            or unaccent(lower(name)) like unaccent(lower(:likeString))
-          order by ts_rank(document, to_tsquery('english', :queryString)) desc
+            select *
+            from cuisine_search
+            where document @@ to_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+            order by ts_rank(document, to_tsquery('english', :queryStr)) desc
         `, {
           model: CuisineSearchResult,
-          replacements: { queryString: clean, likeString: `%${clean}%` }
+          replacements: { queryStr: clean, likeStr: `%${clean}%` }
         });
     }
   },
@@ -73,14 +67,13 @@ export default {
       const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
-          select *
-          from location_search
-          where document @@ to_tsquery('english', :queryString) 
-            or lower(name) like lower(:likeString)
-          order by ts_rank(document, to_tsquery('english', :queryString)) desc
+            select *
+            from location_search
+            where document @@ to_tsquery('english', :queryStr) or lower(name) like lower(:likeStr)
+            order by ts_rank(document, to_tsquery('english', :queryStr)) desc
         `, {
           model: LocationSearchResult,
-          replacements: { queryString: clean, likeString: `%${clean}%` }
+          replacements: { queryStr: clean, likeStr: `%${clean}%` }
         });
     }
   },

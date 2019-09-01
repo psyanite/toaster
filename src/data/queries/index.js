@@ -2,6 +2,7 @@ import { GraphQLObjectType as ObjectType } from 'graphql';
 import CommentQueries from './CommentQueries';
 import CurateQueries from './CurateQueries';
 import FeedQueries from './FeedQueries';
+import LocationQueries from './LocationQueries';
 import MeQueries from './MeQueries';
 import PostQueries from './PostQueries';
 import RewardQueries from './RewardQueries';
@@ -21,6 +22,7 @@ export default new ObjectType({
     CommentQueries,
     CurateQueries,
     FeedQueries,
+    LocationQueries,
     MeQueries,
     PostQueries,
     RewardQueries,
