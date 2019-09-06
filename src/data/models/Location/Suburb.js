@@ -19,6 +19,10 @@ const Suburb = sequelize.define('suburbs', {
   city_id: {
     type: Sequelize.INTEGER,
   },
+
+  coords: {
+    type: Sequelize.GEOMETRY('POINT'),
+  }
 });
 
 export default Suburb;

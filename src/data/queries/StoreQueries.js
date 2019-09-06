@@ -13,7 +13,7 @@ export default {
   },
 
   storeById: {
-    type: new List(StoreType),
+    type: StoreType,
     args: {
       id: {
         type: new NonNull(Int),

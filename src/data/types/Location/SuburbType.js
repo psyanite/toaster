@@ -9,6 +9,8 @@ import { resolver } from 'graphql-sequelize';
 import { City, Location, Suburb } from '../../models';
 import LocationType from './LocationType';
 import CityType from './CityType';
+import { PointObject } from 'graphql-geojson';
+import GeneralUtils from '../../../utils/GeneralUtils';
 
 Suburb.City = Suburb.belongsTo(City, { constraints: false });
 Suburb.Locations = Suburb.hasMany(Location, {
@@ -30,5 +32,9 @@ export default new ObjectType({
       type: new List(LocationType),
       resolve: resolver(Suburb.Locations),
     },
+    coords: {
+      type: PointObject,
+      resolve: GeneralUtils.resolveCoords,
+    }
   }),
 });
