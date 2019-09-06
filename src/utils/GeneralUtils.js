@@ -1,4 +1,5 @@
 import * as Randomize from 'randomstring';
+import sequelize from '../data/sequelize';
 
 export default {
   generateCode() {

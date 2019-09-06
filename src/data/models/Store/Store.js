@@ -66,6 +66,10 @@ const Store = sequelize.define('stores', {
 
   avg_cost: {
     type: Sequelize.INTEGER,
+  },
+
+  coords: {
+    type: Sequelize.GEOMETRY('POINT'),
   }
 });
 

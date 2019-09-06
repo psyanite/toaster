@@ -145,4 +145,30 @@ export default {
       return `Updated store counts for ${result.rowCount} user profiles`;
     }
   },
+
+  updateRewardCoords: {
+    type: String,
+    resolve: async () => {
+      const [, firstUpdate] = await sequelize
+        .query(`
+          update rewards r
+          set coords = array[s.coords]
+          from stores s
+          where r.store_id = s.id
+        `);
+      const [, secondUpdate] = await sequelize
+        .query(`
+          update rewards r
+          set coords = array(
+            select s.coords
+            from stores s
+              left join store_group_stores sgs on sgs.store_id = s.id
+            where r.store_group_id = sgs.group_id
+            )
+          where store_group_id is not null
+        `);
+      const total = await Reward.count();
+      return `Updated ${firstUpdate.rowCount + secondUpdate.rowCount} rewards out of ${total} rewards`;
+    }
+  },
 };

@@ -157,3 +157,29 @@ from stores s
          left join post_reviews r on r.post_id = p.id
 group by s.id;
 ```
+
+### 
+```postgresql
+CREATE OR REPLACE FUNCTION to_distance(point[], float, float)
+  RETURNS float
+AS
+$$
+DECLARE
+  points ALIAS FOR $1;
+  lat ALIAS FOR $2;
+  lng ALIAS FOR $3;
+  distances float[];
+BEGIN
+  FOR I IN array_lower(points, 1)..array_upper(points, 1)
+    LOOP
+      distances[I] := 6371 * acos(
+              cos(radians(lat)) * cos(radians(points[I][0])) * cos(radians(lng) - radians(points[I][1])) +
+              sin(radians(lat)) * sin(radians(points[I][0])));
+    END LOOP;
+  RETURN min(unnest(distances));
+END;
+$$
+  LANGUAGE plpgsql
+  STABLE
+  RETURNS NULL ON NULL INPUT;
+```

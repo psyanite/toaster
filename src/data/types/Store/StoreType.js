@@ -6,6 +6,7 @@ import {
   GraphQLString as String,
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
+import { PointObject } from 'graphql-geojson';
 
 import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile, Tag, StoreHour, City } from '../../models';
 import SuburbType from '../Location/SuburbType';
@@ -58,6 +59,21 @@ export default new ObjectType({
     z_url: { type: String },
     more_info: { type: String },
     avg_cost: { type: Int },
+    coords: {
+      type: PointObject,
+      resolve: (store) => {
+        return {
+          type: 'Point',
+            coordinates: [store.coords.x, store.coords.y],
+          crs: {
+          type: 'name',
+            properties: {
+            name: 'urn:ogc:def:crs:OGC:1.3:CRS84',
+          },
+        },
+        }
+      }
+    },
     address: {
       type: AddressType,
       resolve: resolver(Store.Address),
