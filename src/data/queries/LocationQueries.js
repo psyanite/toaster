@@ -44,19 +44,22 @@ export default {
       query: {
         type: new NonNull(String),
       },
+      limit: {
+        type: Int,
+      }
     },
-    resolve: async (_, { query }) => {
+    resolve: async (_, { query, limit }) => {
       const clean = query.replace(/\s+/g, ' | ');
       const suburbs = await sequelize
         .query(`
             select *
             from suburbs
-            where document @@ to_tsquery('english', :queryStr) or lower(name) like lower(:likeStr)
-            order by ts_rank(document, to_tsquery('english', :queryStr)) desc
-            limit 12
+            where document @@ plainto_tsquery('english', :queryStr) or lower(name) like lower(:likeStr)
+            order by ts_rank(document, plainto_tsquery('english', :queryStr)) desc
+            limit :limitStr
         `, {
           model: Suburb,
-          replacements: { queryStr: clean, likeStr: `%${clean}%` }
+          replacements: { queryStr: clean, likeStr: `%${clean}%`, limitStr: limit || 12 }
         });
       return Suburb.findAll({ where: { id: { [Op.in]: suburbs.map(s => s.id) } } });
     }

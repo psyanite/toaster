@@ -1,7 +1,15 @@
 /* eslint-disable no-param-reassign */
-import { GraphQLList as List, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
+import {
+  GraphQLInt as Int,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+  GraphQLObjectType as ObjectType,
+  GraphQLString as String,
+} from 'graphql';
 import sequelize from '../sequelize';
 import Sequelize from 'sequelize';
+import { PointObject } from 'graphql-geojson';
+import GeneralUtils from '../../utils/GeneralUtils';
 
 const CuisineSearchResult = sequelize.define('cuisines_search', {
   name: {
@@ -22,6 +30,9 @@ const LocationSearchResult = sequelize.define('location_search', {
   },
   description: {
     type: Sequelize.STRING,
+  },
+  coords: {
+    type: Sequelize.GEOMETRY('POINT'),
   }
 });
 
@@ -30,6 +41,10 @@ const LocationSearchResultType = new ObjectType({
   fields: () => ({
     name: { type: String },
     description: { type: String },
+    coords: {
+      type: PointObject,
+      resolve: GeneralUtils.resolveCoords,
+    }
   }),
 });
 
@@ -47,8 +62,8 @@ export default {
         .query(`
             select *
             from cuisine_search
-            where document @@ to_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
-            order by ts_rank(document, to_tsquery('english', :queryStr)) desc
+            where document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+            order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: CuisineSearchResult,
           replacements: { queryStr: clean, likeStr: `%${clean}%` }
@@ -62,18 +77,21 @@ export default {
       query: {
         type: new NonNull(String),
       },
+      limit: {
+        type: Int,
+      }
     },
-    resolve: async (_, { query }) => {
+    resolve: async (_, { query, limit }) => {
       const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
             select *
             from location_search
-            where document @@ to_tsquery('english', :queryStr) or lower(name) like lower(:likeStr)
-            order by ts_rank(document, to_tsquery('english', :queryStr)) desc
+            where document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+            order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: LocationSearchResult,
-          replacements: { queryStr: clean, likeStr: `%${clean}%` }
+          replacements: { queryStr: clean, likeStr: `%${clean}%`, limitStr: limit || 12 }
         });
     }
   },

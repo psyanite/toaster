@@ -86,8 +86,8 @@ export default {
         .query(`
           select id
           from reward_search
-          where document @@ to_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
-          order by ts_rank(document, to_tsquery('english', :queryStr)) desc
+          where document @@ plainto_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          order by ts_rank(document, plainto_tsquery('english', :queryStr)) desc
         `, {
           replacements: { queryStr: clean, likeStr: `%${clean}%` }
         });
@@ -99,7 +99,7 @@ export default {
   },
 
   rewardsByCoords: {
-    type: new List(StoreType),
+    type: new List(RewardType),
     args: {
       lat: {
         type: new NonNull(Float),
@@ -115,10 +115,9 @@ export default {
       }
     },
     resolve: async (_, { lat, lng, limit, offset }) => {
-      const attributes =  [[sequelize.literal(`mini(to_distance(coords, ${lat}, ${lng}))`), 'distance']];
-      return Store.findAll({
-        attributes: { include: attributes },
-        include: [{ attributes: attributes }],
+      return Reward.findAll({
+        where: { hidden: false },
+        attributes: { include: [[sequelize.literal(`mini(to_distance(coords, ${lat}, ${lng}))`), 'distance']] },
         order: sequelize.col('distance'),
         limit: limit,
         offset: offset,

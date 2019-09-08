@@ -5,11 +5,11 @@ import StoreType from '../types/Store/StoreType';
 import sequelize from '../../data/sequelize';
 
 export default {
-  allStores: {
+  topStores: {
     type: new List(StoreType),
-    resolve() {
-      return Store.findAll({ order: [['order', 'ASC']] }).then(data => data);
-    },
+    resolve: async () => {
+      return Store.findAll({ where: { rank: 1 }, limit: 12 });
+    }
   },
 
   storeById: {
@@ -22,32 +22,73 @@ export default {
     resolve: resolver(Store),
   },
 
-  storesBySearch: {
+  storesByQuery: {
     type: new List(StoreType),
     args: {
       query: {
         type: new NonNull(String),
+      },
+      limit: {
+        type: new NonNull(Int),
+      },
+      offset: {
+        type: new NonNull(Int),
       }
     },
-    resolve: async (_, { query }) => {
+    resolve: async (_, { query, limit, offset }) => {
       const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
           select *
           from store_search
-          where document @@ to_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
-          order by ts_rank(document, to_tsquery('english', :queryStr)) desc
+          where document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
+          limit :limitStr
+          offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: clean, likeStr: `%${clean}%` }
+          replacements: { queryStr: clean, likeStr: `%${clean}%`, limitStr: limit, offsetStr: offset }
         });
     }
   },
 
-  topStores: {
+  storesByQueryCoords: {
     type: new List(StoreType),
-    resolve: async () => {
-      return Store.findAll({ where: { rank: 1 } });
+    args: {
+      query: {
+        type: new NonNull(String),
+      },
+      lat: {
+        type: new NonNull(Float),
+      },
+      lng: {
+        type: new NonNull(Float),
+      },
+      dist: {
+        type: new NonNull(Float),
+      },
+      // limit: {
+      //   type: new NonNull(Int),
+      // },
+      // offset: {
+      //   type: new NonNull(Int),
+      // }
+    },
+    resolve: async (_, { query, lat, lng, limit, offset, dist }) => {
+      const clean = query.replace(/\s+/g, ' | ');
+      return await sequelize
+        .query(`
+          select *
+          from store_search
+          where (document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
+            and to_distance(coords, :lat, :lng) < :dist
+          order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
+          limit :limitStr
+          offset :offsetStr
+        `, {
+          model: Store,
+          replacements: { queryStr: clean, likeStr: `%${clean}%`, limitStr: 10, offsetStr: 0, lat, lng, dist }
+        });
     }
   },
 
