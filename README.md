@@ -10,51 +10,6 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
   <img src="https://github.com/psyanite/toaster/blob/master/docs/images/allstores-query.png" width="600px"/>  
 </div>
 
-
-### Meowries
-```
-profileByUserId(userId: Int!): [UserProfile]
-favoriteStores(userId: Int!): [Store]
-allPosts: [Post]
-postById(id: Int!): [Post]
-postsByStoreId(storeId: Int!): [Post]
-postsByUserId(userId: Int!): [Post]
-allRewards: [Reward]
-allStores: [Store]
-storeById(id: Int!): [Store]
-storesBySearch(query: String!): [Store]
-allUserAccounts: [UserAccount]
-userAccountById(id: Int!): UserAccount
-userAccountByUsername(username: String!): UserAccount
-userLoginBy(socialType: String!socialId: String!): UserLogin
-userProfileByUsername(username: String!): UserProfile
-allUserRewards: [UserReward]
-userRewardBy(userId: IntrewardId: Int): [UserReward]
-```
-
-### Meowtations
-```
-addStore(name: String!): Store
-
-addUser(
-  username: String!
-  displayName: String!
-  email: String!
-  profilePicture: String!
-  socialId: String!
-  socialType: String!): UserLogin
-
-favoriteReward(userId: Int!rewardId: Int!): UserAccount
-
-unfavoriteReward(userId: Int!rewardId: Int!): UserAccount
-
-favoriteStore(userId: Int!storeId: Int!): UserAccount
-
-unfavoriteStore(userId: Int!storeId: Int!): UserAccount
-
-addUserReward(userId: Int!rewardId: Int!): UserReward
-```
-
 ### Development Tools
 
 * PostgreSQL 10

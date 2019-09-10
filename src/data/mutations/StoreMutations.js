@@ -1,4 +1,4 @@
-import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
+import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String, GraphQLFloat as Float } from 'graphql';
 
 import sequelize from '../sequelize';
 
@@ -58,6 +58,12 @@ export default {
       city: {
         type: new NonNull(String),
       },
+      lat: {
+        type: new NonNull(Float)
+      },
+      lng: {
+        type: new NonNull(Float)
+      },
       moreInfo: {
         type: String,
       },
@@ -72,6 +78,7 @@ export default {
       zId, zUrl, name, phoneCountry, phoneNumber, coverImage,
       addressFirstLine, addressSecondLine, addressStreetNumber, addressStreetName, googleUrl,
       cuisines, location, suburb, city,
+      lat, lng,
       moreInfo, avgCost, hours
     }) => {
       const process = async (t) => {
@@ -99,6 +106,7 @@ export default {
           city_id: cityObj.id,
           more_info: moreInfo,
           avg_cost: avgCost,
+          coords: sequelize.literal(`POINT(${lat},${lng})`),
         }, { transaction: t });
 
         await StoreAddress.create({
