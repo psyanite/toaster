@@ -1,9 +1,7 @@
 /* eslint-disable global-require */
 import path from 'path';
 import express from 'express';
-import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import { graphql } from 'graphql';
 import graphqlHTTP from 'express-graphql';
 import fetch from 'node-fetch';
@@ -35,95 +33,12 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
 app.use(express.static(path.resolve(__dirname, 'public')));
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-//
-// Authentication
-// -----------------------------------------------------------------------------
-app.use(
-  expressJwt({
-    secret: config.auth.jwt.secret,
-    credentialsRequired: false,
-    getToken: req => req.cookies.id_token,
-  }),
-);
-// Error handler for express-jwt
-app.use((err, req, res, next) => {
-  // eslint-disable-line no-unused-vars
-  if (err instanceof Jwt401Error) {
-    console.error('[express-jwt-error]', req.cookies.id_token);
-    // `clearCookie`, otherwise user can't use web-app until cookie expires
-    res.clearCookie('id_token');
-  }
-  next(err);
-});
-
-// app.use(passport.initialize());
 
 if (__DEV__) {
   app.enable('trust proxy');
 }
-// app.get(
-//   '/login/facebook',
-//   passport.authenticate('facebook', {
-//     scope: ['email', 'user_location'],
-//     session: false,
-//   }),
-// );
-// app.get(
-//   '/login/facebook/return',
-//   passport.authenticate('facebook', {
-//     failureRedirect: '/login',
-//     session: false,
-//   }),
-//   (req, res) => {
-//     const expiresIn = 60 * 60 * 24 * 180; // 180 days
-//     const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
-//     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-//     res.cookie('user_account_id', req.user.id, {
-//       maxAge: 1000 * expiresIn,
-//       httpOnly: true,
-//     });
-//     const url = require('url');
-//     res.redirect(
-//       url.format({
-//         pathname: '/me',
-//         query: {
-//           id_token: token,
-//           user_account_id: req.user.id,
-//         },
-//       }),
-//     );
-//   },
-// );
-
-
-//
-// Auth Router
-// Not currently used!!!
-// -----------------------------------------------------------------------------
-// app.use('/auth', apiRouters.authRouter);
-
-
-//
-// Authentication
-// -----------------------------------------------------------------------------
-// app.use((req, res, next) => {
-//   const auth = req.headers.authorization;
-//   if (req.method === 'GET' || req.headers.origin === 'http://localhost:3000') {
-//     next();
-//   } else if (!auth) {
-//     throw new Error('Missing bearer token');
-//   } else if (auth !== `Bearer ${config.api.bearer}`) {
-//     throw new Error('Invalid bearer token');
-//   }
-//   next();
-// });
-//
-
-
 
 //
 // Register API middleware
@@ -132,26 +47,20 @@ if (__DEV__) {
 app.use(
   '/graphql',
   (req, res) => {
-    // const auth = req.headers.authorization;
-    // if (req.method === 'POST' && req.headers.origin !== 'http://localhost:3000') {
-    //   if (!auth) {
-    //     throw new Error('Missing bearer token');
-    //   } else if (auth !== `Bearer ${config.api.bearer}`) {
-    //     throw new Error('Invalid bearer token');
-    //   }
-    // }
+    const auth = req.headers.authorization;
+    if (req.method === 'POST' && req.headers.origin !== 'http://localhost:3000') {
+      if (!auth) {
+        throw new Error('Missing bearer token');
+      } else if (auth !== `Bearer ${config.api.bearer}`) {
+        throw new Error('Invalid bearer token');
+      }
+    }
 
     graphqlHTTP(req => ({
       schema,
       graphiql: true,
       rootValue: { request: req },
       pretty: true,
-      // customFormatErrorFn: error => ({
-      //   message: error.message,
-      //   locations: error.locations,
-      //   stack: error.stack ? error.stack.split('\n') : [],
-      //   path: error.path
-      // })
     }))(req, res)
   }
 );

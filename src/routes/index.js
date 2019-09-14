@@ -13,20 +13,12 @@ const routes = {
       load: () => import(/* webpackMode: 'eager' */ './home'),
     },
     {
-      path: '/me',
-      load: () => import(/* webpackChunkName: 'me'  */ './me'),
-    },
-    {
       path: '/contact',
       load: () => import(/* webpackChunkName: 'contact' */ './contact'),
     },
     {
       path: '/login',
       load: () => import(/* webpackChunkName: 'login' */ './login'),
-    },
-    {
-      path: '/logout',
-      load: () => import(/* webpackChunkName: 'logout' */ './me/logout'),
     },
     {
       path: '/register',
@@ -57,7 +49,7 @@ const routes = {
     const route = await next();
 
     // Provide default values for title, description etc.
-    route.title = `${route.title || 'Untitled Page'} - www.reactstarterkit.com`;
+    route.title = `${route.title || 'Untitled Page'}`;
     route.description = route.description || '';
 
     return route;
