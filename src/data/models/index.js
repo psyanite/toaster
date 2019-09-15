@@ -1,5 +1,7 @@
 import sequelize from '../sequelize';
 
+import Admin from './Admin/Admin';
+
 import UserAccount from './User/UserAccount';
 import UserClaim from './User/UserClaim';
 import UserFollow from './User/UserFollow';
@@ -41,6 +43,7 @@ function sync(...args) {
 export default { sync };
 
 export {
+  Admin,
   UserAccount,
   UserClaim,
   UserFollow,

@@ -5,7 +5,7 @@ import { UserLogin } from '../models';
 import UserLoginType from '../types/User/UserLoginType';
 
 export default {
-  userLoginBy: {
+  userLogin: {
     type: UserLoginType,
     args: {
       socialType: {

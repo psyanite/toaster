@@ -33,7 +33,7 @@ export default {
       },
     },
     resolve: async (_, { userId }) => {
-      return await FavoriteStore.findAll({ where: { user_id: userId }, include: [Store] });
+      return FavoriteStore.findAll({ where: { user_id: userId }, include: [Store] });
     }
   },
 
@@ -52,7 +52,7 @@ export default {
       if (results == null) {
         return [];
       }
-      return  results.map(r => r.user_id);
+      return results.map(r => r.user_id);
     }
   },
 
@@ -71,7 +71,7 @@ export default {
       if (results == null) {
         return [];
       }
-      return  results.map(r => r.store_id);
+      return results.map(r => r.store_id);
     }
   },
 

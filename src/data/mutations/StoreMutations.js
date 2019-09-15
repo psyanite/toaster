@@ -8,6 +8,8 @@ import CuisineService from '../services/CuisineService';
 import { Store, StoreAddress, StoreCuisine, StoreFollow, StoreHour, UserAccount } from '../models';
 import StoreType from '../types/Store/StoreType';
 import StoreFollowType from '../types/Store/StoreFollowType';
+import UserProfileType from '../types/User/UserProfileType';
+import UserProfile from '../models/User/UserProfile';
 
 export default {
   upsertStore: {
@@ -178,8 +180,26 @@ export default {
       const exist = await StoreFollow.findOne({ where: { store_id: storeId, follower_id: followerId } });
       if (exist == null) throw Error(`Could not find follow for storeId: ${storeId}, followerId: ${followerId}`);
       await exist.destroy();
-      await Store.decrement('follower_count', { where: { id: storeId } })
+      await Store.decrement('follower_count', { where: { id: storeId } });
       return exist;
+    }
+  },
+
+  setStoreCoverImage: {
+    type: StoreType,
+    args: {
+      storeId: {
+        type: new NonNull(Int),
+      },
+      picture: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { storeId, picture }) => {
+      let store = await Store.findByPk(storeId);
+      if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
+      await store.update({ cover_image: picture });
+      return store;
     }
   },
 };

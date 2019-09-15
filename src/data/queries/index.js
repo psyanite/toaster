@@ -1,4 +1,5 @@
 import { GraphQLObjectType as ObjectType } from 'graphql';
+import AdminQueries from './AdminQueries';
 import CommentQueries from './CommentQueries';
 import CurateQueries from './CurateQueries';
 import FeedQueries from './FeedQueries';
@@ -19,6 +20,7 @@ export default new ObjectType({
   description: '🐈 Toaster Meowries',
   fields: Object.assign(
     {},
+    AdminQueries,
     CommentQueries,
     CurateQueries,
     FeedQueries,

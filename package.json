@@ -14,6 +14,7 @@
   ],
   "dependencies": {
     "@babel/polyfill": "7.0.0-beta.36",
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
     "core-js": "^2.5.3",
