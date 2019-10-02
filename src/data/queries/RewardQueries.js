@@ -5,7 +5,6 @@ import RewardType from '../types/Reward/RewardType';
 import sequelize from '../sequelize';
 import Sequelize from 'sequelize';
 import StoreType from '../types/Store/StoreType';
-import { Store } from '../models';
 
 const Op = Sequelize.Op;
 
@@ -122,6 +121,18 @@ export default {
         limit: limit,
         offset: offset,
       });
+    }
+  },
+
+  rewardsByIds: {
+    type: new List(RewardType),
+    args: {
+      ids: {
+        type: new List(Int),
+      },
+    },
+    resolve: async (_, { ids }) => {
+      return Reward.findAll({ where: { id: { [Op.in]: ids } } });
     }
   }
 };

@@ -12,6 +12,7 @@ import StoreType from './StoreType';
 StoreGroup.Stores = StoreGroup.belongsToMany(Store, {
   through: 'store_group_stores',
   foreignKey: 'group_id',
+  as: 'stores',
 });
 
 export default new ObjectType({

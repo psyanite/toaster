@@ -1,10 +1,34 @@
 /* eslint-disable no-param-reassign */
-import { GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
+import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { Admin } from '../models';
 import AdminType from '../types/Admin/AdminType';
 import bcrypt from 'bcrypt';
 
 export default {
+  findAdminById: {
+    type: AdminType,
+    args: {
+      id: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { id }) => {
+      return Admin.findByPk(id)
+    }
+  },
+
+  findAdminByUsername: {
+    type: AdminType,
+    args: {
+      username: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { username }) => {
+      return Admin.findOne({ where: { username } });
+    }
+  },
+
   adminLogin: {
     type: AdminType,
     args: {
@@ -23,16 +47,4 @@ export default {
       return admin;
     }
   },
-
-  findAdminByUsername: {
-    type: AdminType,
-    args: {
-      username: {
-        type: new NonNull(String),
-      },
-    },
-    resolve: async (_, { username }) => {
-      return Admin.findOne({ where: { username } });
-    }
-  }
 };

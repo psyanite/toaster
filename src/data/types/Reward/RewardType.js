@@ -17,6 +17,7 @@ import UserProfileType from '../User/UserProfileType';
 Reward.Store = Reward.belongsTo(Store, { foreignKey: 'store_id' });
 Reward.StoreGroup = Reward.belongsTo(StoreGroup, {
   foreignKey: 'store_group_id',
+  as: 'storeGroup',
 });
 Reward.FavoritedBy = Reward.belongsToMany(UserProfile, {
   through: 'user_favorite_stores',
@@ -24,10 +25,18 @@ Reward.FavoritedBy = Reward.belongsToMany(UserProfile, {
   as: 'favoriteStores',
 });
 
+export const RewardTypeValues = Object.freeze({
+  OneTime: 'one_time',
+  Unlimited: 'unlimited',
+  Loyalty: 'loyalty',
+});
+
 const RewardType = new EnumType({
   name: 'RewardType',
   values: {
     one_time: { value: 'one_time' },
+    unlimited: { value: 'unlimited' },
+    loyalty: { value: 'loyalty' },
   },
 });
 

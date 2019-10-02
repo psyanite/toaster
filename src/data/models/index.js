@@ -36,6 +36,8 @@ import ReplyLike from './Post/ReplyLike';
 
 import Reward from './Reward/Reward';
 
+import SystemError from './System/SystemError';
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
@@ -73,4 +75,5 @@ export {
   Reply,
   ReplyLike,
   Reward,
+  SystemError
 };

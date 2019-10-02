@@ -16,9 +16,13 @@ const UserReward = sequelize.define('user_rewards', {
     type: Sequelize.STRING,
   },
 
-  redeemed_at: {
+  last_redeemed_at: {
     type: Sequelize.DATE,
   },
+
+  redeemed_count: {
+    type: Sequelize.INTEGER,
+  }
 });
 
 export default UserReward;

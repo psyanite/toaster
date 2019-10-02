@@ -7,14 +7,11 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { UserAccount, UserClaim, UserLogin, UserProfile } from '../../models';
+import { UserAccount, UserClaim, UserLogin, UserProfile, Store, Reward, Post } from '../../models';
 import UserProfileType from './UserProfileType';
-import Post from '../../models/Post/Post';
 import PostType from '../Post/PostType';
-import Store from '../../models/Store/Store';
 import RewardType from '../Reward/RewardType';
 import StoreType from '../Store/StoreType';
-import Reward from '../../models/Reward/Reward';
 
 UserAccount.UserClaim = UserAccount.hasMany(UserClaim, {
   foreignKey: 'user_id',

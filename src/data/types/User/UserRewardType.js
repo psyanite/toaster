@@ -1,4 +1,4 @@
-import { GraphQLObjectType as ObjectType, GraphQLString as String } from 'graphql';
+import { GraphQLObjectType as ObjectType, GraphQLString as String, GraphQLInt as Int } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
 import { Reward, UserAccount, UserReward } from '../../models';
@@ -21,11 +21,14 @@ export default new ObjectType({
       type: UserAccountType,
       resolve: resolver(UserReward.UserAccount),
     },
+    user_id: { type: Int },
+    reward_id: { type: Int },
     reward: {
       type: RewardType,
       resolve: resolver(UserReward.Reward),
     },
     unique_code: { type: String },
-    redeemed_at: { type: DateTime },
+    last_redeemed_at: { type: DateTime },
+    redeemed_count: { type: Int },
   }),
 });
