@@ -41,12 +41,13 @@ export default {
           user_id: userId,
           last_redeemed_at: { [Op.not]: null },
         },
-        include: [{ model: Reward, where: { type: { [Op.ne]: RewardTypeValues.Loyalty }}}]
+        include: [{ model: Reward, where: { type: { [Op.ne]: RewardTypeValues.Loyalty }}}],
+        order: [['last_redeemed_at', 'DESC']]
       });
     }
   },
 
-  loyaltyRewardsByUserId: {
+  loyaltyRewards: {
     type: new List(UserRewardType),
     args: {
       userId: {
@@ -59,7 +60,8 @@ export default {
           user_id: userId,
           last_redeemed_at: { [Op.not]: null },
         },
-        include: [{ model: Reward, where: { type: RewardTypeValues.Loyalty }}]
+        include: [{ model: Reward, where: { type: RewardTypeValues.Loyalty }}],
+        order: [['last_redeemed_at', 'DESC']]
       });
     }
   },

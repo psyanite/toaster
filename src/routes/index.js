@@ -10,7 +10,13 @@ const routes = {
     // added to client.js as well and not repeated in individual each route chunk.
     {
       path: '',
-      load: () => import(/* webpackMode: 'eager' */ './home'),
+      load: () => import('./home'),
+    },
+
+    // Wildcard routes, e.g. { path: '(.*)', ... } (must go last)
+    {
+      path: '(.*)',
+      load: () => import('./home'),
     },
   ],
 
@@ -19,8 +25,8 @@ const routes = {
     const route = await next();
 
     // Provide default values for title, description etc.
-    route.title = `${route.title || 'Untitled Page'}`;
-    route.description = route.description || '';
+    route.title = 'Meow';
+    route.description = '';
 
     return route;
   },

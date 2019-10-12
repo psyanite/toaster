@@ -20,6 +20,10 @@ const Comment = sequelize.define('comments', {
     type: Sequelize.INTEGER,
   },
 
+  commented_by_store: {
+    type: Sequelize.INTEGER,
+  },
+
   commented_at: {
     type: Sequelize.DATE,
     allowNull: false,

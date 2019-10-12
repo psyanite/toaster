@@ -28,7 +28,7 @@ const getFollowedUsersPosts = async (userId) => {
     return [];
   }
 
-  return await Post.findAll({
+  return Post.findAll({
     limit: 30,
     where: {
       posted_by: {
@@ -36,7 +36,7 @@ const getFollowedUsersPosts = async (userId) => {
       }
     },
     order: [['posted_at', 'DESC']]
-  })
+  });
 };
 
 const getFollowedStoresPosts = async (userId) => {
@@ -52,7 +52,7 @@ const getFollowedStoresPosts = async (userId) => {
     return [];
   }
 
-  return await Post.findAll({
+  return Post.findAll({
     limit: 30,
     where: {
       store_id: {
@@ -60,7 +60,7 @@ const getFollowedStoresPosts = async (userId) => {
       }
     },
     order: [['posted_at', 'DESC']]
-  })
+  });
 };
 
 const refreshTopPosts = async () => {

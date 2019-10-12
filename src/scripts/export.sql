@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.3
--- Dumped by pg_dump version 10.3
+-- Dumped from database version 10.10
+-- Dumped by pg_dump version 10.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -12,8 +12,43 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: tiger; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA tiger;
+
+
+ALTER SCHEMA tiger OWNER TO postgres;
+
+--
+-- Name: tiger_data; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA tiger_data;
+
+
+ALTER SCHEMA tiger_data OWNER TO postgres;
+
+--
+-- Name: topology; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA topology;
+
+
+ALTER SCHEMA topology OWNER TO postgres;
+
+--
+-- Name: SCHEMA topology; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA topology IS 'PostGIS Topology schema';
+
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
@@ -27,6 +62,104 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: address_standardizer; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS address_standardizer WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION address_standardizer; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION address_standardizer IS 'Used to parse an address into constituent elements. Generally used to support geocoding address normalization step.';
+
+
+--
+-- Name: address_standardizer_data_us; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS address_standardizer_data_us WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION address_standardizer_data_us; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION address_standardizer_data_us IS 'Address Standardizer US dataset example';
+
+
+--
+-- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
+
+
+--
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
+--
+-- Name: postgis_sfcgal; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis_sfcgal WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgis_sfcgal; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis_sfcgal IS 'PostGIS SFCGAL functions';
+
+
+--
+-- Name: postgis_tiger_geocoder; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder WITH SCHEMA tiger;
+
+
+--
+-- Name: EXTENSION postgis_tiger_geocoder; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis_tiger_geocoder IS 'PostGIS tiger geocoder and reverse geocoder';
+
+
+--
+-- Name: postgis_topology; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis_topology WITH SCHEMA topology;
+
+
+--
+-- Name: EXTENSION postgis_topology; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
 
 
 --
@@ -149,7 +282,8 @@ ALTER TYPE public.post_type OWNER TO postgres;
 
 CREATE TYPE public.reward_type AS ENUM (
     'one_time',
-    'unlimited'
+    'unlimited',
+    'loyalty'
 );
 
 
@@ -289,6 +423,43 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: admins; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.admins (
+    id integer NOT NULL,
+    username character varying(64),
+    store_id integer,
+    created_at timestamp with time zone NOT NULL,
+    hash character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.admins OWNER TO postgres;
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.admins_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.admins_id_seq OWNER TO postgres;
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.admins_id_seq OWNED BY public.admins.id;
+
+
+--
 -- Name: cities; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -324,6 +495,42 @@ ALTER SEQUENCE public.cities_id_seq OWNED BY public.cities.id;
 
 
 --
+-- Name: comment_likes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.comment_likes (
+    user_id integer,
+    comment_id integer NOT NULL,
+    id integer NOT NULL,
+    store_id integer
+);
+
+
+ALTER TABLE public.comment_likes OWNER TO postgres;
+
+--
+-- Name: comment_likes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.comment_likes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.comment_likes_id_seq OWNER TO postgres;
+
+--
+-- Name: comment_likes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.comment_likes_id_seq OWNED BY public.comment_likes.id;
+
+
+--
 -- Name: comment_replies; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -331,8 +538,9 @@ CREATE TABLE public.comment_replies (
     id integer NOT NULL,
     comment_id integer NOT NULL,
     body text,
-    replied_by integer NOT NULL,
-    replied_at timestamp with time zone NOT NULL
+    replied_by integer,
+    replied_at timestamp with time zone NOT NULL,
+    replied_by_store integer
 );
 
 
@@ -361,6 +569,42 @@ ALTER SEQUENCE public.comment_replies_id_seq OWNED BY public.comment_replies.id;
 
 
 --
+-- Name: comment_reply_likes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.comment_reply_likes (
+    user_id integer,
+    reply_id integer NOT NULL,
+    id integer NOT NULL,
+    store_id integer
+);
+
+
+ALTER TABLE public.comment_reply_likes OWNER TO postgres;
+
+--
+-- Name: comment_reply_likes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.comment_reply_likes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.comment_reply_likes_id_seq OWNER TO postgres;
+
+--
+-- Name: comment_reply_likes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.comment_reply_likes_id_seq OWNED BY public.comment_reply_likes.id;
+
+
+--
 -- Name: comments; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -368,8 +612,9 @@ CREATE TABLE public.comments (
     id integer NOT NULL,
     post_id integer NOT NULL,
     body text NOT NULL,
-    commented_by integer NOT NULL,
-    commented_at timestamp with time zone
+    commented_by integer,
+    commented_at timestamp with time zone NOT NULL,
+    commented_by_store integer
 );
 
 
@@ -635,6 +880,42 @@ ALTER SEQUENCE public.post_comments_id_seq OWNED BY public.comments.id;
 
 
 --
+-- Name: post_likes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.post_likes (
+    user_id integer,
+    post_id integer NOT NULL,
+    id integer NOT NULL,
+    store_id integer
+);
+
+
+ALTER TABLE public.post_likes OWNER TO postgres;
+
+--
+-- Name: post_likes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.post_likes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.post_likes_id_seq OWNER TO postgres;
+
+--
+-- Name: post_likes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.post_likes_id_seq OWNED BY public.post_likes.id;
+
+
+--
 -- Name: post_photos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -675,11 +956,11 @@ ALTER SEQUENCE public.post_photos_id_seq OWNED BY public.post_photos.id;
 CREATE TABLE public.post_reviews (
     id integer NOT NULL,
     post_id integer NOT NULL,
-    overall_score public.score_type NOT NULL,
-    taste_score public.score_type NOT NULL,
-    service_score public.score_type NOT NULL,
-    value_score public.score_type NOT NULL,
-    ambience_score public.score_type NOT NULL,
+    overall_score public.score_type,
+    taste_score public.score_type,
+    service_score public.score_type,
+    value_score public.score_type,
+    ambience_score public.score_type,
     body text
 );
 
@@ -720,7 +1001,8 @@ CREATE TABLE public.posts (
     like_count integer DEFAULT 0 NOT NULL,
     comment_count integer DEFAULT 0 NOT NULL,
     hidden boolean DEFAULT true NOT NULL,
-    posted_at timestamp with time zone
+    posted_at timestamp with time zone,
+    posted_by_admin integer
 );
 
 
@@ -1056,6 +1338,42 @@ ALTER SEQUENCE public.suburbs_id_seq OWNED BY public.suburbs.id;
 
 
 --
+-- Name: system_errors; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.system_errors (
+    id integer NOT NULL,
+    error_type character varying(64) NOT NULL,
+    description character varying(255) NOT NULL,
+    occurred_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.system_errors OWNER TO postgres;
+
+--
+-- Name: system_errors_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.system_errors_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.system_errors_id_seq OWNER TO postgres;
+
+--
+-- Name: system_errors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.system_errors_id_seq OWNED BY public.system_errors.id;
+
+
+--
 -- Name: tags; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1137,18 +1455,6 @@ CREATE TABLE public.user_claims (
 ALTER TABLE public.user_claims OWNER TO postgres;
 
 --
--- Name: user_favorite_comments; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.user_favorite_comments (
-    user_id integer NOT NULL,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.user_favorite_comments OWNER TO postgres;
-
---
 -- Name: user_favorite_posts; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1159,18 +1465,6 @@ CREATE TABLE public.user_favorite_posts (
 
 
 ALTER TABLE public.user_favorite_posts OWNER TO postgres;
-
---
--- Name: user_favorite_replies; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.user_favorite_replies (
-    user_id integer NOT NULL,
-    reply_id integer NOT NULL
-);
-
-
-ALTER TABLE public.user_favorite_replies OWNER TO postgres;
 
 --
 -- Name: user_favorite_rewards; Type: TABLE; Schema: public; Owner: postgres
@@ -1249,11 +1543,19 @@ CREATE TABLE public.user_rewards (
     user_id integer NOT NULL,
     reward_id integer NOT NULL,
     unique_code character varying(64) NOT NULL,
-    redeemed_at timestamp with time zone
+    last_redeemed_at timestamp with time zone,
+    redeemed_count integer DEFAULT 0 NOT NULL
 );
 
 
 ALTER TABLE public.user_rewards OWNER TO postgres;
+
+--
+-- Name: admins id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admins ALTER COLUMN id SET DEFAULT nextval('public.admins_id_seq'::regclass);
+
 
 --
 -- Name: cities id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -1263,10 +1565,24 @@ ALTER TABLE ONLY public.cities ALTER COLUMN id SET DEFAULT nextval('public.citie
 
 
 --
+-- Name: comment_likes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_likes ALTER COLUMN id SET DEFAULT nextval('public.comment_likes_id_seq'::regclass);
+
+
+--
 -- Name: comment_replies id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.comment_replies ALTER COLUMN id SET DEFAULT nextval('public.comment_replies_id_seq'::regclass);
+
+
+--
+-- Name: comment_reply_likes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_reply_likes ALTER COLUMN id SET DEFAULT nextval('public.comment_reply_likes_id_seq'::regclass);
 
 
 --
@@ -1309,6 +1625,13 @@ ALTER TABLE ONLY public.districts ALTER COLUMN id SET DEFAULT nextval('public.di
 --
 
 ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.location_id_seq'::regclass);
+
+
+--
+-- Name: post_likes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post_likes ALTER COLUMN id SET DEFAULT nextval('public.post_likes_id_seq'::regclass);
 
 
 --
@@ -1368,6 +1691,13 @@ ALTER TABLE ONLY public.suburbs ALTER COLUMN id SET DEFAULT nextval('public.subu
 
 
 --
+-- Name: system_errors id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.system_errors ALTER COLUMN id SET DEFAULT nextval('public.system_errors_id_seq'::regclass);
+
+
+--
 -- Name: tags id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1382,6 +1712,17 @@ ALTER TABLE ONLY public.user_accounts ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Data for Name: admins; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.admins (id, username, store_id, created_at, hash) FROM stdin;
+9	donutcat	8	2019-09-24 20:50:21.47+10	$2b$10$96c0pL7AwM6H51wP5XJodOBa2VM32jFN5xhtdP3tED6GBYg4c2Pw6
+8	cinnamoncat	3	2019-09-15 18:43:32.443+10	$2b$10$96c0pL7AwM6H51wP5XJodOBa2VM32jFN5xhtdP3tED6GBYg4c2Pw6
+10	bobacat	\N	2019-10-02 20:11:32.012+10	$2b$10$GNkNdIcO132ajWMeBgTbyOhTNrp2T1ijm4KnjCOTgPzZUer7u..qK
+\.
+
+
+--
 -- Data for Name: cities; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1391,21 +1732,43 @@ COPY public.cities (id, name, district_id, coords) FROM stdin;
 
 
 --
+-- Data for Name: comment_likes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.comment_likes (user_id, comment_id, id, store_id) FROM stdin;
+2	2	1	\N
+2	3	2	\N
+2	1	3	\N
+2	29	4	\N
+2	47	5	\N
+\.
+
+
+--
 -- Data for Name: comment_replies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.comment_replies (id, comment_id, body, replied_by, replied_at) FROM stdin;
-1	1	This is lit!!!	3	2019-07-10 07:25:47.16+10
-2	1	Totally.	1	2019-07-10 07:26:41.436+10
-7	1	meow meow	2	2019-07-20 16:48:18.956+10
-10	1	meow	2	2019-07-20 17:01:33.864+10
-11	1	Unilever	2	2019-07-20 17:04:02.375+10
-19	1	@curious_chloe that's so true	2	2019-07-21 16:16:10.225+10
-20	1	@curious_chloe so true	2	2019-07-21 16:36:43.647+10
-21	1	@curious_chloe hello kitty	2	2019-07-21 16:37:27.432+10
-24	53	@curious_chloe super meow meow	2	2019-07-28 15:36:16.436+10
-45	58	@curious_chloe a	2	2019-07-28 17:22:07.529+10
-46	58	@curious_chloe b	2	2019-07-28 17:22:15.68+10
+COPY public.comment_replies (id, comment_id, body, replied_by, replied_at, replied_by_store) FROM stdin;
+1	1	This is lit!!!	3	2019-07-10 07:25:47.16+10	\N
+2	1	Totally.	1	2019-07-10 07:26:41.436+10	\N
+7	1	meow meow	2	2019-07-20 16:48:18.956+10	\N
+10	1	meow	2	2019-07-20 17:01:33.864+10	\N
+11	1	Unilever	2	2019-07-20 17:04:02.375+10	\N
+19	1	@curious_chloe that's so true	2	2019-07-21 16:16:10.225+10	\N
+20	1	@curious_chloe so true	2	2019-07-21 16:36:43.647+10	\N
+21	1	@curious_chloe hello kitty	2	2019-07-21 16:37:27.432+10	\N
+24	53	@curious_chloe super meow meow	2	2019-07-28 15:36:16.436+10	\N
+45	58	@curious_chloe a	2	2019-07-28 17:22:07.529+10	\N
+46	58	@curious_chloe b	2	2019-07-28 17:22:15.68+10	\N
+\.
+
+
+--
+-- Data for Name: comment_reply_likes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.comment_reply_likes (user_id, reply_id, id, store_id) FROM stdin;
+2	2	1	\N
 \.
 
 
@@ -1413,52 +1776,52 @@ COPY public.comment_replies (id, comment_id, body, replied_by, replied_at) FROM 
 -- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.comments (id, post_id, body, commented_by, commented_at) FROM stdin;
-4	133	that's one cute melon	2	2019-07-14 04:22:52.803+10
-1	1	this is brill, we are totally coming here next week, how about we go together after our seminar at the beach where we will have a fantastic time? I can't wait for the seminar it's going to be interactive and so full-on, I think I'm going to be knackered afterwards.	3	2019-07-11 06:31:33.937+10
-3	1	how much did this all cost???	1	2019-07-14 06:31:44.507+10
-2	1	omg this looks amaze	2	2019-07-15 05:31:21.677+10
-5	1	hello	2	2019-07-20 13:38:27.893+10
-7	1	meow meow 	2	2019-07-20 13:39:08.21+10
-8	1	super	2	2019-07-20 14:29:54.154+10
-9	1	hello	2	2019-07-20 14:32:07.247+10
-10	1	hello	2	2019-07-20 14:44:38.498+10
-11	1	kitty	2	2019-07-20 14:45:06.082+10
-12	1	kitty	2	2019-07-20 14:47:26.688+10
-13	1	kitty katw	2	2019-07-20 14:48:34.264+10
-14	1	hello meow meow	2	2019-07-20 14:48:52.294+10
-15	1	hello meow meow	2	2019-07-20 14:53:32.182+10
-16	1	super duper	2	2019-07-20 14:53:40.964+10
-17	1	pork bun	2	2019-07-20 15:27:25.675+10
-18	1	boiiii	2	2019-07-20 15:29:17.278+10
-19	1	hhh	2	2019-07-20 15:51:43.249+10
-20	1	super	2	2019-07-20 15:51:55.931+10
-21	1	hhhhhh	2	2019-07-20 15:52:48.822+10
-22	1	jello	2	2019-07-20 15:58:29.606+10
-24	1	cake	2	2019-07-20 16:00:46.821+10
-25	1	pizza	2	2019-07-20 16:00:50.511+10
-26	1	Mona Lisa	2	2019-07-20 16:02:39.831+10
-28	1	Cheesecake	2	2019-07-20 16:03:44.592+10
-29	1	Cheesey	2	2019-07-20 16:03:50.858+10
-30	1	super	2	2019-07-20 16:03:57.596+10
-36	1	super duper!	2	2019-07-20 20:02:50.236+10
-37	1	test	2	2019-07-21 15:56:38.581+10
-38	1	super	2	2019-07-21 15:58:39.51+10
-39	1	. Hello	2	2019-07-21 16:00:59.515+10
-40	1	hehe	2	2019-07-21 16:01:37.143+10
-41	1	Vaseline	2	2019-07-21 16:05:31.905+10
-42	1	rosy	2	2019-07-21 16:05:41.395+10
-43	1	lip therapy	2	2019-07-21 16:07:26.228+10
-44	1	a moment ago	2	2019-07-21 16:07:32.083+10
-46	1	super	2	2019-07-21 16:08:46.043+10
-47	1	mafia 	2	2019-07-21 16:29:28.469+10
-48	1	robert	2	2019-07-21 16:30:43.893+10
-49	1	the list	2	2019-07-21 16:32:03.093+10
-50	134	meow meow	1	2019-07-21 19:47:43.955+10
-52	134	ccc meow	1	2019-07-21 19:52:03.98+10
-53	133	hello kitty	2	2019-07-28 15:36:11.085+10
-57	2	hello kitty	2	2019-07-28 16:31:14.732+10
-58	2	a	2	2019-07-28 17:20:58.86+10
+COPY public.comments (id, post_id, body, commented_by, commented_at, commented_by_store) FROM stdin;
+4	133	that's one cute melon	2	2019-07-14 04:22:52.803+10	\N
+1	1	this is brill, we are totally coming here next week, how about we go together after our seminar at the beach where we will have a fantastic time? I can't wait for the seminar it's going to be interactive and so full-on, I think I'm going to be knackered afterwards.	3	2019-07-11 06:31:33.937+10	\N
+3	1	how much did this all cost???	1	2019-07-14 06:31:44.507+10	\N
+2	1	omg this looks amaze	2	2019-07-15 05:31:21.677+10	\N
+5	1	hello	2	2019-07-20 13:38:27.893+10	\N
+7	1	meow meow 	2	2019-07-20 13:39:08.21+10	\N
+8	1	super	2	2019-07-20 14:29:54.154+10	\N
+9	1	hello	2	2019-07-20 14:32:07.247+10	\N
+10	1	hello	2	2019-07-20 14:44:38.498+10	\N
+11	1	kitty	2	2019-07-20 14:45:06.082+10	\N
+12	1	kitty	2	2019-07-20 14:47:26.688+10	\N
+13	1	kitty katw	2	2019-07-20 14:48:34.264+10	\N
+14	1	hello meow meow	2	2019-07-20 14:48:52.294+10	\N
+15	1	hello meow meow	2	2019-07-20 14:53:32.182+10	\N
+16	1	super duper	2	2019-07-20 14:53:40.964+10	\N
+17	1	pork bun	2	2019-07-20 15:27:25.675+10	\N
+18	1	boiiii	2	2019-07-20 15:29:17.278+10	\N
+19	1	hhh	2	2019-07-20 15:51:43.249+10	\N
+20	1	super	2	2019-07-20 15:51:55.931+10	\N
+21	1	hhhhhh	2	2019-07-20 15:52:48.822+10	\N
+22	1	jello	2	2019-07-20 15:58:29.606+10	\N
+24	1	cake	2	2019-07-20 16:00:46.821+10	\N
+25	1	pizza	2	2019-07-20 16:00:50.511+10	\N
+26	1	Mona Lisa	2	2019-07-20 16:02:39.831+10	\N
+28	1	Cheesecake	2	2019-07-20 16:03:44.592+10	\N
+29	1	Cheesey	2	2019-07-20 16:03:50.858+10	\N
+30	1	super	2	2019-07-20 16:03:57.596+10	\N
+36	1	super duper!	2	2019-07-20 20:02:50.236+10	\N
+37	1	test	2	2019-07-21 15:56:38.581+10	\N
+38	1	super	2	2019-07-21 15:58:39.51+10	\N
+39	1	. Hello	2	2019-07-21 16:00:59.515+10	\N
+40	1	hehe	2	2019-07-21 16:01:37.143+10	\N
+41	1	Vaseline	2	2019-07-21 16:05:31.905+10	\N
+42	1	rosy	2	2019-07-21 16:05:41.395+10	\N
+43	1	lip therapy	2	2019-07-21 16:07:26.228+10	\N
+44	1	a moment ago	2	2019-07-21 16:07:32.083+10	\N
+46	1	super	2	2019-07-21 16:08:46.043+10	\N
+47	1	mafia 	2	2019-07-21 16:29:28.469+10	\N
+48	1	robert	2	2019-07-21 16:30:43.893+10	\N
+49	1	the list	2	2019-07-21 16:32:03.093+10	\N
+50	134	meow meow	1	2019-07-21 19:47:43.955+10	\N
+52	134	ccc meow	1	2019-07-21 19:52:03.98+10	\N
+53	133	hello kitty	2	2019-07-28 15:36:11.085+10	\N
+57	2	hello kitty	2	2019-07-28 16:31:14.732+10	\N
+58	2	a	2	2019-07-28 17:20:58.86+10	\N
 \.
 
 
@@ -1764,6 +2127,16 @@ COPY public.locations (id, name, suburb_id) FROM stdin;
 
 
 --
+-- Data for Name: post_likes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.post_likes (user_id, post_id, id, store_id) FROM stdin;
+2	3	3	\N
+2	139	4	\N
+\.
+
+
+--
 -- Data for Name: post_photos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1846,6 +2219,7 @@ COPY public.post_photos (id, post_id, url) FROM stdin;
 379	198	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
 380	199	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
 381	210	https://firebasestorage.googleapis.com/v0/b/burntoast-fix.appspot.com/o/reviews%2Fpost-photos%2F1564903094251-5258.jpg?alt=media&token=6350e510-cd74-4c3b-a46e-1b073432940f
+383	216	https://firebasestorage.googleapis.com/v0/b/burntbutter-fix.appspot.com/o/reviews%2Fpost-photos%2F1570703668147-971.jpg?alt=media&token=757bb0c3-c246-4b8c-b872-a26b716a2574
 \.
 
 
@@ -1933,6 +2307,8 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 199	208	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
 200	209	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
 201	210	okay	bad	okay	okay	okay	Consistent as always! Coffee was really good, chicken burger was juicy and saucy, and the wicked chips! Matcha cake was so light and sauce was highlight to cake, but I found it very pricey for its taste. I wouldn’t order matcha cake again, that I know for sure! Other dishes though another story :)
+202	211	good	okay	good	okay	good	Great service. Great coffee. I now visit here every weekend. Dog-friendly cafe with drinking bowls near the front door. I bring my cute puppies here and they love it too.
+207	216	\N	\N	\N	\N	\N	if you could count the skeletons in my closet.
 \.
 
 
@@ -1940,87 +2316,89 @@ COPY public.post_reviews (id, post_id, overall_score, taste_score, service_score
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.posts (id, type, store_id, posted_by, like_count, comment_count, hidden, posted_at) FROM stdin;
-5	photo	3	1	0	0	f	2018-05-06 17:58:09.777+10
-4	review	3	2	0	0	f	2018-02-18 09:22:02.385+11
-6	photo	2	3	0	0	f	2018-06-07 06:40:00.804+10
-8	review	3	4	0	0	f	2018-08-08 12:33:21.072+10
-7	photo	2	4	0	0	f	2018-07-12 22:12:23.453+10
-1	review	1	1	0	39	f	2019-01-20 02:04:20+11
-3	photo	2	1	1	0	f	2019-02-07 23:54:38.249+11
-137	review	3	5	0	0	f	2019-07-24 19:48:06.909+10
-136	review	3	3	0	0	f	2019-07-24 19:46:49.818+10
-133	review	23	2	0	2	f	2019-07-07 16:03:48.854+10
-2	review	1	2	0	2	f	2018-01-25 20:10:55+11
-142	review	4	\N	0	0	f	2019-08-04 16:50:14.116+10
-143	review	4	\N	0	0	f	2019-08-04 17:18:08.668+10
-139	review	4	2	1	0	f	2019-07-28 15:13:56.516+10
-146	review	3	\N	0	0	f	2019-08-18 15:53:54.409+10
-147	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-148	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-149	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-150	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-151	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-134	review	4	2	0	2	f	2019-07-07 21:39:08.342+10
-152	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-153	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-154	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-155	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-156	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-157	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-158	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-159	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-160	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-161	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-162	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-163	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-164	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-165	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-166	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-167	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-168	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-169	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-170	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-171	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-172	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-173	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-174	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-175	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-176	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-177	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-178	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-179	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-180	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-181	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-182	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-183	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-184	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-185	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-186	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-187	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-188	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-189	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-190	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-191	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-192	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-193	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-194	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-195	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-196	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-197	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-198	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-199	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-200	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-201	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-202	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-203	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-204	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-205	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-206	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-207	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-208	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-209	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
-210	review	3	2	0	0	f	2019-08-18 15:53:54.409+10
+COPY public.posts (id, type, store_id, posted_by, like_count, comment_count, hidden, posted_at, posted_by_admin) FROM stdin;
+5	photo	3	1	0	0	f	2018-05-06 17:58:09.777+10	\N
+4	review	3	2	0	0	f	2018-02-18 09:22:02.385+11	\N
+6	photo	2	3	0	0	f	2018-06-07 06:40:00.804+10	\N
+8	review	3	4	0	0	f	2018-08-08 12:33:21.072+10	\N
+7	photo	2	4	0	0	f	2018-07-12 22:12:23.453+10	\N
+137	review	3	5	0	0	f	2019-07-24 19:48:06.909+10	\N
+136	review	3	3	0	0	f	2019-07-24 19:46:49.818+10	\N
+142	review	4	\N	0	0	f	2019-08-04 16:50:14.116+10	\N
+143	review	4	\N	0	0	f	2019-08-04 17:18:08.668+10	\N
+146	review	3	\N	0	0	f	2019-08-18 15:53:54.409+10	\N
+147	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+148	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+149	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+150	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+151	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+152	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+153	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+154	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+155	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+156	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+157	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+158	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+159	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+160	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+161	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+162	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+163	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+164	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+165	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+166	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+167	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+168	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+169	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+170	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+171	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+172	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+173	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+174	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+175	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+176	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+177	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+178	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+179	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+180	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+181	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+182	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+183	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+184	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+185	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+186	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+187	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+188	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+189	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+190	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+191	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+192	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+193	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+194	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+195	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+196	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+197	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+198	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+199	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+200	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+201	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+202	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+203	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+204	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+205	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+206	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+207	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+208	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+209	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+210	review	3	2	0	0	f	2019-08-18 15:53:54.409+10	\N
+211	review	8	2	0	0	f	2019-09-11 20:29:48.866+10	\N
+3	photo	2	1	1	0	f	2019-02-07 23:54:38.249+11	\N
+139	review	4	2	1	0	f	2019-07-28 15:13:56.516+10	\N
+134	review	4	2	0	2	f	2019-07-07 21:39:08.342+10	\N
+1	review	1	1	0	39	f	2019-01-20 02:04:20+11	\N
+133	review	23	2	0	2	f	2019-07-07 16:03:48.854+10	\N
+2	review	1	2	0	2	f	2018-01-25 20:10:55+11	\N
+216	review	8	\N	0	0	f	2019-10-10 21:33:51.937+11	9
 \.
 
 
@@ -2042,19 +2420,31 @@ COPY public.reward_rankings (reward_id, rank, valid_from, valid_to) FROM stdin;
 --
 
 COPY public.rewards (id, name, description, type, store_id, store_group_id, valid_from, valid_until, promo_image, terms_and_conditions, active, hidden, redeem_limit, code, rank, tags, coords) FROM stdin;
-9	$3 Bagel 🥯	Nothing's better than a delicious bagel for a brighter start to the day, top it off with your favourite spread.	one_time	3	\N	2019-01-01	2019-12-01	https://imgur.com/yYaJYSI.jpg	Offer only available before 10am. \r\n\r\nEvery Tuesday, buy any size Teavana™ Tea Latte (Green Tea Latte, Chai Tea Latte, Vanilla Black Tea Latte, Peach Black Tea Latte or Full Leaf Tea Latte) and score another one for FREE to surprise a friend! \r\n\r\nFree beverage must be of equal or lesser value. \r\n\r\nFrappuccino® blended beverages are excluded. \r\n\r\nOffer ends 26 August 2019.\r\n	t	t	\N	BKKWL	99	cafe,bagel,coffee	{"(-33.839401000000002,151.20946599999999)"}
-8	Tea Latte Tuesday ☕	Get together for Tea Latte Tuesday. Buy a Teavana Tea Latte & score another one for FREE to share!	one_time	3	\N	2019-01-01	2019-12-01	https://imgur.com/o4bRN3i.jpg	Every Tuesday, buy any size Teavana™ Tea Latte (Green Tea Latte, Chai Tea Latte, Vanilla Black Tea Latte, Peach Black Tea Latte or Full Leaf Tea Latte) and score another one for FREE to surprise a friend!\r\n\r\nFree beverage must be of equal or lesser value.\r\n\r\nFrappuccino® blended beverages are excluded.\r\n\r\nEnds 26 August 2019.	t	t	\N	4pPfr	99	tea,latte,coffee,cafe	{"(-33.839401000000002,151.20946599999999)"}
-1	Double Mex Tuesday 🌯	Buy two regular or naked burritos and get the cheaper one for free. Add two drinks for only $2! Hurry, only available this Tuesday.	one_time	\N	4	2018-11-01	2020-05-05	https://imgur.com/tR1bD1v.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	W6JVB	1	burrito,mexican	{"(-33.871730999999997,151.19897499999999)","(-33.865963000000001,151.20821699999999)","(-33.862026999999998,151.20987500000001)"}
-2	Free Toppings! 🍮	Come enjoy our mouth-watering tasty teas, enjoy a free topping of your choice when you purchase any large drink.	one_time	\N	3	2018-11-01	2020-08-23	https://imgur.com/KMzxoYx.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	WhCDD	1	milk tea,bubble tea	{"(-33.795578999999996,151.185439)","(-33.881093,151.204746)","(-33.873831000000003,151.20563799999999)","(-33.877578999999997,151.20545999999999)","(-33.884374000000001,151.19529600000001)","(-33.794479000000003,151.185959)","(-33.859076999999999,151.20815099999999)"}
-13	Free Upsize 🍵	Feelin' chilly this winter? Visit Bean Code and pick up a limited edition hot taro bean milk. Free upsize available on any drink on the menu from medium to large.	one_time	34	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/pictures/chains/6/17742416/42bdf07396559691b7c687382fa8b2cb.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	QQjk2	99	bean,drink,milk tea,bubble tea	{"(-33.796928000000001,151.18362400000001)"}
-3	Free Loaded Fries 🍟	8bit is all about the good times, with its wickedly delicious take on classic burgers, hotdogs, epic loaded fries and shakes. Come try one of our delicious burgers or hotdogs and get an epic loaded fries for free.	one_time	9	\N	2018-11-01	2018-05-05	https://imgur.com/3woCfTC.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	RRW2h	1	fries,burger,fast-food	{"(-33.872760999999997,151.20533800000001)"}
-7	Free Coffee ☕	Purchase one of our finest authentic Kurtosh and receive any large coffee for free.	one_time	20	\N	2019-01-01	2019-12-01	https://imgur.com/9ydUqpJ.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	c9VXr	1	coffee,cafe	{"(-33.874538000000001,151.20067700000001)"}
-5	Half Price Soup Dumplings 🥟	To celebrate our grand opening, order our signature soup dumplings for only half price when you spend over $25. Available both lunch and dinner.	one_time	21	\N	2018-12-25	2020-07-09	https://imgur.com/bjJ3S72.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	JbgQP	99	chinese,dumplings	{"(-33.870510000000003,151.208923)"}
-6	$20 off $40 spend 💸	Enjoy our delicious wood-fired authentic Italian pizzas and hand-crafted pastas. Get $20 off when you spend over $40.	one_time	22	\N	2018-12-02	2020-05-05	https://imgur.com/tSE2cXf.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	9WRjf	1	italian,pizza,pasta	{"(-33.828257000000001,151.14623599999999)"}
-11	Free Size Upgrade 🍦	Free size upgrade whenever you purchase a soft serve. All our products are a work of art.	one_time	29	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/pictures/chains/4/16570514/ee9842022e181961c1f1b909b63ae303.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	PP9WR	99	ice cream,soft serve,dessert,sweet	{"(-33.874670999999999,151.20650900000001)"}
-12	Bring Your Own Cup Discount ☕	Take 50c off your coffee whenever you come to Mecca and bring your own cup or mug.	one_time	30	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/reviews_photos/cbb/9405cae7439688208e7028157cffccbb_1541840677.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	QQ9WR	99	coffee,cafe	{"(-33.782896000000001,151.26756599999999)"}
-14	$1 off Mondays ☕	Pick me up Monday, get $1 off for any large drink, smoothie, and ice drinks.	one_time	25	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/pictures/chains/9/16567979/91f31c5f267624ef8cf2ec31916fcefb.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	Jjjk2	99	coffe,cafe	{"(-33.882722000000001,151.21450300000001)"}
-15	$20 Pizza ☕	Come in on Wednesday night and pick up any medium pizza for $20 from our classic range.	one_time	22	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/reviews_photos/28b/dc5c64e51622552c5312ded510ad028b_1556783562.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	jk92z	99	coffe,cafe	{"(-33.828257000000001,151.14623599999999)"}
+14	$1 off Mondays ☕	Pick me up Monday, get $1 off for any large drink, smoothie, and ice drinks.	one_time	25	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/pictures/chains/9/16567979/91f31c5f267624ef8cf2ec31916fcefb.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	Jjjk2	99	coffe,cafe	{"(-33.882722000000001,151.21450300000001)"}
+12	Bring Your Own Cup Discount ☕	Take 50c off your coffee whenever you come to Mecca and bring your own cup or mug.	one_time	30	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/reviews_photos/cbb/9405cae7439688208e7028157cffccbb_1541840677.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	QQ9WR	99	coffee,cafe	{"(-33.782896000000001,151.26756599999999)"}
+13	Free Upsize 🍵	Feelin' chilly this winter? Visit Bean Code and pick up a limited edition hot taro bean milk. Free upsize available on any drink on the menu from medium to large.	one_time	34	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/pictures/chains/6/17742416/42bdf07396559691b7c687382fa8b2cb.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	QQjk2	99	bean,drink,milk tea,bubble tea	{"(-33.796928000000001,151.18362400000001)"}
+15	$20 Pizza 🍕	Come in on Wednesday night and pick up any medium pizza for $20 from our classic range.	one_time	22	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/reviews_photos/28b/dc5c64e51622552c5312ded510ad028b_1556783562.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	jk92z	99	coffe,cafe	{"(-33.828257000000001,151.14623599999999)"}
+6	$20 off $40 spend 💸	Enjoy our delicious wood-fired authentic Italian pizzas and hand-crafted pastas. Get $20 off when you spend over $40.	one_time	22	\N	2018-12-02	2020-05-05	https://imgur.com/tSE2cXf.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	9WRjf	1	italian,pizza,pasta	{"(-33.828257000000001,151.14623599999999)"}
+7	Free Coffee ☕	Purchase one of our finest authentic Kurtosh and receive any large coffee for free.	one_time	20	\N	2019-01-01	2019-12-01	https://imgur.com/9ydUqpJ.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	c9VXr	1	coffee,cafe	{"(-33.874538000000001,151.20067700000001)"}
+11	Free Size Upgrade 🍦	Free size upgrade whenever you purchase a soft serve. All our products are a work of art.	one_time	29	\N	2018-12-02	2020-05-05	https://b.zmtcdn.com/data/pictures/chains/4/16570514/ee9842022e181961c1f1b909b63ae303.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	PP9WR	99	ice cream,soft serve,dessert,sweet	{"(-33.874670999999999,151.20650900000001)"}
+2	Free Toppings! 🍮	Come enjoy our mouth-watering tasty teas, enjoy a free topping of your choice when you purchase any large drink.	one_time	\N	3	2018-11-01	2020-08-23	https://imgur.com/KMzxoYx.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	WhCDD	1	milk tea,bubble tea	{"(-33.795578999999996,151.185439)","(-33.873831000000003,151.20563799999999)","(-33.881093,151.204746)","(-33.877578999999997,151.20545999999999)","(-33.859076999999999,151.20815099999999)","(-33.884374000000001,151.19529600000001)","(-33.794479000000003,151.185959)"}
+1	Double Mex Tuesday 🌯	Buy two regular or naked burritos and get the cheaper one for free. Add two drinks for only $2! Hurry, only available this Tuesday.	unlimited	\N	4	2018-11-01	2020-05-05	https://imgur.com/tR1bD1v.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	W6JVB	1	burrito,mexican	{"(-33.865963000000001,151.20821699999999)","(-33.871730999999997,151.19897499999999)","(-33.862026999999998,151.20987500000001)"}
+8	Tea Latte Tuesday ☕	Get together for Tea Latte Tuesday. Buy a Teavana Tea Latte & score another one for FREE to share!	one_time	3	\N	2019-01-01	2019-12-01	https://imgur.com/o4bRN3i.jpg	Every Tuesday, buy any size Teavana™ Tea Latte (Green Tea Latte, Chai Tea Latte, Vanilla Black Tea Latte, Peach Black Tea Latte or Full Leaf Tea Latte) and score another one for FREE to surprise a friend!\r\n\r\nFree beverage must be of equal or lesser value.\r\n\r\nFrappuccino® blended beverages are excluded.\r\n\r\nEnds 26 August 2019.	t	t	1	4pPfr	99	tea,latte,coffee,cafe	{"(-33.839401000000002,151.20946599999999)"}
+5	Half Price Soup Dumplings 🥟	To celebrate our grand opening, order our signature soup dumplings for only half price when you spend over $25. Available both lunch and dinner.	one_time	21	\N	2018-12-25	2020-07-09	https://imgur.com/bjJ3S72.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	JbgQP	99	chinese,dumplings	{"(-33.870510000000003,151.208923)"}
+9	$3 Bagel 🥯	Nothing's better than a delicious bagel for a brighter start to the day, top it off with your favourite spread.	one_time	3	\N	2019-01-01	2019-12-01	https://imgur.com/yYaJYSI.jpg	Offer only available before 10am. \r\n\r\nEvery Tuesday, buy any size Teavana™ Tea Latte (Green Tea Latte, Chai Tea Latte, Vanilla Black Tea Latte, Peach Black Tea Latte or Full Leaf Tea Latte) and score another one for FREE to surprise a friend! \r\n\r\nFree beverage must be of equal or lesser value. \r\n\r\nFrappuccino® blended beverages are excluded. \r\n\r\nOffer ends 26 August 2019.\r\n	t	t	1	BKKWL	99	cafe,bagel,coffee	{"(-33.839401000000002,151.20946599999999)"}
+17	Buy 3 get 1 free 🍵	It's simple, buy a coffee, get a star, collect 3 stars and get a free medium coffee on the house! Come talk to our friendly staff for more info. A loyalty card you can't lose.	loyalty	8	\N	2018-11-01	2020-11-05	https://b.zmtcdn.com/data/reviews_photos/d2c/a40be30a1b16c34457b2eab1490aed2c_1526978870.jpg	Offer only applies medium or large drinks.\r\nNot to be used in conjunction with any other offer.	t	f	3	9J99Q	99	coffee,cafe	{"(-33.880653000000002,151.20675199999999)"}
+16	Bingsoo Tuesday 🍦	Bingsoo Bingtwo, buy two for the price of one every Tuesday. Come into any of our participating stores, offer ends when summer is over!	unlimited	36	\N	2018-11-01	2020-11-05	https://b.zmtcdn.com/data/reviews_photos/741/b77fbeea14a19205042456a45e037741_1536399624.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	PL9Zz	99	bingsoo,sweet,ice cream,dessert, soft serve	{"(-33.878081999999999,151.20494099999999)"}
+18	$3 Bagel 🥯	Pay $1 for a bagel when you purchase a coffee. Offer applies one per person.	unlimited	8	\N	2018-11-01	2020-11-05	https://i.imgur.com/hVS4Sb1.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	\N	9J9KM	99	cafe,bagel,coffee	{"(-33.880653000000002,151.20675199999999)"}
+19	Get $5 off Macarons 🎂	Get $5 off your purchase when you purchase a 12 or 18 box of Macarons of assorted flavours. Offer applies one per person.	one_time	8	\N	2018-11-01	2020-11-05	https://i.imgur.com/b4FTcEP.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	ZJ6JJ	99	cafe,bagel,coffee,sweets,macarons	{"(-33.880653000000002,151.20675199999999)"}
+3	Free Loaded Fries 🍟	8bit is all about the good times, with its wickedly delicious take on classic burgers, hotdogs, epic loaded fries and shakes. Come try one of our delicious burgers or hotdogs and get an epic loaded fries for free.	one_time	9	\N	2018-11-01	2018-05-05	https://imgur.com/3woCfTC.jpg	Offer only applies to full price items.\r\nNot to be used in conjunction with any other offer.	t	f	1	RRW2h	1	fries,burger,fast-food	{"(-33.872760999999997,151.20533800000001)"}
+\.
+
+
+--
+-- Data for Name: spatial_ref_sys; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
 \.
 
 
@@ -2262,11 +2652,6 @@ COPY public.store_tags (store_id, tag_id) FROM stdin;
 --
 
 COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_id, city_id, cover_image, "order", rank, follower_count, review_count, store_count, z_id, z_url, more_info, avg_cost, coords) FROM stdin;
-2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2	1	0	3	0	\N	\N	\N	\N	(-33.869546,151.19551799999999)
-1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1	1	1	2	0	\N	\N	\N	\N	(-33.796928000000001,151.18362400000001)
-3	Workshop Meowpresso	+61	288819222	4	1	1	https://imgur.com/sLPotj2.jpg	3	1	0	5	0	\N	\N	\N	\N	(-33.839401000000002,151.20946599999999)
-4	The Walrus Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4	1	0	4	0	\N	\N	\N	\N	(-33.874001,151.20836199999999)
-5	Frankie's Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6	1	1	0	0	\N	\N	\N	\N	(-33.865898000000001,151.209641)
 6	Cié Lest	+61	291111089	\N	4	1	https://imgur.com/euQ3uUf.jpg	5	99	0	0	0	\N	\N	\N	\N	(-33.877929999999999,151.21312)
 7	Pablo & Rusty's Sydney CBD	+61	281898789	\N	4	1	https://imgur.com/H7hHQe6.jpg	7	99	0	0	0	\N	\N	\N	\N	(-33.872311000000003,151.20906099999999)
 9	8bit	+61	295511312	6	5	1	https://imgur.com/bmvua2K.jpg	9	99	0	0	0	\N	\N	\N	\N	(-33.872760999999997,151.20533800000001)
@@ -2274,6 +2659,11 @@ COPY public.stores (id, name, phone_country, phone_number, location_id, suburb_i
 10	CoCo Fresh Tea & Juice	+61	295511312	7	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N	(-33.795578999999996,151.185439)
 12	CoCo Fresh Tea & Juice	+61	295511312	10	1	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N	(-33.873831000000003,151.20563799999999)
 11	CoCo Fresh Tea & Juice	+61	295511312	9	9	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N	(-33.881093,151.204746)
+2	Sokyo	+61	295258017	\N	1	1	https://imgur.com/9zJ9GvA.jpg	2	1	1	3	0	\N	\N	\N	\N	(-33.869546,151.19551799999999)
+1	Dumplings & Co.	+61	296992235	5	2	1	https://imgur.com/9aGBDLY.jpg	1	1	1	2	0	\N	\N	\N	\N	(-33.796928000000001,151.18362400000001)
+4	The Walrus Cafe	+61	289910090	\N	3	1	https://imgur.com/rxOxA57.jpg	4	1	1	4	0	\N	\N	\N	\N	(-33.874001,151.20836199999999)
+5	Frankie's Pizza	+61	298810099	\N	3	1	https://imgur.com/q9978qK.jpg	6	1	1	0	0	\N	\N	\N	\N	(-33.865898000000001,151.209641)
+3	Workshop Meowpresso	+61	288819222	4	1	1	https://i.imgur.com/sLPotj2.jpg	3	1	1	5	0	\N	\N	\N	\N	(-33.839401000000002,151.20946599999999)
 13	CoCo Fresh Tea & Juice	+61	295511312	11	2	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N	(-33.877578999999997,151.20545999999999)
 16	CoCo Fresh Tea & Juice	+61	295511312	\N	10	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N	(-33.859076999999999,151.20815099999999)
 14	CoCo Fresh Tea & Juice	+61	295511312	\N	7	1	https://imgur.com/KMzxoYx.jpg	14	99	0	0	0	\N	\N	\N	\N	(-33.884374000000001,151.19529600000001)
@@ -3129,6 +3519,7 @@ COPY public.suburbs (id, name, city_id, postcode, document, coords) FROM stdin;
 387	Wattle Grove	1	2173	'grove':2 'wattl':1	(-33.963315999999999,150.93640300000001)
 390	Abbotsbury	1	2176	'abbotsburi':1	(-33.877538000000001,150.86776800000001)
 391	Bossley Park	1	2176	'bossley':1 'park':2	(-33.866259999999997,150.88415000000001)
+499	Loftus	1	2232	'loftus':1	(-34.048074999999997,151.051176)
 392	Edensor Park	1	2176	'edensor':1 'park':2	(-33.877057000000001,150.875292)
 393	Greenfield Park	1	2176	'greenfield':1 'park':2	(-33.872186999999997,150.889408)
 394	Prairiewood	1	2176	'prairiewood':1	(-33.867342000000001,150.90213)
@@ -3213,7 +3604,6 @@ COPY public.suburbs (id, name, city_id, postcode, document, coords) FROM stdin;
 495	Audley	1	2232	'audley':1	(-34.075294999999997,151.05651900000001)
 496	Grays Point	1	2232	'gray':1 'point':2	(-34.058839999999996,151.08165199999999)
 497	Kareela	1	2232	'kareela':1	(-34.014668,151.08273299999999)
-499	Loftus	1	2232	'loftus':1	(-34.048074999999997,151.051176)
 501	Woronora	1	2232	'woronora':1	(-34.020654,151.047946)
 502	Engadine	1	2233	'engadin':1	(-34.065716000000002,151.012663)
 504	Waterfall	1	2233	'waterfal':1	(-34.135199999999998,150.994957)
@@ -4757,6 +5147,19 @@ COPY public.suburbs (id, name, city_id, postcode, document, coords) FROM stdin;
 
 
 --
+-- Data for Name: system_errors; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.system_errors (id, error_type, description, occurred_at) FROM stdin;
+1	Update Store	Could not update store 1	2019-09-26 17:22:52.64+10
+2	Validate Reward	Could not parse userReward: null	2019-09-26 19:17:18.32+10
+3	Validate Reward	Could not parse userReward: null	2019-09-26 19:17:29.84+10
+4	Validate Reward	Could not parse userReward: null	2019-09-26 19:20:30.058+10
+5	Validate Reward	Could not parse userReward: null	2019-09-26 19:21:40.644+10
+\.
+
+
+--
 -- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -4767,6 +5170,30 @@ COPY public.tags (id, name) FROM stdin;
 4	fancy
 5	coffee
 6	brunch
+\.
+
+
+--
+-- Data for Name: us_gaz; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.us_gaz (id, seq, word, stdword, token, is_custom) FROM stdin;
+\.
+
+
+--
+-- Data for Name: us_lex; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.us_lex (id, seq, word, stdword, token, is_custom) FROM stdin;
+\.
+
+
+--
+-- Data for Name: us_rules; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.us_rules (id, rule, is_custom) FROM stdin;
 \.
 
 
@@ -4820,36 +5247,10 @@ COPY public.user_claims (user_id, type, value) FROM stdin;
 
 
 --
--- Data for Name: user_favorite_comments; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.user_favorite_comments (user_id, comment_id) FROM stdin;
-2	2
-2	3
-2	1
-2	29
-2	47
-\.
-
-
---
 -- Data for Name: user_favorite_posts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.user_favorite_posts (user_id, post_id) FROM stdin;
-2	118
-2	132
-2	3
-2	139
-\.
-
-
---
--- Data for Name: user_favorite_replies; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.user_favorite_replies (user_id, reply_id) FROM stdin;
-2	2
 \.
 
 
@@ -4862,9 +5263,9 @@ COPY public.user_favorite_rewards (user_id, reward_id) FROM stdin;
 1	1
 2	3
 2	5
-2	7
 2	2
 2	8
+2	12
 \.
 
 
@@ -4899,6 +5300,7 @@ COPY public.user_follows (user_id, follower_id) FROM stdin;
 1	2
 3	2
 4	2
+2	2765
 \.
 
 
@@ -4942,11 +5344,11 @@ google	116467743640327081754	1
 COPY public.user_profiles (user_id, username, preferred_name, profile_picture, gender, firstname, surname, tagline, follower_count, store_count) FROM stdin;
 2764	eddie_chae	Eddie	https://imgur.com/CUVkwzY.jpg	male	Edward	Perry	\N	0	0
 2765	goldcoast.sophia	Sophia	https://imgur.com/ejg9ziF.jpg	female	Sophia	King	When a poet digs himself into a hole, he doesn't climb out. He digs deeper, enjoys the scenery, and comes out the other side enlightened.	0	0
-1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	female	Luna	Lytele	Avid traveller, big foodie. Ramen or die! 🍜	0	3
-3	annika_b	Annika	https://imgur.com/18N6fV3.jpg	female	Annika	McIntyre	🏹 Sagittarius\r\n🍜 Big Foodie\r\n📍 Tokyo, Amsterdam, Brooklyn	0	2
-2	curious_chloe	Chloe	https://imgur.com/AwS5vPC.jpg	female	Chloe	Lee	🏹 Saggitarius\n✈ Tokyo, Amsterdam, and Brooklyn\n🏠 Living in Sydney\n🍜 Ramen, Pad Thai, and Boba is Lyf	0	4
-4	miss.leia	Leia	https://imgur.com/CUVkwzY.jpg	female	Leia	Rochford	When a poet digs himself into a hole, he doesn't climb out. He digs deeper, enjoys the scenery, and comes out the other side enlightened.	0	2
+1	nyatella	Luna	https://imgur.com/DAdLVwp.jpg	female	Luna	Lytele	Avid traveller, big foodie. Ramen or die! 🍜	1	3
+3	annika_b	Annika	https://imgur.com/18N6fV3.jpg	female	Annika	McIntyre	🏹 Sagittarius\r\n🍜 Big Foodie\r\n📍 Tokyo, Amsterdam, Brooklyn	2	2
 5	evalicious	Eva	https://imgur.com/fFa9R1o.jpg	female	Eva	Seacrest	\N	0	1
+2	curious_chloe	Chloe	https://imgur.com/AwS5vPC.jpg	female	Chloe	Lee	🏹 Saggitarius\n✈ Tokyo, Amsterdam, and Brooklyn\n🏠 Living in Sydney\n🍜 Ramen, Pad Thai, and Boba is Lyf	2	5
+4	miss.leia	Leia	https://imgur.com/CUVkwzY.jpg	female	Leia	Rochford	When a poet digs himself into a hole, he doesn't climb out. He digs deeper, enjoys the scenery, and comes out the other side enlightened.	1	2
 \.
 
 
@@ -4954,15 +5356,77 @@ COPY public.user_profiles (user_id, username, preferred_name, profile_picture, g
 -- Data for Name: user_rewards; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_rewards (user_id, reward_id, unique_code, redeemed_at) FROM stdin;
-2	7	N4CE	\N
-1	1	CX1P	\N
-2	9	0MYD	\N
-2	8	OK1O	\N
-2	3	IODE	\N
-2765	2	Y8Z2	\N
-2	1	5GVY	\N
+COPY public.user_rewards (user_id, reward_id, unique_code, last_redeemed_at, redeemed_count) FROM stdin;
+2	18	MN6K	2019-10-02 21:00:37.644+10	5
+2	19	Z7Z7	\N	0
+2	17	9MNW	2019-10-02 21:00:06.265+10	3
+2765	2	Y8Z2	2019-09-19 07:35:34.959+10	1
+1	1	CX1P	2019-09-19 07:35:34.959+10	1
+2	9	0MYD	2019-09-19 07:35:34.959+10	1
+2	3	IODE	2019-09-19 07:35:34.959+10	1
+2	7	N4CE	2019-09-19 07:35:34.959+10	1
+2	8	OK1O	2019-09-19 07:35:34.959+10	1
+2	12	5KK5	\N	0
+2	1	5GVY	2019-09-19 07:35:34.959+10	5
+2	5	NYKD	\N	0
+2	15	GCDQ	\N	0
+2	2	PLPZ	\N	0
 \.
+
+
+--
+-- Data for Name: geocode_settings; Type: TABLE DATA; Schema: tiger; Owner: postgres
+--
+
+COPY tiger.geocode_settings (name, setting, unit, category, short_desc) FROM stdin;
+\.
+
+
+--
+-- Data for Name: pagc_gaz; Type: TABLE DATA; Schema: tiger; Owner: postgres
+--
+
+COPY tiger.pagc_gaz (id, seq, word, stdword, token, is_custom) FROM stdin;
+\.
+
+
+--
+-- Data for Name: pagc_lex; Type: TABLE DATA; Schema: tiger; Owner: postgres
+--
+
+COPY tiger.pagc_lex (id, seq, word, stdword, token, is_custom) FROM stdin;
+\.
+
+
+--
+-- Data for Name: pagc_rules; Type: TABLE DATA; Schema: tiger; Owner: postgres
+--
+
+COPY tiger.pagc_rules (id, rule, is_custom) FROM stdin;
+\.
+
+
+--
+-- Data for Name: topology; Type: TABLE DATA; Schema: topology; Owner: postgres
+--
+
+COPY topology.topology (id, name, srid, "precision", hasz) FROM stdin;
+\.
+
+
+--
+-- Data for Name: layer; Type: TABLE DATA; Schema: topology; Owner: postgres
+--
+
+COPY topology.layer (topology_id, layer_id, schema_name, table_name, feature_column, feature_type, level, child_id) FROM stdin;
+\.
+
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.admins_id_seq', 10, true);
 
 
 --
@@ -4973,10 +5437,24 @@ SELECT pg_catalog.setval('public.cities_id_seq', 2, true);
 
 
 --
+-- Name: comment_likes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.comment_likes_id_seq', 5, true);
+
+
+--
 -- Name: comment_replies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.comment_replies_id_seq', 46, true);
+
+
+--
+-- Name: comment_reply_likes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.comment_reply_likes_id_seq', 1, true);
 
 
 --
@@ -5022,38 +5500,45 @@ SELECT pg_catalog.setval('public.post_comments_id_seq', 58, true);
 
 
 --
+-- Name: post_likes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.post_likes_id_seq', 4, true);
+
+
+--
 -- Name: post_photos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_photos_id_seq', 381, true);
+SELECT pg_catalog.setval('public.post_photos_id_seq', 387, true);
 
 
 --
 -- Name: post_reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.post_reviews_id_seq', 201, true);
+SELECT pg_catalog.setval('public.post_reviews_id_seq', 209, true);
 
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.posts_id_seq', 210, true);
+SELECT pg_catalog.setval('public.posts_id_seq', 218, true);
 
 
 --
 -- Name: rewards_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.rewards_id_seq', 15, true);
+SELECT pg_catalog.setval('public.rewards_id_seq', 19, true);
 
 
 --
 -- Name: store_addresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.store_addresses_id_seq', 50, true);
+SELECT pg_catalog.setval('public.store_addresses_id_seq', 53, true);
 
 
 --
@@ -5067,7 +5552,7 @@ SELECT pg_catalog.setval('public.store_groups_id_seq', 4, true);
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stores_id_seq', 60, true);
+SELECT pg_catalog.setval('public.stores_id_seq', 63, true);
 
 
 --
@@ -5075,6 +5560,13 @@ SELECT pg_catalog.setval('public.stores_id_seq', 60, true);
 --
 
 SELECT pg_catalog.setval('public.suburbs_id_seq', 2448, true);
+
+
+--
+-- Name: system_errors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.system_errors_id_seq', 5, true);
 
 
 --
@@ -5157,6 +5649,22 @@ CREATE MATERIALIZED VIEW public.store_search AS
 ALTER TABLE public.store_search OWNER TO postgres;
 
 --
+-- Name: admins admins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: comment_likes comment_likes_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_likes
+    ADD CONSTRAINT comment_likes_pk PRIMARY KEY (id);
+
+
+--
 -- Name: comment_replies comment_replies_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -5213,6 +5721,14 @@ ALTER TABLE ONLY public.comments
 
 
 --
+-- Name: post_likes post_likes_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post_likes
+    ADD CONSTRAINT post_likes_pk PRIMARY KEY (id);
+
+
+--
 -- Name: post_photos post_photos_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -5234,6 +5750,14 @@ ALTER TABLE ONLY public.post_reviews
 
 ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_pk PRIMARY KEY (id);
+
+
+--
+-- Name: comment_reply_likes reply_likes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_reply_likes
+    ADD CONSTRAINT reply_likes_pkey UNIQUE (user_id, reply_id);
 
 
 --
@@ -5293,6 +5817,14 @@ ALTER TABLE ONLY public.suburbs
 
 
 --
+-- Name: system_errors system_errors_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.system_errors
+    ADD CONSTRAINT system_errors_pk PRIMARY KEY (id);
+
+
+--
 -- Name: tags tags_id_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -5317,27 +5849,11 @@ ALTER TABLE ONLY public.user_claims
 
 
 --
--- Name: user_favorite_comments user_favorite_comments_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_favorite_comments
-    ADD CONSTRAINT user_favorite_comments_pk PRIMARY KEY (user_id, comment_id);
-
-
---
--- Name: user_favorite_posts user_favorite_posts_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_favorite_posts user_favorite_posts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_favorite_posts
-    ADD CONSTRAINT user_favorite_posts_pk PRIMARY KEY (user_id, post_id);
-
-
---
--- Name: user_favorite_replies user_favorite_replies_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_favorite_replies
-    ADD CONSTRAINT user_favorite_replies_pk PRIMARY KEY (user_id, reply_id);
+    ADD CONSTRAINT user_favorite_posts_pkey PRIMARY KEY (user_id, post_id);
 
 
 --
@@ -5381,10 +5897,24 @@ ALTER TABLE ONLY public.user_favorite_rewards
 
 
 --
+-- Name: admins_username_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX admins_username_index ON public.admins USING btree (username);
+
+
+--
 -- Name: cities_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX cities_name ON public.cities USING btree (name);
+
+
+--
+-- Name: comment_likes_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX comment_likes_id_uindex ON public.comment_likes USING btree (id);
 
 
 --
@@ -5420,6 +5950,13 @@ CREATE INDEX cuisine_search_document_idx ON public.cuisine_search USING btree (d
 --
 
 CREATE INDEX districts_name ON public.districts USING btree (name);
+
+
+--
+-- Name: errors_error_type_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX errors_error_type_index ON public.system_errors USING btree (error_type);
 
 
 --
@@ -5605,6 +6142,13 @@ CREATE INDEX suburbs_name ON public.suburbs USING btree (name);
 
 
 --
+-- Name: system_errors_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX system_errors_id_uindex ON public.system_errors USING btree (id);
+
+
+--
 -- Name: user_accounts_email_confirmed_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5629,7 +6173,7 @@ CREATE UNIQUE INDEX user_follows_user_id_follower_uindex ON public.user_follows 
 -- Name: user_rewards_redeemed_at_index; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX user_rewards_redeemed_at_index ON public.user_rewards USING btree (redeemed_at);
+CREATE INDEX user_rewards_redeemed_at_index ON public.user_rewards USING btree (last_redeemed_at);
 
 
 --
@@ -5640,11 +6184,43 @@ CREATE UNIQUE INDEX user_rewards_unique_code_uindex ON public.user_rewards USING
 
 
 --
+-- Name: admins admins_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
+
+
+--
 -- Name: cities cities_district_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.cities
-    ADD CONSTRAINT cities_district_id_fkey FOREIGN KEY (district_id) REFERENCES public.districts(id);
+    ADD CONSTRAINT cities_district_id_fkey FOREIGN KEY (district_id) REFERENCES public.districts(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comment_likes comment_likes_comments_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_likes
+    ADD CONSTRAINT comment_likes_comments_id_fk FOREIGN KEY (comment_id) REFERENCES public.comments(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comment_likes comment_likes_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_likes
+    ADD CONSTRAINT comment_likes_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comment_likes comment_likes_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_likes
+    ADD CONSTRAINT comment_likes_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON DELETE CASCADE;
 
 
 --
@@ -5656,11 +6232,51 @@ ALTER TABLE ONLY public.comment_replies
 
 
 --
+-- Name: comment_replies comment_replies_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_replies
+    ADD CONSTRAINT comment_replies_stores_id_fk FOREIGN KEY (replied_by_store) REFERENCES public.stores(id) ON DELETE CASCADE;
+
+
+--
 -- Name: comment_replies comment_replies_user_profiles_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.comment_replies
-    ADD CONSTRAINT comment_replies_user_profiles_user_id_fk FOREIGN KEY (replied_by) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT comment_replies_user_profiles_user_id_fk FOREIGN KEY (replied_by) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: comment_reply_likes comment_reply_likes_comment_replies_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_reply_likes
+    ADD CONSTRAINT comment_reply_likes_comment_replies_id_fk FOREIGN KEY (reply_id) REFERENCES public.comment_replies(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comment_reply_likes comment_reply_likes_reply_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_reply_likes
+    ADD CONSTRAINT comment_reply_likes_reply_id_fkey FOREIGN KEY (reply_id) REFERENCES public.comment_replies(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comment_reply_likes comment_reply_likes_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comment_reply_likes
+    ADD CONSTRAINT comment_reply_likes_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comments comments_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comments
+    ADD CONSTRAINT comments_stores_id_fk FOREIGN KEY (commented_by_store) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -5668,7 +6284,7 @@ ALTER TABLE ONLY public.comment_replies
 --
 
 ALTER TABLE ONLY public.districts
-    ADD CONSTRAINT districts_country_id_fkey FOREIGN KEY (country_id) REFERENCES public.countries(id);
+    ADD CONSTRAINT districts_country_id_fkey FOREIGN KEY (country_id) REFERENCES public.countries(id) ON DELETE CASCADE;
 
 
 --
@@ -5676,7 +6292,7 @@ ALTER TABLE ONLY public.districts
 --
 
 ALTER TABLE ONLY public.locations
-    ADD CONSTRAINT locations_suburb_id_fkey FOREIGN KEY (suburb_id) REFERENCES public.suburbs(id);
+    ADD CONSTRAINT locations_suburb_id_fkey FOREIGN KEY (suburb_id) REFERENCES public.suburbs(id) ON DELETE CASCADE;
 
 
 --
@@ -5692,7 +6308,31 @@ ALTER TABLE ONLY public.comments
 --
 
 ALTER TABLE ONLY public.comments
-    ADD CONSTRAINT post_comments_user_accounts_id_fk FOREIGN KEY (commented_by) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT post_comments_user_accounts_id_fk FOREIGN KEY (commented_by) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: post_likes post_likes_posts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post_likes
+    ADD CONSTRAINT post_likes_posts_id_fk FOREIGN KEY (post_id) REFERENCES public.posts(id) ON DELETE CASCADE;
+
+
+--
+-- Name: post_likes post_likes_stores_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post_likes
+    ADD CONSTRAINT post_likes_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
+
+
+--
+-- Name: post_likes post_likes_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.post_likes
+    ADD CONSTRAINT post_likes_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON DELETE CASCADE;
 
 
 --
@@ -5700,7 +6340,7 @@ ALTER TABLE ONLY public.comments
 --
 
 ALTER TABLE ONLY public.post_photos
-    ADD CONSTRAINT post_photos_posts_id_fk FOREIGN KEY (post_id) REFERENCES public.posts(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT post_photos_posts_id_fk FOREIGN KEY (post_id) REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
@@ -5708,7 +6348,7 @@ ALTER TABLE ONLY public.post_photos
 --
 
 ALTER TABLE ONLY public.post_reviews
-    ADD CONSTRAINT post_reviews_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT post_reviews_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
@@ -5716,7 +6356,7 @@ ALTER TABLE ONLY public.post_reviews
 --
 
 ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_posted_by_id_fkey FOREIGN KEY (posted_by) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT posts_posted_by_id_fkey FOREIGN KEY (posted_by) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
 
 
 --
@@ -5724,7 +6364,7 @@ ALTER TABLE ONLY public.posts
 --
 
 ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT posts_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -5732,7 +6372,7 @@ ALTER TABLE ONLY public.posts
 --
 
 ALTER TABLE ONLY public.reward_rankings
-    ADD CONSTRAINT reward_rankings_rewards_id_fk FOREIGN KEY (reward_id) REFERENCES public.rewards(id);
+    ADD CONSTRAINT reward_rankings_rewards_id_fk FOREIGN KEY (reward_id) REFERENCES public.rewards(id) ON DELETE CASCADE;
 
 
 --
@@ -5740,7 +6380,7 @@ ALTER TABLE ONLY public.reward_rankings
 --
 
 ALTER TABLE ONLY public.rewards
-    ADD CONSTRAINT rewards_store_group_id_fkey FOREIGN KEY (store_group_id) REFERENCES public.store_groups(id);
+    ADD CONSTRAINT rewards_store_group_id_fkey FOREIGN KEY (store_group_id) REFERENCES public.store_groups(id) ON DELETE CASCADE;
 
 
 --
@@ -5748,7 +6388,7 @@ ALTER TABLE ONLY public.rewards
 --
 
 ALTER TABLE ONLY public.rewards
-    ADD CONSTRAINT rewards_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT rewards_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -5764,7 +6404,7 @@ ALTER TABLE ONLY public.store_addresses
 --
 
 ALTER TABLE ONLY public.store_cuisines
-    ADD CONSTRAINT store_cuisines_cuisines_id_fk FOREIGN KEY (cuisine_id) REFERENCES public.cuisines(id);
+    ADD CONSTRAINT store_cuisines_cuisines_id_fk FOREIGN KEY (cuisine_id) REFERENCES public.cuisines(id) ON DELETE CASCADE;
 
 
 --
@@ -5788,7 +6428,7 @@ ALTER TABLE ONLY public.store_follows
 --
 
 ALTER TABLE ONLY public.store_follows
-    ADD CONSTRAINT store_follows_user_profiles_user_id_fk FOREIGN KEY (follower_id) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT store_follows_user_profiles_user_id_fk FOREIGN KEY (follower_id) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
 
 
 --
@@ -5844,7 +6484,7 @@ ALTER TABLE ONLY public.store_tags
 --
 
 ALTER TABLE ONLY public.store_tags
-    ADD CONSTRAINT store_tags_tag_id_fk FOREIGN KEY (tag_id) REFERENCES public.tags(id);
+    ADD CONSTRAINT store_tags_tag_id_fk FOREIGN KEY (tag_id) REFERENCES public.tags(id) ON DELETE CASCADE;
 
 
 --
@@ -5852,7 +6492,7 @@ ALTER TABLE ONLY public.store_tags
 --
 
 ALTER TABLE ONLY public.suburbs
-    ADD CONSTRAINT suburbs_city_id_fkey FOREIGN KEY (city_id) REFERENCES public.cities(id);
+    ADD CONSTRAINT suburbs_city_id_fkey FOREIGN KEY (city_id) REFERENCES public.cities(id) ON DELETE CASCADE;
 
 
 --
@@ -5860,47 +6500,23 @@ ALTER TABLE ONLY public.suburbs
 --
 
 ALTER TABLE ONLY public.user_claims
-    ADD CONSTRAINT user_claims_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT user_claims_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON DELETE CASCADE;
 
 
 --
--- Name: user_favorite_comments user_favorite_comments_comments_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_favorite_comments
-    ADD CONSTRAINT user_favorite_comments_comments_id_fk FOREIGN KEY (user_id) REFERENCES public.comments(id);
-
-
---
--- Name: user_favorite_comments user_favorite_comments_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_favorite_comments
-    ADD CONSTRAINT user_favorite_comments_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
-
-
---
--- Name: user_favorite_posts user_favorite_posts_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_favorite_posts user_favorite_posts_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_favorite_posts
-    ADD CONSTRAINT user_favorite_posts_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_favorite_posts_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: user_favorite_replies user_favorite_replies_replies_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_favorite_posts user_favorite_posts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.user_favorite_replies
-    ADD CONSTRAINT user_favorite_replies_replies_id_fk FOREIGN KEY (user_id) REFERENCES public.comment_replies(id);
-
-
---
--- Name: user_favorite_replies user_favorite_replies_user_accounts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_favorite_replies
-    ADD CONSTRAINT user_favorite_replies_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+ALTER TABLE ONLY public.user_favorite_posts
+    ADD CONSTRAINT user_favorite_posts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5908,7 +6524,7 @@ ALTER TABLE ONLY public.user_favorite_replies
 --
 
 ALTER TABLE ONLY public.user_favorite_stores
-    ADD CONSTRAINT user_favorite_stores_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id);
+    ADD CONSTRAINT user_favorite_stores_stores_id_fk FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE;
 
 
 --
@@ -5924,7 +6540,7 @@ ALTER TABLE ONLY public.user_favorite_stores
 --
 
 ALTER TABLE ONLY public.user_follows
-    ADD CONSTRAINT user_follows_user_profiles_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT user_follows_user_profiles_user_id_fk FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
 
 
 --
@@ -5932,7 +6548,7 @@ ALTER TABLE ONLY public.user_follows
 --
 
 ALTER TABLE ONLY public.user_follows
-    ADD CONSTRAINT user_follows_user_profiles_user_id_fk_2 FOREIGN KEY (follower_id) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT user_follows_user_profiles_user_id_fk_2 FOREIGN KEY (follower_id) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
 
 
 --
@@ -5940,7 +6556,7 @@ ALTER TABLE ONLY public.user_follows
 --
 
 ALTER TABLE ONLY public.user_logins
-    ADD CONSTRAINT user_logins_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_logins_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON DELETE CASCADE;
 
 
 --
@@ -5948,7 +6564,7 @@ ALTER TABLE ONLY public.user_logins
 --
 
 ALTER TABLE ONLY public.user_profiles
-    ADD CONSTRAINT user_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT user_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON DELETE CASCADE;
 
 
 --
@@ -5956,7 +6572,7 @@ ALTER TABLE ONLY public.user_profiles
 --
 
 ALTER TABLE ONLY public.user_favorite_rewards
-    ADD CONSTRAINT user_rewards_reward_id_fkey FOREIGN KEY (reward_id) REFERENCES public.rewards(id);
+    ADD CONSTRAINT user_rewards_reward_id_fkey FOREIGN KEY (reward_id) REFERENCES public.rewards(id) ON DELETE CASCADE;
 
 
 --
@@ -5964,7 +6580,7 @@ ALTER TABLE ONLY public.user_favorite_rewards
 --
 
 ALTER TABLE ONLY public.user_rewards
-    ADD CONSTRAINT user_rewards_rewards_id_fk FOREIGN KEY (reward_id) REFERENCES public.rewards(id);
+    ADD CONSTRAINT user_rewards_rewards_id_fk FOREIGN KEY (reward_id) REFERENCES public.rewards(id) ON DELETE CASCADE;
 
 
 --
@@ -5972,7 +6588,7 @@ ALTER TABLE ONLY public.user_rewards
 --
 
 ALTER TABLE ONLY public.user_rewards
-    ADD CONSTRAINT user_rewards_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id);
+    ADD CONSTRAINT user_rewards_user_accounts_id_fk FOREIGN KEY (user_id) REFERENCES public.user_accounts(id) ON DELETE CASCADE;
 
 
 --
@@ -5980,7 +6596,7 @@ ALTER TABLE ONLY public.user_rewards
 --
 
 ALTER TABLE ONLY public.user_favorite_rewards
-    ADD CONSTRAINT user_rewards_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id);
+    ADD CONSTRAINT user_rewards_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user_profiles(user_id) ON DELETE CASCADE;
 
 
 --

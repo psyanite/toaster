@@ -5,6 +5,7 @@ import RewardType from '../types/Reward/RewardType';
 import sequelize from '../sequelize';
 import Sequelize from 'sequelize';
 import StoreType from '../types/Store/StoreType';
+import { UserProfile, UserReward } from '../models';
 
 const Op = Sequelize.Op;
 
@@ -134,5 +135,25 @@ export default {
     resolve: async (_, { ids }) => {
       return Reward.findAll({ where: { id: { [Op.in]: ids } } });
     }
-  }
+  },
+
+  favoriteRewards: {
+    type: new List(RewardType),
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+    },
+    resolve: async (_, { userId }) => {
+      return Reward.findAll({
+        include: [
+          { model: UserReward, as: 'userRewards', where: { user_id: userId }, required: false },
+          { model: UserProfile, as: 'favoritedBy', where: { user_id: userId } },
+        ],
+      order: [
+        [ { model: UserReward, as: 'userRewards' }, 'last_redeemed_at', 'DESC NULLS LAST' ]
+      ]
+      });
+    }
+  },
 };

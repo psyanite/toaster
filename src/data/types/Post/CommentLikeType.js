@@ -3,7 +3,9 @@ import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as Obje
 export default new ObjectType({
   name: 'CommentLikeType',
   fields: () => ({
-    user_id: { type: new NonNull(Int) },
+    id: { type: new NonNull(Int) },
     comment_id: { type: new NonNull(Int) },
+    user_id: { type: Int },
+    store_id: { type: Int },
   }),
 });

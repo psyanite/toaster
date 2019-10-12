@@ -9,10 +9,11 @@ import {
 } from 'graphql';
 import { GraphQLDate as Date } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Reward, Store, StoreGroup, UserProfile } from '../../models';
+import { Reward, Store, StoreGroup, UserProfile, UserReward } from '../../models';
 import StoreType from '../Store/StoreType';
 import StoreGroupType from '../Store/StoreGroupType';
 import UserProfileType from '../User/UserProfileType';
+import UserRewardType from '../User/UserRewardType';
 
 Reward.Store = Reward.belongsTo(Store, { foreignKey: 'store_id' });
 Reward.StoreGroup = Reward.belongsTo(StoreGroup, {
@@ -20,10 +21,12 @@ Reward.StoreGroup = Reward.belongsTo(StoreGroup, {
   as: 'storeGroup',
 });
 Reward.FavoritedBy = Reward.belongsToMany(UserProfile, {
-  through: 'user_favorite_stores',
-  foreignKey: 'user_id',
-  as: 'favoriteStores',
+  through: 'user_favorite_rewards',
+  foreignKey: 'reward_id',
+  otherKey: 'user_id',
+  as: 'favoritedBy',
 });
+Reward.UserRewards = Reward.hasMany(UserReward, { as: 'userRewards' });
 
 export const RewardTypeValues = Object.freeze({
   OneTime: 'one_time',
@@ -66,6 +69,10 @@ export default new ObjectType({
     favorited_by: {
       type: List(UserProfileType),
       resolve: resolver(Reward.FavoritedBy),
+    },
+    user_rewards: {
+      type: List(UserRewardType),
+      resolve: resolver(Reward.UserRewards),
     },
   }),
 });

@@ -20,6 +20,10 @@ const Reply = sequelize.define('comment_replies', {
     type: Sequelize.INTEGER,
   },
 
+  replied_by_store: {
+    type: Sequelize.INTEGER,
+  },
+
   replied_at: {
     type: Sequelize.DATE,
     allowNull: false,

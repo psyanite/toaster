@@ -141,7 +141,7 @@ app.use((err, req, res, next) => {
       title="Internal Server Error"
       description={err.message}
     >
-      {err.toString()} />)}
+      {ReactDOM.renderToString(<p>{err.toString()}</p>)}
     </Html>,
   );
   res.status(err.status || 500);

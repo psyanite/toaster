@@ -13,7 +13,7 @@ export default {
       },
     },
     resolve: async (_, { postId }) => {
-      return await Comment.findAll({ where: { post_id: postId }});
+      return Comment.findAll({ where: { post_id: postId } });
     }
   },
 

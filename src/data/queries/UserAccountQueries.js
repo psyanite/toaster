@@ -6,6 +6,7 @@ import UserAccountType from '../types/User/UserAccountType';
 import UserProfileType from '../types/User/UserProfileType';
 
 export default {
+
   allUserAccounts: {
     type: new List(UserAccountType),
     resolve() {
