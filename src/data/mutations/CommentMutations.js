@@ -1,6 +1,5 @@
 import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { Comment, CommentLike, Post, Reply, ReplyLike } from '../models';
-import UserAccount from '../models/User/UserAccount';
 import CommentType from '../types/Post/CommentType';
 import ReplyType from '../types/Post/ReplyType';
 import ReplyLikeType from '../types/Post/ReplyLikeType';

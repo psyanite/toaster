@@ -10,8 +10,13 @@ let TopStorePosts = null;
 
 export class Feed {
   constructor(posts) {
+    let slicedPosts = posts.length > 60 ? posts.slice(0, 60) : posts;
+    slicedPosts.sort((a, b) => {
+      return new Date(b.posted_at) - new Date(a.posted_at);
+    });
+
     this.createdAt = new Date();
-    this.posts = posts;
+    this.postIds = slicedPosts.map((p) => p.id);
   }
 }
 
@@ -96,17 +101,6 @@ const getTopUserPosts = (limit) => {
   return TopUserPosts.slice(0, limit || 25);
 };
 
-const toMap = (input) => {
-  let posts = input.length > 60 ? input.slice(0, 60) : input;
-  posts.sort((a, b) => {
-    return new Date(b.posted_at) - new Date(a.posted_at);
-  });
-  return posts.reduce((map, post) => {
-    map.set(post.id, post);
-    return map;
-  }, new Map());
-};
-
 refreshTopPosts();
 
 export default class FeedService {
@@ -114,7 +108,7 @@ export default class FeedService {
   static async getGenericFeed() {
     const topStorePosts = getTopStorePosts(30);
     const topUserPosts = getTopUserPosts(30);
-    return new Feed(toMap([...topStorePosts, ...topUserPosts]));
+    return new Feed([...topStorePosts, ...topUserPosts]);
   }
 
   static async getFeed(userId) {
@@ -122,12 +116,12 @@ export default class FeedService {
     let posts = [...userPosts, ...storePosts];
     if (posts.length > 60) {
       const topStorePosts = getTopStorePosts(10);
-      return new Feed(toMap([...posts, ...topStorePosts]));
+      return new Feed([...posts, ...topStorePosts]);
     }
 
     const remainder = 60 - posts.length;
     const topStorePosts = getTopStorePosts(Math.round(remainder * 0.7));
     const topUserPosts = getTopUserPosts(Math.round(remainder * 0.3));
-    return new Feed(toMap([...posts, ...topStorePosts, ...topUserPosts]));
+    return new Feed([...posts, ...topStorePosts, ...topUserPosts]);
   }
 }

@@ -4,6 +4,7 @@ import sequelize from '../../sequelize';
 const CommentLike = sequelize.define('comment_likes', {
   id: {
     type: Sequelize.INTEGER,
+    autoIncrement: true,
     primaryKey: true,
   },
 

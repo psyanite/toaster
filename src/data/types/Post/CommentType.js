@@ -14,7 +14,7 @@ import CommentLikeType from './CommentLikeType';
 import StoreType from '../Store/StoreType';
 
 Comment.Replies = Comment.hasMany(Reply, { as: 'replies' });
-Comment.Likers = Comment.hasMany(CommentLike, { foreignKey: 'comment_id', as: 'likers' });
+Comment.Likes = Comment.hasMany(CommentLike, { foreignKey: 'comment_id', as: 'likes' });
 Comment.UserProfile = Comment.belongsTo(UserProfile, { foreignKey: 'commented_by' });
 Comment.Store = Comment.belongsTo(Store, { foreignKey: 'commented_by_store' });
 
@@ -28,9 +28,9 @@ export default new ObjectType({
       type: new List(ReplyType),
       resolve: resolver(Comment.Replies),
     },
-    liked_by: {
+    likes: {
       type: new List(CommentLikeType),
-      resolve: resolver(Comment.Likers),
+      resolve: resolver(Comment.Likes),
     },
     commented_by: {
       type: UserProfileType,

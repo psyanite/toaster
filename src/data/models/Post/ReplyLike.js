@@ -4,6 +4,7 @@ import sequelize from '../../sequelize';
 const ReplyLike = sequelize.define('comment_reply_likes', {
   id: {
     type: Sequelize.INTEGER,
+    autoIncrement: true,
     primaryKey: true,
   },
 

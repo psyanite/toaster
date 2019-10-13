@@ -2,9 +2,13 @@
 import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull } from 'graphql';
 import PostType from '../types/Post/PostType';
 import FeedService, { Feed } from '../services/FeedService';
+import { Post } from '../models';
+import Sequelize from 'sequelize';
+
+const Op = Sequelize.Op;
 
 const UserFeeds = new Map();
-let DefaultFeed = new Feed(null);
+let DefaultFeed = new Feed([]);
 
 const isExpired = (createdAt) => {
   return createdAt < new Date(new Date() - 10*60000)
@@ -26,10 +30,14 @@ export default {
       },
     },
     resolve: async (_, { limit, offset }) => {
-      if (!DefaultFeed.posts || isExpired(DefaultFeed.createdAt)) {
+      if (!DefaultFeed.postIds || isExpired(DefaultFeed.createdAt)) {
         DefaultFeed = await FeedService.getGenericFeed();
       }
-      return slice(DefaultFeed.posts.values(), limit, offset);
+      const ids = slice(DefaultFeed.postIds, limit, offset);
+      return Post.findAll({
+        where: { id: { [Op.in]: ids } },
+        order: [['posted_at', 'DESC']],
+      });
     }
   },
 
@@ -54,7 +62,11 @@ export default {
         UserFeeds.set(userId, feed);
       }
 
-      return slice(feed.posts.values(), limit, offset);
+      const ids = slice(feed.postIds, limit, offset);
+      return Post.findAll({
+        where: { id: { [Op.in]: ids } },
+        order: [['posted_at', 'DESC']],
+      });
     }
   }
 };

@@ -12,7 +12,7 @@ import UserProfileType from '../User/UserProfileType';
 import ReplyLikeType from './ReplyLikeType';
 import StoreType from '../Store/StoreType';
 
-Reply.Likers = Reply.hasMany(ReplyLike, { foreignKey: 'reply_id', as: 'likers' });
+Reply.Likes = Reply.hasMany(ReplyLike, { foreignKey: 'reply_id', as: 'likes' });
 Reply.UserProfile = Reply.belongsTo(UserProfile, { foreignKey: 'replied_by' });
 Reply.Store = Reply.belongsTo(Store, { foreignKey: 'replied_by_store' });
 
@@ -22,9 +22,9 @@ export default new ObjectType({
     id: { type: new NonNull(Int) },
     comment_id: { type: new NonNull(Int) },
     body: { type: String },
-    liked_by: {
+    likes: {
       type: new List(ReplyLikeType),
-      resolve: resolver(Reply.Likers),
+      resolve: resolver(Reply.Likes),
     },
     replied_by: {
       type: UserProfileType,
