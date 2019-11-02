@@ -5,11 +5,9 @@ import sequelize from '../sequelize';
 import WhereService from '../services/WhereService';
 import CuisineService from '../services/CuisineService';
 
-import { Store, StoreAddress, StoreCuisine, StoreFollow, StoreHour, UserAccount } from '../models';
+import { Suburb, Store, StoreAddress, StoreCuisine, StoreFollow, StoreHour, UserAccount } from '../models';
 import StoreType from '../types/Store/StoreType';
 import StoreFollowType from '../types/Store/StoreFollowType';
-import UserProfileType from '../types/User/UserProfileType';
-import UserProfile from '../models/User/UserProfile';
 
 export default {
   upsertStore: {
@@ -70,7 +68,7 @@ export default {
         type: String,
       },
       avgCost: {
-        type: new NonNull(Int),
+        type: Int,
       },
       hours: {
         type: new NonNull(String),
@@ -84,13 +82,15 @@ export default {
       moreInfo, avgCost, hours
     }) => {
       const process = async (t) => {
+
+        const suburbObj = await Suburb.findOne({ where: { name: suburb }});
+        if (suburbObj == null) throw Error(`Could not find suburb by: ${suburb}`);
+
         // const exist = await Store.findOne({ where: { z_id: z_id }});
         await Store.destroy({ where: { z_id: zId }, transaction: t });
 
         const cityObj = await WhereService.greateCity(city);
-        const suburbObj = await WhereService.greateSuburb(suburb, cityObj.id);
-        let locationObj = null;
-        if (location) locationObj = await WhereService.greateLocation(location, suburbObj.id);
+        const locationObj = location ? await WhereService.greateLocation(location, suburbObj.id) : null;
 
         const cuisineNames = cuisines.split(',').map((c) => c.trim());
         const cuisineNameProms = cuisineNames.map((c) => CuisineService.greateCuisine(c));
@@ -126,11 +126,13 @@ export default {
         }, { transaction: t }));
         await Promise.all(cuisineProms);
 
-        const hourProms = hours.split('\n').map((h, i) => {
-          const splits = h.split('~');
-          return StoreHour.create({ store_id: store.id, order: i+1, dotw: splits[0], hours: splits[1] }, { transaction: t });
-        });
-        await Promise.all(hourProms);
+        if (!!hours) {
+          const hourProms = hours.split('$$$').map((h, i) => {
+            const splits = h.split('~');
+            return StoreHour.create({ store_id: store.id, order: i+1, dotw: splits[0], hours: splits[1] }, { transaction: t });
+          });
+          await Promise.all(hourProms);
+        }
 
         return store;
       };
@@ -138,6 +140,7 @@ export default {
       try {
         return await sequelize.transaction(process);
       } catch (err) {
+        console.log(err.errors);
         throw Error(`Could not upsert store: ${err}`);
       }
     }

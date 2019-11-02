@@ -22,6 +22,18 @@ export default {
     resolve: resolver(Store),
   },
 
+  storeByZid: {
+    type: StoreType,
+    args: {
+      zid: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { zid }) => {
+      return Store.findOne({ where: { z_id: zid } });
+    }
+  },
+
   storesByQuery: {
     type: new List(StoreType),
     args: {

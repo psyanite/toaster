@@ -3,7 +3,6 @@ import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as Obje
 export default new ObjectType({
   name: 'StoreHour',
   fields: () => ({
-    id: { type: new NonNull(Int) },
     store_id: { type: new NonNull(Int) },
     order: { type: Int },
     dotw: { type: String },

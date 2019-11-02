@@ -1,7 +1,7 @@
 ### Upsert Store
 ```
 mutation {
-	upsertStore(
+  upsertStore(
     zId: "sydney/le-le-meow-surry-hills", 
     zUrl: "https://www.zomato.com/sydney/le-le-meow-surry-hills",
     name: "Le Meow",
@@ -20,7 +20,7 @@ mutation {
     lng: 151.208362,
     moreInfo: "Breakfast,Takeaway Available,No Alcohol Available",
     avgCost: 40,
-    hours: "Mon~Closed\nTue~5:30pm - 10pm\nWed~5:30pm - 10pm\nThu~5:30pm - 10pm\nFri~11am-2pm, 5:30pm - 10pm\nSat~Closed\nSun~Closed"
+    hours: "Mon~Closed$$$Tue~5:30pm - 10pm$$$Wed~5:30pm - 10pm$$$Thu~5:30pm - 10pm$$$Fri~11am-2pm, 5:30pm - 10pm$$$Sat~Closed$$$Sun~Closed"
   ) {
     id,
     name,
