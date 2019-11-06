@@ -57,16 +57,15 @@ export default {
       },
     },
     resolve: async (_, { query }) => {
-      const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
             select *
             from cuisine_search
-            where document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
-            order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
+            where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+            order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: CuisineSearchResult,
-          replacements: { queryStr: clean, likeStr: `%${clean}%` }
+          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%` }
         });
     }
   },
@@ -82,16 +81,15 @@ export default {
       }
     },
     resolve: async (_, { query, limit }) => {
-      const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
             select *
             from location_search
-            where document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
-            order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
+            where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+            order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: LocationSearchResult,
-          replacements: { queryStr: clean, likeStr: `%${clean}%`, limitStr: limit || 12 }
+          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit || 12 }
         });
     }
   },

@@ -81,15 +81,14 @@ export default {
       }
     },
     resolve: async (_, { query }) => {
-      const clean = query.replace(/\s+/g, ' | ');
       const [results] = await sequelize
         .query(`
           select id
           from reward_search
-          where document @@ plainto_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
-          order by ts_rank(document, plainto_tsquery('english', :queryStr)) desc
+          where document @@ to_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          order by ts_rank(document, to_tsquery('english', :queryStr)) desc
         `, {
-          replacements: { queryStr: clean, likeStr: `%${clean}%` }
+          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%` }
         });
       if (!results || results.length === 0) {
         return [];

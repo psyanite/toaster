@@ -29,5 +29,5 @@ refresh materialized view store_search;
 select * from store_search;
 
 select * from store_search
-where document @@ plainto_tsquery('english', 'westfield')
-order by ts_rank(document, plainto_tsquery('english', 'westfield')) desc;
+where document @@ to_tsquery('english', 'westfield')
+order by ts_rank(document, to_tsquery('english', 'westfield')) desc;

@@ -3,6 +3,7 @@ import { resolver } from 'graphql-sequelize';
 import { Store } from '../models';
 import StoreType from '../types/Store/StoreType';
 import sequelize from '../../data/sequelize';
+import GeneralUtils from '../../utils/GeneralUtils';
 
 export default {
   topStores: {
@@ -48,18 +49,17 @@ export default {
       }
     },
     resolve: async (_, { query, limit, offset }) => {
-      const clean = query.replace(/\s+/g, ' | ');
       return await sequelize
         .query(`
           select *
           from store_search
-          where document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
-          order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
+          where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
           limit :limitStr
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: clean, likeStr: `%${clean}%`, limitStr: limit, offsetStr: offset }
+          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset }
         });
     }
   },
@@ -76,30 +76,43 @@ export default {
       lng: {
         type: new NonNull(Float),
       },
-      dist: {
-        type: new NonNull(Float),
+      limit: {
+        type: new NonNull(Int),
       },
-      // limit: {
-      //   type: new NonNull(Int),
-      // },
-      // offset: {
-      //   type: new NonNull(Int),
-      // }
+      offset: {
+        type: new NonNull(Int),
+      }
     },
-    resolve: async (_, { query, lat, lng, limit, offset, dist }) => {
-      const clean = query.replace(/\s+/g, ' | ');
-      return await sequelize
+    resolve: async (_, { query, lat, lng, limit, offset }) => {
+      const tryA = await sequelize
         .query(`
-          select *
+          select *  
           from store_search
-          where (document @@ plainto_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
-            and to_distance(coords, :lat, :lng) < :dist
-          order by ts_rank(document, plainto_tsquery('english', unaccent(lower(:queryStr)))) desc
+          where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
+            and to_distance(coords, :lat, :lng) < 100
+          order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
+            to_distance(coords, :lat, :lng)
           limit :limitStr
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: clean, likeStr: `%${clean}%`, limitStr: 10, offsetStr: 0, lat, lng, dist }
+          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
+        });
+
+      if (tryA.length > 0) return tryA;
+
+      await sequelize
+        .query(`
+          select *  
+          from store_search
+          where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
+          order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
+            to_distance(coords, :lat, :lng)
+          limit :limitStr
+          offset :offsetStr
+        `, {
+          model: Store,
+          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
         });
     }
   },
