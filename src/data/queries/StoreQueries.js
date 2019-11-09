@@ -1,9 +1,12 @@
 import { GraphQLFloat as Float, GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Store } from '../models';
+import { Store, Cuisine } from '../models';
 import StoreType from '../types/Store/StoreType';
 import sequelize from '../../data/sequelize';
 import GeneralUtils from '../../utils/GeneralUtils';
+import Sequelize from 'sequelize';
+
+const Op = Sequelize.Op;
 
 export default {
   topStores: {
@@ -141,5 +144,44 @@ export default {
         offset: offset,
       });
     }
-  }
+  },
+
+  storesByCuisine: {
+    type: new List(StoreType),
+    args: {
+      cuisines: {
+        type: new List(Int),
+      },
+      lat: {
+        type: new NonNull(Float),
+      },
+      lng: {
+        type: new NonNull(Float),
+      },
+      limit: {
+        type: new NonNull(Int),
+      },
+      offset: {
+        type: new NonNull(Int),
+      }
+    },
+    resolve: async (_, { cuisines, lat, lng, limit, offset }) => {
+      return sequelize
+        .query(`
+          select
+            stores.*,
+            to_distance(coords, :lat, :lng) as distance
+          from stores
+          join store_cuisines sc on stores.id = sc.store_id and sc.cuisine_id in (:cuisines)
+          group by stores.id
+          order by distance
+          limit :limitStr
+          offset :offsetStr;
+        `, {
+          model: Store,
+          replacements: { cuisines, lat, lng, limitStr: limit, offsetStr: offset }
+        });
+    }
+  },
 };
+
