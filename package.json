@@ -36,7 +36,7 @@
     "query-string": "^5.0.1",
     "randomstring": "^1.1.5",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.2.1",
     "react-render-html": "^0.6.0",
     "react-select": "^1.0.0-rc.5",
     "sequelize": "^5.3.5",
