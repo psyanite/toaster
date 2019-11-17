@@ -10,7 +10,7 @@ import { City, Location, Suburb } from '../../models';
 import LocationType from './LocationType';
 import CityType from './CityType';
 import { PointObject } from 'graphql-geojson';
-import GeneralUtils from '../../../utils/GeneralUtils';
+import Utils from '../../../utils/Utils';
 
 Suburb.City = Suburb.belongsTo(City, { constraints: false });
 Suburb.Locations = Suburb.hasMany(Location, {
@@ -34,7 +34,7 @@ export default new ObjectType({
     },
     coords: {
       type: PointObject,
-      resolve: GeneralUtils.resolveCoords,
+      resolve: Utils.resolveCoords,
     }
   }),
 });

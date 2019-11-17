@@ -7,7 +7,7 @@
 Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL database on the fly. One of the many amazing features of Toaster, is the search endpoint.
 
 <div align="center">
-  <img src="https://github.com/psyanite/toaster/blob/master/docs/images/allstores-query.png" width="600px"/>  
+  <img src="https://github.com/psyanite/toaster/blob/master/docs/images/allstores-query.png" width="600px"/>
 </div>
 
 ### Development Tools
@@ -32,7 +32,7 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
 * Add dotenv configurations like such:
 ```
 DATABASE_DIALECT = 'postgres'
-DATABSE_HOST = 'localhost'
+DATABASE_HOST = 'localhost'
 DATABASE_PORT = 5432
 DATABASE_NAME = 'burntoast'
 DATABASE_USERNAME = 'postgres'

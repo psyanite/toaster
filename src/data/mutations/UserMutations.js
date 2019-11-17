@@ -12,7 +12,7 @@ import UserAccountType from '../types/User/UserAccountType';
 import UserProfileType from '../types/User/UserProfileType';
 import UserFollowType from '../types/User/UserFollowType';
 import UserFollow from '../models/User/UserFollow';
-import GeneralUtils from '../../utils/GeneralUtils';
+import Utils from '../../utils/Utils';
 
 export default {
   addUser: {
@@ -56,7 +56,7 @@ export default {
                   username,
                   preferred_name: displayName,
                   profile_picture: profilePicture,
-                  code: GeneralUtils.generateCode(),
+                  code: Utils.generateCode(),
                 },
                 { transaction: t },
               );

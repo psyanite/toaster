@@ -4,7 +4,7 @@ import { resolver } from 'graphql-sequelize';
 import UserProfileType from '../types/User/UserProfileType';
 import { UserProfile } from '../models';
 import sequelize from '../sequelize';
-import GeneralUtils from '../../utils/GeneralUtils';
+import Utils from '../../utils/Utils';
 
 export default {
   profileByUserId: {
@@ -65,7 +65,7 @@ export default {
   generateCode: {
     type: String,
     resolve: async () => {
-      return GeneralUtils.generateCode();
+      return Utils.generateCode();
     }
   }
 };
