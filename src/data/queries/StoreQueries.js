@@ -3,7 +3,7 @@ import { resolver } from 'graphql-sequelize';
 import { Store, Cuisine } from '../models';
 import StoreType from '../types/Store/StoreType';
 import sequelize from '../../data/sequelize';
-import GeneralUtils from '../../utils/GeneralUtils';
+import Utils from '../../utils/Utils';
 import Sequelize from 'sequelize';
 
 const Op = Sequelize.Op;
@@ -62,7 +62,7 @@ export default {
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset }
+          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset }
         });
     }
   },
@@ -92,14 +92,14 @@ export default {
           select *  
           from store_search
           where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
-            and to_distance(coords, :lat, :lng) < 100
+            and (coords <@> point(:lng, :lat)) * 1.60934 < 100
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
-            to_distance(coords, :lat, :lng)
+            (coords <@> point(:lng, :lat)) * 1.60934
           limit :limitStr
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
+          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
         });
 
       if (tryA.length > 0) return tryA;
@@ -110,12 +110,12 @@ export default {
           from store_search
           where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
-            to_distance(coords, :lat, :lng)
+            (coords <@> point(:lng, :lat)) * 1.60934
           limit :limitStr
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
+          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
         });
     }
   },
@@ -138,7 +138,7 @@ export default {
     },
     resolve: async (_, { lat, lng, limit, offset }) => {
       return Store.findAll({
-        attributes: { include: [[sequelize.literal(`to_distance(coords, ${lat}, ${lng})`), 'distance']] },
+        attributes: { include: [[sequelize.literal(`(coords <@> point(${lng}, ${lat})) * 1.60934`), 'distance']] },
         order: sequelize.col('distance'),
         limit: limit,
         offset: offset,
@@ -146,7 +146,7 @@ export default {
     }
   },
 
-  storesByCuisine: {
+  storesByCuisines: {
     type: new List(StoreType),
     args: {
       cuisines: {
@@ -170,7 +170,7 @@ export default {
         .query(`
           select
             stores.*,
-            to_distance(coords, :lat, :lng) as distance
+            (coords <@> point(:lng, :lat)) * 1.60934 as distance
           from stores
           join store_cuisines sc on stores.id = sc.store_id and sc.cuisine_id in (:cuisines)
           group by stores.id

@@ -6,6 +6,7 @@ import sequelize from '../sequelize';
 import Sequelize from 'sequelize';
 import StoreType from '../types/Store/StoreType';
 import { UserProfile, UserReward } from '../models';
+import Utils from '../../utils/Utils';
 
 const Op = Sequelize.Op;
 
@@ -88,7 +89,7 @@ export default {
           where document @@ to_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
           order by ts_rank(document, to_tsquery('english', :queryStr)) desc
         `, {
-          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%` }
+          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%` }
         });
       if (!results || results.length === 0) {
         return [];
@@ -116,7 +117,7 @@ export default {
     resolve: async (_, { lat, lng, limit, offset }) => {
       return Reward.findAll({
         where: { hidden: false },
-        attributes: { include: [[sequelize.literal(`mini(to_distance(coords, ${lat}, ${lng}))`), 'distance']] },
+        attributes: { include: [[sequelize.literal(`(select min((r <@> point(${lng}, ${lat})) * 1.60934) from unnest(coords) r)`), 'distance']] },
         order: sequelize.col('distance'),
         limit: limit,
         offset: offset,

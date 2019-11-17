@@ -58,7 +58,7 @@ export default {
             limit :limitStr
         `, {
           model: Suburb,
-          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit || 12 }
+          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit || 12 }
         });
       return Suburb.findAll({ where: { id: { [Op.in]: suburbs.map(s => s.id) } } });
     }

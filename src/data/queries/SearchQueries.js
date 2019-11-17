@@ -9,7 +9,7 @@ import {
 import sequelize from '../sequelize';
 import Sequelize from 'sequelize';
 import { PointObject } from 'graphql-geojson';
-import GeneralUtils from '../../utils/GeneralUtils';
+import Utils from '../../utils/Utils';
 
 const CuisineSearchResult = sequelize.define('cuisines_search', {
   name: {
@@ -43,7 +43,7 @@ const LocationSearchResultType = new ObjectType({
     description: { type: String },
     coords: {
       type: PointObject,
-      resolve: GeneralUtils.resolveCoords,
+      resolve: Utils.resolveCoords,
     }
   }),
 });
@@ -65,7 +65,7 @@ export default {
             order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: CuisineSearchResult,
-          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%` }
+          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%` }
         });
     }
   },
@@ -89,7 +89,7 @@ export default {
             order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: LocationSearchResult,
-          replacements: { queryStr: GeneralUtils.tsClean(query), likeStr: `%${query}%`, limitStr: limit || 12 }
+          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit || 12 }
         });
     }
   },

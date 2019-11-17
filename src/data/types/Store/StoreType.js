@@ -18,7 +18,7 @@ import UserProfileType from '../User/UserProfileType';
 import TagType from './TagType';
 import StoreHourType from './StoreHourType';
 import CityType from '../Location/CityType';
-import GeneralUtils from '../../../utils/GeneralUtils';
+import Utils from '../../../utils/Utils';
 
 Store.Location = Store.belongsTo(Location, { foreignKey: 'location_id' });
 Store.Suburb = Store.belongsTo(Suburb, { foreignKey: 'suburb_id' });
@@ -62,7 +62,7 @@ export default new ObjectType({
     avg_cost: { type: Int },
     coords: {
       type: PointObject,
-      resolve: GeneralUtils.resolveCoords,
+      resolve: Utils.resolveCoords,
     },
     address: {
       type: AddressType,

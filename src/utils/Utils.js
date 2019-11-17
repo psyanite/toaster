@@ -2,8 +2,8 @@ import * as Randomize from 'randomstring';
 
 export default {
   generateCode() {
-    let uniqueCode = Randomize.generate({ length: 5, charset: 'bcdfghjklmnpqrtvwxBCDFGHJKLMNPQRTVWX23456789' });
-    return uniqueCode.toString();
+    const options = { length: 5, charset: 'bcdfghjklmnpqrtvwxBCDFGHJKLMNPQRTVWX23456789' };
+    return Randomize.generate(options).toString();
   },
 
   resolveCoords(model) {
@@ -21,5 +21,5 @@ export default {
 
   tsClean(query) {
     return query.trim().replace(/\s+/g, ' | ');
-  }
+  },
 }
