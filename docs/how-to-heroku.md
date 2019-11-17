@@ -10,8 +10,7 @@
 * Run `git describe --tags` to check latest tag
 * Update README.md
 * Commit changes
-* Run `git tag 1.0.0`
-* Run `git push -f --all && git push upstream -f --all && git push -f --tags && git push upstream -f --tags`
+* Run `git push -f --all && git push upstream -f --all`
 * Open CMD
 * Run `heroku login`
 * Run `yarn deploy-heroku`
