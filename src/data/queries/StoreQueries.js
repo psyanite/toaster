@@ -1,12 +1,9 @@
 import { GraphQLFloat as Float, GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Store, Cuisine } from '../models';
+import { Store } from '../models';
 import StoreType from '../types/Store/StoreType';
 import sequelize from '../../data/sequelize';
 import Utils from '../../utils/Utils';
-import Sequelize from 'sequelize';
-
-const Op = Sequelize.Op;
 
 export default {
   topStores: {
@@ -59,7 +56,8 @@ export default {
           where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
           limit :limitStr
-          offset :offsetStr
+          offset
+          :offsetStr
         `, {
           model: Store,
           replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset }
@@ -89,14 +87,15 @@ export default {
     resolve: async (_, { query, lat, lng, limit, offset }) => {
       const tryA = await sequelize
         .query(`
-          select *  
+          select *
           from store_search
-          where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
-            and (coords <@> point(:lng, :lat)) * 1.60934 < 100
+          where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))) and
+            (coords <@> point(:lng, :lat)) * 1.60934 < 100
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
             (coords <@> point(:lng, :lat)) * 1.60934
           limit :limitStr
-          offset :offsetStr
+          offset
+          :offsetStr
         `, {
           model: Store,
           replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
@@ -106,13 +105,14 @@ export default {
 
       await sequelize
         .query(`
-          select *  
+          select *
           from store_search
           where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
             (coords <@> point(:lng, :lat)) * 1.60934
           limit :limitStr
-          offset :offsetStr
+          offset
+          :offsetStr
         `, {
           model: Store,
           replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
@@ -168,15 +168,15 @@ export default {
     resolve: async (_, { cuisines, lat, lng, limit, offset }) => {
       return sequelize
         .query(`
-          select
-            stores.*,
+          select stores.*,
             (coords <@> point(:lng, :lat)) * 1.60934 as distance
           from stores
-          join store_cuisines sc on stores.id = sc.store_id and sc.cuisine_id in (:cuisines)
+                 join store_cuisines sc on stores.id = sc.store_id and sc.cuisine_id in (:cuisines)
           group by stores.id
           order by distance
           limit :limitStr
-          offset :offsetStr;
+          offset
+          :offsetStr;
         `, {
           model: Store,
           replacements: { cuisines, lat, lng, limitStr: limit, offsetStr: offset }

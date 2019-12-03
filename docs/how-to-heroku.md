@@ -1,17 +1,13 @@
 ### How to update Heroku database
 * Ensure `export.sql` is up-to-date
-* Run `heroku pg:reset DATABASE_URL --confirm burntoast`
+* Run `heroku pg:reset DATABASE_URL --confirm burntoast -a burntoast`
 * Run `heroku pg:psql < 'src/scripts/export.sql'`
 * Ignore any errors labelled `ERROR:  must be member of role "postgres"`
 * Check database
 
 
 ### How to release
-* Run `git describe --tags` to check latest tag
-* Update README.md
-* Commit changes
-* Run `git tag 1.0.0`
-* Run `git push -f --all && git push upstream -f --all && git push -f --tags && git push upstream -f --tags`
+* Run `git push -f --all && git push upstream -f --all`
 * Open CMD
 * Run `heroku login`
 * Run `yarn deploy-heroku`

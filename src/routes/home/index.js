@@ -1,14 +1,22 @@
 import React from 'react';
-import Home from './Home';
-import Layout from '../../components/Layout';
+
+class Home extends React.Component {
+  render() {
+    const style = {
+      position: "fixed",
+      bottom: 0,
+    };
+    return (
+      <img src="./meow.png" alt="meow" style={style}/>
+    );
+  }
+}
 
 async function action({ fetch }) {
   return {
     title: 'Meow',
     component: (
-      <Layout>
-        <Home fetch={fetch} />
-      </Layout>
+      <Home fetch={fetch} />
     ),
   };
 }

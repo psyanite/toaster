@@ -1,7 +1,0 @@
-@import '../../components/variables.css';
-
-.container {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}

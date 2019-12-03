@@ -36,8 +36,15 @@ class Html extends React.Component {
 
   render() {
     const { title, description, styles, scripts, app, children } = this.props;
+    const htmlStyle = {
+      background: "linear-gradient(135deg, #43dde0, #4095ff)",
+      lineHeight: 1.375,
+      minHeight: "100%",
+      margin: 0
+    };
+
     return (
-      <html className="no-js" lang="en">
+      <html className="no-js" lang="en" style={htmlStyle}>
         <head>
           <meta charSet="utf-8" />
           <meta httpEquiv="x-ua-compatible" content="ie=edge" />

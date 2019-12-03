@@ -14,7 +14,7 @@
 * Right-click database
 * Dump with `pg_dump`
 * Path to pg_dump: `C:/Program Files/PostgreSQL/pg10/bin/pg_dump.exe`
-* Statements: Copy (*This is super mega importante*)
+* Statements: Inserts
 * Database: burntoast
 * Schemas: <empty>
 * Tables: <empty>
@@ -116,7 +116,7 @@ create index city_locations_document_idx on city_locations (document);
 ### cuisine_search
 ```postgresql
 create materialized view cuisine_search as
-select 
+select
   name,
   to_tsvector('english'::regconfig, unaccent(name)::text) as document
 from cuisines;
@@ -158,7 +158,7 @@ from stores s
 group by s.id;
 ```
 
-### 
+###
 ```postgresql
 CREATE OR REPLACE FUNCTION to_distance(point[], float, float)
   RETURNS float

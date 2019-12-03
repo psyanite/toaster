@@ -1,8 +1,5 @@
 import { Post } from '../models';
 import sequelize from '../sequelize';
-import Sequelize from 'sequelize';
-
-const Op = Sequelize.Op;
 
 let LastFetchedTopPosts = null;
 let TopUserPosts = null;
