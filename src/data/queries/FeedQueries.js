@@ -30,7 +30,7 @@ export default {
       },
     },
     resolve: async (_, { limit, offset }) => {
-      if (!DefaultFeed.postIds || isExpired(DefaultFeed.createdAt)) {
+      if (!DefaultFeed.postIds.length || isExpired(DefaultFeed.createdAt)) {
         DefaultFeed = await FeedService.getGenericFeed();
       }
       const ids = slice(DefaultFeed.postIds, limit, offset);

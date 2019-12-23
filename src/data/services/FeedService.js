@@ -89,15 +89,20 @@ const refreshTopPosts = async () => {
   });
   TopUserPosts = await fetchTopUserPosts;
   TopStorePosts = await fetchTopStorePosts;
+  LastFetchedTopPosts = new Date();
 };
 
-const getTopStorePosts = (limit) => {
-  if (LastFetchedTopPosts < new Date(new Date() - 5*60000)) refreshTopPosts();
+const topPostsAreStale = () => {
+  return LastFetchedTopPosts == null || LastFetchedTopPosts < new Date(new Date() - 5*60000);
+};
+
+const getTopStorePosts = async (limit) => {
+  if (topPostsAreStale) await refreshTopPosts();
   return TopStorePosts.slice(0, limit || 25);
 };
 
-const getTopUserPosts = (limit) => {
-  if (LastFetchedTopPosts < new Date(new Date() - 5*60000)) refreshTopPosts();
+const getTopUserPosts = async (limit) => {
+  if (topPostsAreStale) await refreshTopPosts();
   return TopUserPosts.slice(0, limit || 25);
 };
 
@@ -106,8 +111,8 @@ refreshTopPosts();
 export default class FeedService {
 
   static async getGenericFeed() {
-    const topStorePosts = getTopStorePosts(30);
-    const topUserPosts = getTopUserPosts(30);
+    const topStorePosts = await getTopStorePosts(30);
+    const topUserPosts = await getTopUserPosts(30);
     return new Feed([...topStorePosts, ...topUserPosts]);
   }
 
@@ -115,13 +120,13 @@ export default class FeedService {
     const [userPosts, storePosts] = await Promise.all([getFollowedUsersPosts(userId), getFollowedStoresPosts(userId)]);
     let posts = [...userPosts, ...storePosts];
     if (posts.length > 60) {
-      const topStorePosts = getTopStorePosts(10);
+      const topStorePosts = await getTopStorePosts(10);
       return new Feed([...posts, ...topStorePosts]);
     }
 
     const remainder = 60 - posts.length;
-    const topStorePosts = getTopStorePosts(Math.round(remainder * 0.7));
-    const topUserPosts = getTopUserPosts(Math.round(remainder * 0.3));
+    const topStorePosts = await getTopStorePosts(Math.round(remainder * 0.7));
+    const topUserPosts = await getTopUserPosts(Math.round(remainder * 0.3));
     return new Feed([...posts, ...topStorePosts, ...topUserPosts]);
   }
 }
