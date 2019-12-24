@@ -1,4 +1,4 @@
-# 🍞 Toaster 3.0.2
+# 🍞 Toaster
 
 ✨ GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 
@@ -15,14 +15,11 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
 * PostgreSQL 10
 * JDK
 * Git
-* Babun
-* Yarn
-* Node 8.11.3
+* Yarn 1.12.1
+* Node 8.13.0
 * Intellij
 * DataGrip
 * Android Studio
-* Expo
-* Genymotion
 * Git Kraken
 
 ### How to assemble
@@ -39,8 +36,9 @@ DATABASE_USERNAME = 'postgres'
 DATABASE_PASSWORD = '???'
 BEARER = '???'
 ```
-* `psql -U postgres -f 'src/scripts/clean.sql'`
-* `psql -U postgres -d burntoast -f 'src/scripts/export.sql'`
+* Set database in the 'How to database' section
+* Create `/secrets` dir in root
+* Copy `firebase-admin.json` file into dir
 
 ### How to start the frakkin toaster
 * `yarn install`

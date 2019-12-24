@@ -332,4 +332,22 @@ export default {
       return profile;
     }
   },
+
+  setFcmToken: {
+    type: UserProfileType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      token: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { userId, token }) => {
+      let profile = await UserProfile.findByPk(userId);
+      if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
+      await profile.update({ fcm_token: token });
+      return profile;
+    }
+  }
 };
