@@ -25,6 +25,12 @@
 * Replace `src/scripts/export.sql`
 * Commit changes
 
+### How to run export.sql
+* cd to project directory
+* `psql -U postgres`
+* `\c burntoast`
+* `\i src/scripts/export.sql`
+
 ### How to Materialized View
 
 #### store_search
@@ -116,7 +122,7 @@ create index city_locations_document_idx on city_locations (document);
 ### cuisine_search
 ```postgresql
 create materialized view cuisine_search as
-select 
+select
   name,
   to_tsvector('english'::regconfig, unaccent(name)::text) as document
 from cuisines;
@@ -158,7 +164,7 @@ from stores s
 group by s.id;
 ```
 
-### 
+###
 ```postgresql
 CREATE OR REPLACE FUNCTION to_distance(point[], float, float)
   RETURNS float

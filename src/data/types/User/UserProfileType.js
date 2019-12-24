@@ -23,5 +23,8 @@ export default new ObjectType({
     firstname: { type: String },
     surname: { type: String },
     tagline: { type: String },
+    follower_count: { type: Int },
+    store_count: { type: Int },
+    fcm_token: { type: String },
   }),
 });

@@ -1,9 +1,10 @@
 import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
-import { Comment, CommentLike, Post, Reply, ReplyLike } from '../models';
+import { Comment, CommentLike, Post, Reply, ReplyLike, UserProfile } from '../models';
 import CommentType from '../types/Post/CommentType';
 import ReplyType from '../types/Post/ReplyType';
 import ReplyLikeType from '../types/Post/ReplyLikeType';
 import CommentLikeType from '../types/Post/CommentLikeType';
+import FcmService from '../services/FcmService';
 
 export default {
 
@@ -23,12 +24,25 @@ export default {
     resolve: async (_, { postId, body, commentedBy }) => {
       let post = await Post.findByPk(postId);
       if (post == null) throw Error(`Could not find Post by postId: ${postId}`);
+
       const comment = await Comment.create({
         post_id: postId,
         body: body,
         commented_by: commentedBy
       });
       await post.increment('comment_count');
+
+      // send notification to user or admin
+      // var token;
+      // if (post.posted_by) {
+      //   const postedBy = await UserProfile.findByPk(post.posted_by);
+      //   token = postedBy.fcm_token;
+      // } else {
+      //
+      // }
+      // if (token != null) FcmService.sendMessage()
+
+
       return comment;
     }
   },

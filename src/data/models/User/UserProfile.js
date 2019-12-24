@@ -34,6 +34,18 @@ const UserProfile = sequelize.define('user_profiles', {
   tagline: {
     type: Sequelize.STRING(64),
   },
+
+  follower_count: {
+    type: Sequelize.INTEGER,
+  },
+
+  store_count: {
+    type: Sequelize.INTEGER,
+  },
+
+  fcm_token: {
+    type: Sequelize.STRING(255),
+  }
 });
 
 export default UserProfile;
