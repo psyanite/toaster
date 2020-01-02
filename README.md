@@ -1,4 +1,4 @@
-# 🍞 Toaster 3.0.2
+# 🍞 Toaster
 
 ✨ GraphQL API built ontop of a PostgreSQL schema combined with the power of Sequelize
 
@@ -15,14 +15,11 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
 * PostgreSQL 10
 * JDK
 * Git
-* Babun
-* Yarn
-* Node 8.11.3
+* Yarn 1.12.1
+* Node 8.13.0
 * Intellij
 * DataGrip
 * Android Studio
-* Expo
-* Genymotion
 * Git Kraken
 
 ### How to assemble
@@ -53,3 +50,4 @@ BEARER = '???'
 * [How to Heroku](./docs/how-to-heroku.md)
 * [How to postgres full text search](http://rachbelaid.com/postgres-full-text-search-is-good-enough/)
 * [How to sequelize full text search](https://medium.com/riipen-engineering/full-text-search-with-sequelize-and-postgresql-3572cb3093e7)
+* [Test Plan](./docs/test-plan.md)
