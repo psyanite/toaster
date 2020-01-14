@@ -183,11 +183,16 @@ async function start() {
       })
       .catch(error => {
         if (['abort', 'fail'].includes(app.hot.status())) {
+          // console.error(error, error.stack);
           console.warn(`${hmrPrefix}Cannot apply update.`);
-          delete require.cache[require.resolve('../build/server')];
-          // eslint-disable-next-line global-require, import/no-unresolved
-          app = require('../build/server').default;
-          console.warn(`${hmrPrefix}App has been reloaded.`);
+          try {
+            delete require.cache[require.resolve('../build/server')];
+            // eslint-disable-next-line global-require, import/no-unresolved
+            app = require('../build/server').default;
+            console.warn(`${hmrPrefix}App has been reloaded.`);
+          } catch (err) {
+            console.error(err, err.stack);
+          }
         } else {
           console.warn(
             `${hmrPrefix}Update failed: ${error.stack || error.message}`,

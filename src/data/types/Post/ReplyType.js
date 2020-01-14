@@ -13,8 +13,9 @@ import ReplyLikeType from './ReplyLikeType';
 import StoreType from '../Store/StoreType';
 
 Reply.Likes = Reply.hasMany(ReplyLike, { foreignKey: 'reply_id', as: 'likes' });
-Reply.UserProfile = Reply.belongsTo(UserProfile, { foreignKey: 'replied_by' });
-Reply.Store = Reply.belongsTo(Store, { foreignKey: 'replied_by_store' });
+Reply.RepliedBy = Reply.belongsTo(UserProfile, { foreignKey: 'replied_by' });
+Reply.RepliedByStore = Reply.belongsTo(Store, { foreignKey: 'replied_by_store' });
+Reply.ReplyTo = Reply.belongsTo(UserProfile, { foreignKey: 'reply_to' });
 
 export default new ObjectType({
   name: 'Reply',
@@ -28,12 +29,16 @@ export default new ObjectType({
     },
     replied_by: {
       type: UserProfileType,
-      resolve: resolver(Reply.UserProfile),
+      resolve: resolver(Reply.RepliedBy),
     },
     replied_by_store: {
       type: StoreType,
-      resolve: resolver(Reply.Store),
+      resolve: resolver(Reply.RepliedByStore),
     },
     replied_at: { type: DateTime },
+    reply_to: {
+      type: UserProfileType,
+      resolve: resolver(Reply.ReplyTo),
+    },
   }),
 });

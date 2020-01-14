@@ -1,21 +1,23 @@
-import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType, GraphQLString as String, } from 'graphql';
+import { GraphQLObjectType as ObjectType, GraphQLInt as Int, GraphQLNonNull as NonNull } from 'graphql';
+import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
 
-import { Admin } from '../../models';
-import Store from '../../models/Store/Store';
+import { Admin, Store, UserProfile } from '../../models';
 import StoreType from '../Store/StoreType';
-import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
+import UserProfileType from '../User/UserProfileType';
 
-Admin.Store = Admin.belongsTo(Store, {
-  foreignKey: 'store_id',
-  as: 'store',
-});
+Admin.UserProfile = Admin.hasOne(UserProfile);
+Admin.Store = Admin.belongsTo(Store, { foreignKey: 'store_id' });
 
 export default new ObjectType({
   name: 'Admin',
   fields: () => ({
     id: { type: new NonNull(Int) },
-    username: { type: String },
+    profile: {
+      type: UserProfileType,
+      resolve: resolver(Admin.UserProfile),
+    },
+    store_id: { type: Int },
     store: {
       type: StoreType,
       resolve: resolver(Admin.Store),

@@ -1,4 +1,10 @@
-import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String, GraphQLBoolean as Boolean } from 'graphql';
+import {
+  GraphQLBoolean as Boolean,
+  GraphQLInt as Int,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+  GraphQLString as String
+} from 'graphql';
 
 import sequelize from '../sequelize';
 import Store from '../models/Store/Store';
@@ -12,11 +18,14 @@ import PostPhoto from '../models/Post/PostPhoto';
 import PostPhotoType from '../types/Post/PostPhotoType';
 
 export default {
-  addReviewPost: {
+  addPost: {
     type: PostType,
     args: {
       hidden: {
-        type: Boolean,
+        type: new NonNull(Boolean),
+      },
+      official: {
+        type: new NonNull(Boolean),
       },
       storeId: {
         type: new NonNull(Int),
@@ -48,7 +57,7 @@ export default {
     },
     resolve: async (
       _,
-      { hidden, storeId, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos, postedBy },
+      { hidden, official, storeId, body, overallScore, tasteScore, serviceScore, valueScore, ambienceScore, photos, postedBy },
     ) => {
       let store = await Store.findByPk(storeId);
       if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
@@ -57,7 +66,8 @@ export default {
       return sequelize.transaction(async t => {
         const post = await Post.create({
             type: PostTypeValues.Review,
-          hidden: hidden,
+            hidden: hidden,
+            official: official,
             store_id: storeId,
             posted_by: postedBy,
           }, { transaction: t },
@@ -160,117 +170,7 @@ export default {
     ) => {
       let post = await Post.findByPk(postId);
       if (post == null) throw Error(`Could not find Post by postId: ${postId}`);
-      let user = await UserAccount.findByPk(myId);
-      if (user == null) throw Error(`Could not find UserAccount by userId: ${myId}`);
       if (post.posted_by !== myId) throw Error(`You must be the owner of the post to delete the post`);
-      await post.destroy();
-      return post;
-    }
-  },
-
-  addAdminPost: {
-    type: PostType,
-    args: {
-      hidden: {
-        type: Boolean,
-      },
-      storeId: {
-        type: new NonNull(Int),
-      },
-      body: {
-        type: String,
-      },
-      photos: {
-        type: new List(String),
-      },
-      postedByAdmin: {
-        type: new NonNull(Int),
-      },
-    },
-    resolve: async (
-      _,
-      { storeId, body, photos, postedByAdmin },
-    ) => {
-      let store = await Store.findByPk(storeId);
-      if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
-      let admin = await Admin.findByPk(postedByAdmin);
-      if (admin == null) throw Error(`Could not find Admin by postedByAdmin: ${postedByAdmin}`);
-      return sequelize.transaction(async t => {
-        const post = await Post.create({
-            type: PostTypeValues.Review,
-            hidden: false,
-            store_id: storeId,
-            posted_by_admin: postedByAdmin,
-          }, { transaction: t },
-        );
-        await PostReview.create({
-            post_id: post.id,
-            body: body,
-          }, { transaction: t },
-        );
-        if (photos.length > 0) {
-          const postPhotos = photos.map((p) => {
-            return { post_id: post.id, url: p }
-          });
-          await PostPhoto.bulkCreate(postPhotos, { returning: true, transaction: t });
-        }
-        return post;
-      });
-    }
-  },
-
-  updateAdminPost: {
-    type: PostType,
-    args: {
-      id: {
-        type: new NonNull(Int),
-      },
-      body: {
-        type: String,
-      },
-      photos: {
-        type: new List(String),
-      },
-    },
-    resolve: async (
-      _,
-      { id, body, photos },
-    ) => {
-      let post = await Post.findByPk(id);
-      if (post == null) throw Error(`Could not find Post by postId: ${id}`);
-      let postReview = await PostReview.findOne({ where: { post_id: id }});
-      return sequelize.transaction(async t => {
-        await postReview.update({ body: body }, {transaction: t});
-        if (photos.length > 0) {
-          const postPhotos = photos.map((p) => {
-            return { post_id: id, url: p }
-          });
-          await PostPhoto.bulkCreate(postPhotos, { returning: true, transaction: t });
-        }
-        return post;
-      });
-    }
-  },
-
-  deleteAdminPost: {
-    type: PostType,
-    args: {
-      postId: {
-        type: new NonNull(Int),
-      },
-      myId: {
-        type: new NonNull(Int)
-      }
-    },
-    resolve: async (
-      _,
-      { postId, myId },
-    ) => {
-      let post = await Post.findByPk(postId);
-      if (post == null) throw Error(`Could not find Post by postId: ${postId}`);
-      let admin = await Admin.findByPk(myId);
-      if (admin == null) throw Error(`Could not find Admin by adminId: ${myId}`);
-      if (post.posted_by_admin !== myId) throw Error(`You must be the owner of the post to delete the post`);
       await post.destroy();
       return post;
     }

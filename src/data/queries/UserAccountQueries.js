@@ -31,15 +31,15 @@ export default {
     }),
   },
 
-  userProfileByUsername: {
-    type: UserProfileType,
+  userAccountByEmail: {
+    type: UserAccountType,
     args: {
-      username: {
+      email: {
         type: new NonNull(String),
       },
     },
-    resolve: async (_, { username }) => {
-      return UserProfile.findOne({ where: { username: username } });
+    resolve: async (_, { email }) => {
+      return UserAccount.findOne({ where: { email } });
     }
   },
 };

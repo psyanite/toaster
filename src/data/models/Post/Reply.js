@@ -29,6 +29,10 @@ const Reply = sequelize.define('comment_replies', {
     allowNull: false,
     defaultValue: Sequelize.NOW
   },
+
+  reply_to: {
+    type: Sequelize.INTEGER,
+  }
 });
 
 export default Reply;

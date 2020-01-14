@@ -36,8 +36,9 @@ DATABASE_USERNAME = 'postgres'
 DATABASE_PASSWORD = '???'
 BEARER = '???'
 ```
-* `psql -U postgres -f 'src/scripts/clean.sql'`
-* `psql -U postgres -d burntoast -f 'src/scripts/export.sql'`
+* Set database in the 'How to database' section
+* Create `/secrets` dir in root
+* Copy `firebase-admin.json` file into dir
 
 ### How to start the frakkin toaster
 * `yarn install`

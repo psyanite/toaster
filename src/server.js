@@ -62,6 +62,7 @@ app.use(
     }))(req, res)
   }
 );
+
 app.use((err, req, res, next) => {
   res.status(403).send({ 'errors': [{ 'message': err.message }] });
 });

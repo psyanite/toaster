@@ -64,7 +64,7 @@ export default {
       const total = await Reward.count();
       return `Updated ${firstUpdate.rowCount + secondUpdate.rowCount} rewards out of ${total} rewards`;
     }
-  },  
+  },
 
   updateStoreRankings: {
     type: String,

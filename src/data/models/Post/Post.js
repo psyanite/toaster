@@ -20,10 +20,6 @@ const Post = sequelize.define('posts', {
     type: Sequelize.INTEGER,
   },
 
-  posted_by_admin: {
-    type: Sequelize.INTEGER,
-  },
-
   like_count: {
     type: Sequelize.INTEGER,
   },
@@ -33,6 +29,10 @@ const Post = sequelize.define('posts', {
   },
 
   hidden: {
+    type: Sequelize.BOOLEAN,
+  },
+
+  official: {
     type: Sequelize.BOOLEAN,
   },
 

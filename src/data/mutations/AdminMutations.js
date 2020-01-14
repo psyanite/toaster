@@ -1,15 +1,20 @@
 import { GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
-
-import AdminType from '../types/Admin/AdminType';
-import Admin from '../models/Admin/Admin';
 import bcrypt from 'bcrypt';
+import sequelize from '../sequelize';
+
+import { Admin, UserAccount, UserProfile } from '../models';
+import UserProfileType from '../types/User/UserProfileType';
 
 const SaltRounds = 10;
 
 export default {
+
   addAdmin: {
-    type: AdminType,
+    type: UserProfileType,
     args: {
+      email: {
+        type: new NonNull(String),
+      },
       username: {
         type: new NonNull(String),
       },
@@ -17,9 +22,19 @@ export default {
         type: new NonNull(String),
       },
     },
-    resolve: async (_, { username, password }) => {
-      const hash = await bcrypt.hash(password, SaltRounds);
-      return Admin.create({ username, hash });
+    resolve: async (_, { email, username, password }) => {
+      return sequelize.transaction(async t => {
+        const user = await UserAccount.create({ email }, { transaction: t });
+        const hash = await bcrypt.hash(password, SaltRounds);
+        const admin = await Admin.create({ user_id: user.id, hash }, { transaction: t });
+
+        return UserProfile.create({
+          user_id: user.id,
+          username,
+          admin_id: admin.id,
+          }, { transaction: t },
+        );
+      });
     }
   },
 };
