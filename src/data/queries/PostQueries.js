@@ -7,7 +7,7 @@ import sequelize from '../sequelize';
 
 export default {
   postById: {
-    type: new List(PostType),
+    type: PostType,
     args: {
       id: {
         type: new NonNull(Int),
@@ -35,12 +35,12 @@ export default {
           select * from (
             select distinct on (posted_by, store_id) *
             from posts
-            where store_id = :storeId and posted_by is not null and hidden = false
+            where store_id = :storeId and official = false and hidden = false
             order by posted_by, store_id, posted_at desc
           ) a
           union (
             select * from posts
-            where store_id = :storeId and posted_by is null
+            where store_id = :storeId and official = true
           )
           order by posted_at desc
           limit :limitStr

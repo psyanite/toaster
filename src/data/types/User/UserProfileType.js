@@ -1,12 +1,12 @@
 import { GraphQLObjectType as ObjectType, GraphQLString as String, GraphQLInt as Int } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { UserAccount, UserProfile } from '../../models';
+import { Admin, UserAccount, UserProfile } from '../../models';
 import UserAccountType from './UserAccountType';
+import AdminType from '../Admin/AdminType';
 
-UserProfile.UserAccount = UserProfile.belongsTo(UserAccount, {
-  foreignKey: 'user_id',
-});
+UserProfile.UserAccount = UserProfile.belongsTo(UserAccount, { foreignKey: 'user_id' });
+UserProfile.Admin = UserProfile.belongsTo(Admin, { foreignKey: 'admin_id' });
 
 export default new ObjectType({
   name: 'UserProfile',
@@ -20,8 +20,15 @@ export default new ObjectType({
     preferred_name: { type: String },
     profile_picture: { type: String },
     gender: { type: String },
-    firstname: { type: String },
-    surname: { type: String },
+    first_name: { type: String },
+    last_name: { type: String },
     tagline: { type: String },
+    follower_count: { type: Int },
+    store_count: { type: Int },
+    fcm_token: { type: String },
+    admin: {
+      type: AdminType,
+      resolve: resolver(UserProfile.Admin),
+    },
   }),
 });

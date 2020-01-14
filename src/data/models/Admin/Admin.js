@@ -8,14 +8,6 @@ const Admin = sequelize.define('admins', {
     primaryKey: true,
   },
 
-  username: {
-    type: Sequelize.STRING(64),
-  },
-
-  hash: {
-    type: Sequelize.STRING(255),
-  },
-
   store_id: {
     type: Sequelize.NUMBER,
   },
@@ -24,6 +16,10 @@ const Admin = sequelize.define('admins', {
     type: Sequelize.DATE,
     allowNull: false,
     defaultValue: Sequelize.NOW
+  },
+
+  hash: {
+    type: Sequelize.STRING(255),
   },
 });
 

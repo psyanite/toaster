@@ -5,6 +5,7 @@ import { UserProfile } from '../models';
 import UserProfileType from '../types/User/UserProfileType';
 
 export default {
+
   userProfileByUsername: {
     type: UserProfileType,
     args: {
@@ -12,13 +13,8 @@ export default {
         type: new NonNull(String),
       },
     },
-    resolve: resolver(UserProfile, {
-      before: (findOptions, args) => {
-        findOptions.where = {
-          username: args.username,
-        };
-        return findOptions;
-      },
-    }),
+    resolve: async (_, { username }) => {
+      return UserProfile.findOne({ where: { username } });
+    }
   },
 };

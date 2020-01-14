@@ -257,9 +257,9 @@ export default {
       },
     },
     resolve: async (_, { userId, tagline }) => {
-      let profile = await UserProfile.findByPk(userId);
+      const profile = await UserProfile.findByPk(userId);
       if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
-      await profile.update({ tagline: tagline });
+      await profile.update({ tagline });
       return profile;
     }
   },
@@ -272,7 +272,7 @@ export default {
       },
     },
     resolve: async (_, { userId }) => {
-      let profile = await UserProfile.findByPk(userId);
+      const profile = await UserProfile.findByPk(userId);
       if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
       await profile.update({ tagline: null });
       return profile;
@@ -290,7 +290,7 @@ export default {
       },
     },
     resolve: async (_, { userId, picture }) => {
-      let profile = await UserProfile.findByPk(userId);
+      const profile = await UserProfile.findByPk(userId);
       if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
       await profile.update({ profile_picture: picture });
       return profile;
@@ -308,7 +308,7 @@ export default {
       },
     },
     resolve: async (_, { userId, name }) => {
-      let profile = await UserProfile.findByPk(userId);
+      const profile = await UserProfile.findByPk(userId);
       if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
       await profile.update({ preferred_name: name });
       return profile;
@@ -326,10 +326,28 @@ export default {
       },
     },
     resolve: async (_, { userId, name }) => {
-      let profile = await UserProfile.findByPk(userId);
+      const profile = await UserProfile.findByPk(userId);
       if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
       await profile.update({ username: name });
       return profile;
     }
   },
+
+  setFcmToken: {
+    type: UserProfileType,
+    args: {
+      userId: {
+        type: new NonNull(Int),
+      },
+      token: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { userId, token }) => {
+      const profile = await UserProfile.findByPk(userId);
+      if (profile == null) throw Error(`Could not find UserProfile by userId: ${userId}`);
+      await profile.update({ fcm_token: token });
+      return profile;
+    }
+  }
 };

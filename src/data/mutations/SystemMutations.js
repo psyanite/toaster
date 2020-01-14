@@ -15,7 +15,7 @@ export default {
       },
     },
     resolve: async (_, { errorType, description }) => {
-      return SystemError.create({ error_type: errorType, description: description.slice(0,250) });
+      return SystemError.create({ error_type: errorType, description: description.slice(0, 250) });
     }
   },
 };
