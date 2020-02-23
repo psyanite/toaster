@@ -5,6 +5,7 @@ import UserRewardType from '../types/User/UserRewardType';
 import Sequelize from 'sequelize';
 import Reward from '../models/Reward/Reward';
 import RewardType, { RewardTypeValues } from '../types/Reward/RewardType';
+import Utils from '../../utils/Utils';
 
 const Op = Sequelize.Op;
 
@@ -104,7 +105,7 @@ export default {
       },
     },
     resolve: async (_, { adminId, code }) => {
-      console.log(`canHonorUserReward: Requested for adminId: ${adminId}, code: ${code}`);
+      Utils.debug(`canHonorUserReward: Requested for adminId: ${adminId}, code: ${code}`);
 
       const admin = await Admin.findByPk(adminId);
       if (admin == null) throw Error(`Could not find Admin by adminId: ${adminId}`);

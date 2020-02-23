@@ -1,11 +1,9 @@
-import Sequelize from 'sequelize';
 import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import * as Randomize from 'randomstring';
-
-import sequelize from '../sequelize';
-import { Reward, UserReward, UserAccount, StoreGroup } from '../models';
+import { Reward, StoreGroup, UserAccount, UserReward } from '../models';
 import UserRewardType from '../types/User/UserRewardType';
 import { RewardTypeValues } from '../types/Reward/RewardType';
+import Utils from '../../utils/Utils';
 
 const createUserReward = async function (userId, rewardId) {
   let uniqueCode = Randomize.generate({ length: 4, capitalization: 'uppercase' });
@@ -51,7 +49,7 @@ export default {
       },
     },
     resolve: async (_, { code }) => {
-      console.log(`honorReward: Requested for code: ${code}`);
+      Utils.debug(`honorReward: Requested for code: ${code}`);
 
       const exists = await UserReward.findOne({ where: { unique_code: code }});
       if (exists == null) throw Error(`Could not find UserReward by code: ${code}`);

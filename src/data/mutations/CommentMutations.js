@@ -18,9 +18,9 @@ async function notifyNewComment(post, comment) {
     );
 
     const title = commentedBy.admin != null ? commentedBy.admin.store.name : commentedBy.username;
-    const fcm = post.official ? FcmService.fcm.butter : FcmService.fcm.burntoast;
+    const messenger = post.official ? FcmService.fcm.butter : FcmService.fcm.burntoast;
 
-    FcmService.notifyPost(fcm, {
+    FcmService.notifyPost(messenger, {
       token: fcmToken,
       title: title,
       body: `Commented on your post: ${comment.body}`,
@@ -29,8 +29,7 @@ async function notifyNewComment(post, comment) {
       flashComment: comment.id,
     });
 
-  } catch
-    (e) {
+  } catch (e) {
     Utils.error(() => console.error(e, e.stack));
   }
 }
@@ -48,9 +47,9 @@ async function notifyNewReply(commentId, reply) {
     );
 
     const title = repliedBy.admin != null ? repliedBy.admin.store.name : repliedBy.username;
-    const fcm = replyTo.admin_id != null ? FcmService.fcm.butter : FcmService.fcm.burntoast;
+    const messenger = replyTo.admin_id != null ? FcmService.fcm.butter : FcmService.fcm.burntoast;
 
-    FcmService.notifyPost(fcm, {
+    FcmService.notifyPost(messenger, {
       token: fcmToken,
       title: title,
       body: `Replied to you: ${reply.body}`,

@@ -4,13 +4,31 @@
 * Run `heroku pg:psql < 'src/scripts/export.sql'`
 * Ignore any errors labelled `ERROR:  must be member of role "postgres"`
 * Check database
+* Delete a random number of rows until we have < 500 left, where id > 100
+* Check the numbers to make sure you don't delete too many rows
+```
+select count(*) from stores
+where random()*11705 > 5500
+and id > 100;
+```
+
+```
+??? doesn't work ???
+DELETE FROM stores
+WHERE ctid IN (
+    SELECT ctid
+    FROM stores
+    WHERE id > 100
+    ORDER BY random()
+    LIMIT 500
+)
+```
 
 
 ### How to release
 * Run `git push -f --all && git push upstream -f --all && git push -f --tags && git push upstream -f --tags`
 * Open CMD
-* Run `heroku login`
-* Run `yarn deploy-heroku`
+* Run `yarn deploy-heroku` (`heroku login` if login is required)
 * This command may seem to get stuck but should take 15 minutes
 
 

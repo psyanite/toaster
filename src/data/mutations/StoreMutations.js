@@ -8,6 +8,7 @@ import CuisineService from '../services/CuisineService';
 import { Suburb, Store, StoreAddress, StoreCuisine, StoreFollow, StoreHour, UserAccount } from '../models';
 import StoreType from '../types/Store/StoreType';
 import StoreFollowType from '../types/Store/StoreFollowType';
+import Utils from '../../utils/Utils';
 
 export default {
   upsertStore: {
@@ -140,7 +141,7 @@ export default {
       try {
         return await sequelize.transaction(process);
       } catch (err) {
-        console.log(err.errors);
+        Utils.error(err.errors);
         throw Error(`Could not upsert store: ${err}`);
       }
     }

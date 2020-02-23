@@ -7,15 +7,48 @@ import {
 } from 'graphql';
 
 import sequelize from '../sequelize';
-import Store from '../models/Store/Store';
-import Admin from '../models/Admin/Admin';
-import UserAccount from '../models/User/UserAccount';
+
+import { Post, PostPhoto, PostReview, Store, UserAccount, UserProfile } from '../models';
 import PostType, { PostTypeValues } from '../types/Post/PostType';
 import { ScoreType } from '../types/Post/PostReviewType';
-import PostReview from '../models/Post/PostReview';
-import Post from '../models/Post/Post';
-import PostPhoto from '../models/Post/PostPhoto';
 import PostPhotoType from '../types/Post/PostPhotoType';
+
+import Utils from '../../utils/Utils';
+import FcmService from '../services/FcmService';
+
+async function notifyNewPost(post) {
+  try {
+    const adminUserProfiles = await sequelize
+      .query(`
+        select user_profiles.*
+        from user_profiles
+               join admins a on user_profiles.admin_id = a.id
+        where a.store_id = :storeId;
+      `, {
+        model: UserProfile,
+        replacements: { storeId: post.store_id },
+      });
+    const fcmTokens = adminUserProfiles.map(p => p.fcm_token).filter(e => e);
+
+    if (fcmTokens.length <= 0) return;
+
+    const messenger = FcmService.fcm.butter;
+    const postedBy = await UserProfile.findByPk(post.posted_by);
+
+    fcmTokens.forEach(fcmToken => {
+      FcmService.notifyPost(messenger, {
+        token: fcmToken,
+        title: postedBy.username,
+        body: 'Posted a new review for your store',
+        imageUrl: postedBy.profile_picture,
+        postId: post.id,
+      })
+    });
+
+  } catch (e) {
+    Utils.error(() => console.error(e, e.stack));
+  }
+}
 
 export default {
   addPost: {
@@ -63,7 +96,8 @@ export default {
       if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
       let user = await UserAccount.findByPk(postedBy);
       if (user == null) throw Error(`Could not find UserAccount by userId: ${postedBy}`);
-      return sequelize.transaction(async t => {
+
+      const process = async (t) => {
         const post = await Post.create({
             type: PostTypeValues.Review,
             hidden: hidden,
@@ -72,6 +106,7 @@ export default {
             posted_by: postedBy,
           }, { transaction: t },
         );
+
         await PostReview.create({
             post_id: post.id,
             overall_score: overallScore,
@@ -89,7 +124,16 @@ export default {
           await PostPhoto.bulkCreate(postPhotos, { returning: true, transaction: t });
         }
         return post;
-      });
+      };
+
+      try {
+        const post = await sequelize.transaction(process);
+        notifyNewPost(post);
+        return post;
+      } catch (err) {
+        Utils.error(err.errors);
+        throw Error(`Could not add post: ${err}`);
+      }
     }
   },
 
@@ -130,19 +174,19 @@ export default {
     ) => {
       let post = await Post.findByPk(id);
       if (post == null) throw Error(`Could not find Post by postId: ${id}`);
-      let postReview = await PostReview.findOne({ where: { post_id: id }});
+      let postReview = await PostReview.findOne({ where: { post_id: id } });
       return sequelize.transaction(async t => {
         await post.update({
           hidden: hidden,
-        }, {transaction: t});
+        }, { transaction: t });
         await postReview.update({
-            overall_score: overallScore,
-            taste_score: tasteScore,
-            service_score: serviceScore,
-            value_score: valueScore,
-            ambience_score: ambienceScore,
-            body: body,
-        }, {transaction: t});
+          overall_score: overallScore,
+          taste_score: tasteScore,
+          service_score: serviceScore,
+          value_score: valueScore,
+          ambience_score: ambienceScore,
+          body: body,
+        }, { transaction: t });
         if (photos.length > 0) {
           const postPhotos = photos.map((p) => {
             return { post_id: id, url: p }

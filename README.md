@@ -38,7 +38,8 @@ BEARER = '???'
 ```
 * Set database in the 'How to database' section
 * Create `/secrets` dir in root
-* Copy `firebase-admin.json` file into dir
+* Copy `firebase-admin-burntoast.json` file into dir
+* Copy `firebase-admin-butter.json` file into dir
 
 ### How to start the frakkin toaster
 * `yarn install`
