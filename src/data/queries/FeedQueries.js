@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull } from 'graphql';
 import PostType from '../types/Post/PostType';
 import FeedService, { Feed } from '../services/FeedService';

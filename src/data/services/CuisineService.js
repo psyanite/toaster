@@ -2,10 +2,10 @@ import { Cuisine } from '../models';
 
 export default class CuisineService {
 
-  static greateCuisine = async (name) => {
+  static async greateCuisine(name) {
     const exist = await Cuisine.findOne({ where: { name: name }});
     if (exist != null) return exist;
 
-    return await Cuisine.create({ name: name });
+    return Cuisine.create({ name: name });
   };
 }

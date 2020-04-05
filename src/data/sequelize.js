@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import config from '../config';
+import configs from '../configs';
 
 // https://github.com/sequelize/sequelize/issues/8417
 
@@ -10,27 +10,41 @@ const define = {
   timestamps: false,
 };
 
-let sequelize;
-
-if (config.env === config.ENV.development) {
-  sequelize = new Sequelize(
-    config.database.name,
-    config.database.username,
-    config.database.password,
-    {
-      host: config.database.host,
-      port: config.database.port,
-      dialect: config.database.dialect,
-      define,
-    },
-  );
-} else {
-  sequelize = new Sequelize(config.database.url, {
-    dialectOptions: {
-      ssl: true,
-    },
+const sequelize = new Sequelize(
+  configs.database.name,
+  configs.database.username,
+  configs.database.password,
+  {
+    host: configs.database.host,
+    port: configs.database.port,
+    dialect: configs.database.dialect,
+    logging: console.log,
     define,
-  });
-}
+  },
+);
+
+// import fs from 'fs';
+// sequelize = new Sequelize(
+//   configs.database.name,
+//   configs.database.username,
+//   configs.database.password,
+//   {
+//     host: configs.database.host,
+//     port: configs.database.port,
+//     dialect: configs.database.dialect,
+//     logging: console.log,
+//     define,
+//     dialectOptions: {
+//       ssl: {
+//         mode: 'verify-ca',
+//         rejectUnauthorized: false,
+//         ca: fs.readFileSync('./secrets/knob-server-ca.pem').toString(),
+//         key: fs.readFileSync('./secrets/knob-client-key.pem').toString(),
+//         cert: fs.readFileSync('./secrets/knob-client-cert.pem').toString(),
+//       },
+//     }
+//   }
+// );
+
 
 export default sequelize;

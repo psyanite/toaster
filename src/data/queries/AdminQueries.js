@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import bcrypt from 'bcrypt';
 
@@ -46,6 +45,12 @@ export default {
 
 
   /** Test Queries **/
+  meow: {
+    type: String,
+    resolve: () => {
+      return "woof";
+    },
+  },
 
   testNotification: {
     type: String,

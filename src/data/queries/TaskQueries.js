@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { GraphQLString as String } from 'graphql';
 import sequelize from '../sequelize';
 import { Store, Reward } from '../models';

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import TagType from '../types/Store/TagType';
 import { GraphQLString as String, GraphQLNonNull as NonNull } from 'graphql';
 import CurateService from '../services/CurateService';

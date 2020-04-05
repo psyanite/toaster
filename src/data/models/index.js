@@ -1,5 +1,3 @@
-import sequelize from '../sequelize';
-
 import Admin from './Admin/Admin';
 
 import UserAccount from './User/UserAccount';
@@ -37,12 +35,6 @@ import ReplyLike from './Post/ReplyLike';
 import Reward from './Reward/Reward';
 
 import SystemError from './System/SystemError';
-
-function sync(...args) {
-  return sequelize.sync(...args);
-}
-
-export default { sync };
 
 export {
   Admin,

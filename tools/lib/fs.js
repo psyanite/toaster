@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import fs from 'fs';
 import path from 'path';
 import glob from 'glob';
@@ -15,20 +6,15 @@ import rimraf from 'rimraf';
 
 export const readFile = file =>
   new Promise((resolve, reject) => {
-    fs.readFile(
-      file,
-      'utf8',
-      (err, data) => (err ? reject(err) : resolve(data)),
+    fs.readFile(file, 'utf8', (err, data) =>
+      err ? reject(err) : resolve(data),
     );
   });
 
 export const writeFile = (file, contents) =>
   new Promise((resolve, reject) => {
-    fs.writeFile(
-      file,
-      contents,
-      'utf8',
-      err => (err ? reject(err) : resolve()),
+    fs.writeFile(file, contents, 'utf8', err =>
+      err ? reject(err) : resolve(),
     );
   });
 
@@ -61,16 +47,14 @@ export const copyFile = (source, target) =>
 
 export const readDir = (pattern, options) =>
   new Promise((resolve, reject) =>
-    glob(
-      pattern,
-      options,
-      (err, result) => (err ? reject(err) : resolve(result)),
+    glob(pattern, options, (err, result) =>
+      err ? reject(err) : resolve(result),
     ),
   );
 
 export const makeDir = name =>
   new Promise((resolve, reject) => {
-    mkdirp(name, err => (err ? reject(err) : resolve()));
+    mkdirp(name).then(_ => resolve()).catch(err => reject(err));
   });
 
 export const moveDir = async (source, target) => {
@@ -107,10 +91,8 @@ export const copyDir = async (source, target) => {
 
 export const cleanDir = (pattern, options) =>
   new Promise((resolve, reject) =>
-    rimraf(
-      pattern,
-      { glob: options },
-      (err, result) => (err ? reject(err) : resolve(result)),
+    rimraf(pattern, { glob: options }, (err, result) =>
+      err ? reject(err) : resolve(result),
     ),
   );
 

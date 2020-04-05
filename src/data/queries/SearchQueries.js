@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {
   GraphQLInt as Int,
   GraphQLList as List,

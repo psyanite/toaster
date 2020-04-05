@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { GraphQLFloat as Float, GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import Reward from '../models/Reward/Reward';
 import RewardType from '../types/Reward/RewardType';

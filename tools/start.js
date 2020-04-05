@@ -1,42 +1,22 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import path from 'path';
 import express from 'express';
 import browserSync from 'browser-sync';
 import webpack from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import errorOverlayMiddleware from 'react-dev-utils/errorOverlayMiddleware';
 import webpackConfig from './webpack.config';
 import run, { format } from './run';
 import clean from './clean';
 
 const isDebug = !process.argv.includes('--release');
 
-// https://webpack.js.org/configuration/watch/#watchoptions
-const watchOptions = {
-  // Watching may not work with NFS and machines in VirtualBox
-  // Uncomment next line if it is your case (use true or interval in milliseconds)
-  // poll: true,
-  // Decrease CPU or memory usage in some file systems
-  // ignored: /node_modules/,
-};
-
 function createCompilationPromise(name, compiler, config) {
   return new Promise((resolve, reject) => {
     let timeStart = new Date();
-    compiler.plugin('compile', () => {
+    compiler.hooks.compile.tap(name, () => {
       timeStart = new Date();
       console.info(`[${format(timeStart)}] Compiling '${name}'...`);
     });
-    compiler.plugin('done', stats => {
+
+    compiler.hooks.done.tap(name, stats => {
       console.info(stats.toString(config.stats));
       const timeEnd = new Date();
       const time = timeEnd.getTime() - timeStart.getTime();
@@ -66,30 +46,7 @@ let server;
 async function start() {
   if (server) return server;
   server = express();
-  server.use(errorOverlayMiddleware());
   server.use(express.static(path.resolve(__dirname, '../public')));
-
-  // Configure client-side hot module replacement
-  const clientConfig = webpackConfig.find(config => config.name === 'client');
-  clientConfig.entry.client = ['./tools/lib/webpackHotDevClient']
-    .concat(clientConfig.entry.client)
-    .sort((a, b) => b.includes('polyfill') - a.includes('polyfill'));
-  clientConfig.output.filename = clientConfig.output.filename.replace(
-    'chunkhash',
-    'hash',
-  );
-  clientConfig.output.chunkFilename = clientConfig.output.chunkFilename.replace(
-    'chunkhash',
-    'hash',
-  );
-  clientConfig.module.rules = clientConfig.module.rules.filter(
-    x => x.loader !== 'null-loader',
-  );
-  clientConfig.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.NamedModulesPlugin(),
-  );
 
   // Configure server-side hot module replacement
   const serverConfig = webpackConfig.find(config => config.name === 'server');
@@ -99,25 +56,13 @@ async function start() {
   serverConfig.module.rules = serverConfig.module.rules.filter(
     x => x.loader !== 'null-loader',
   );
-  serverConfig.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.NamedModulesPlugin(),
-  );
+  serverConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   // Configure compilation
   await run(clean);
   const multiCompiler = webpack(webpackConfig);
-  const clientCompiler = multiCompiler.compilers.find(
-    compiler => compiler.name === 'client',
-  );
   const serverCompiler = multiCompiler.compilers.find(
     compiler => compiler.name === 'server',
-  );
-  const clientPromise = createCompilationPromise(
-    'client',
-    clientCompiler,
-    clientConfig,
   );
   const serverPromise = createCompilationPromise(
     'server',
@@ -125,25 +70,12 @@ async function start() {
     serverConfig,
   );
 
-  // https://github.com/webpack/webpack-dev-middleware
-  server.use(
-    webpackDevMiddleware(clientCompiler, {
-      publicPath: clientConfig.output.publicPath,
-      logLevel: 'silent',
-      watchOptions,
-    }),
-  );
-
-  // https://github.com/glenjamin/webpack-hot-middleware
-  server.use(webpackHotMiddleware(clientCompiler, { log: false }));
-
   let appPromise;
   let appPromiseResolve;
   let appPromiseIsResolved = true;
-  serverCompiler.plugin('compile', () => {
+  serverCompiler.hooks.compile.tap('server', () => {
     if (!appPromiseIsResolved) return;
     appPromiseIsResolved = false;
-    // eslint-disable-next-line no-return-assign
     appPromise = new Promise(resolve => (appPromiseResolve = resolve));
   });
 
@@ -183,16 +115,10 @@ async function start() {
       })
       .catch(error => {
         if (['abort', 'fail'].includes(app.hot.status())) {
-          // console.error(error, error.stack);
           console.warn(`${hmrPrefix}Cannot apply update.`);
-          try {
-            delete require.cache[require.resolve('../build/server')];
-            // eslint-disable-next-line global-require, import/no-unresolved
-            app = require('../build/server').default;
-            console.warn(`${hmrPrefix}App has been reloaded.`);
-          } catch (err) {
-            console.error(err, err.stack);
-          }
+          delete require.cache[require.resolve('../build/server')];
+          app = require('../build/server').default;
+          console.warn(`${hmrPrefix}App has been reloaded.`);
         } else {
           console.warn(
             `${hmrPrefix}Update failed: ${error.stack || error.message}`,
@@ -201,7 +127,7 @@ async function start() {
       });
   }
 
-  serverCompiler.watch(watchOptions, (error, stats) => {
+  serverCompiler.watch({}, (error, stats) => {
     if (app && !error && !stats.hasErrors()) {
       checkForUpdate().then(() => {
         appPromiseIsResolved = true;
@@ -210,18 +136,18 @@ async function start() {
     }
   });
 
-  // Wait until both client-side and server-side bundles are ready
-  await clientPromise;
+  // Wait until server-side bundle is ready
   await serverPromise;
 
   const timeStart = new Date();
   console.info(`[${format(timeStart)}] Launching server...`);
 
   // Load compiled src/server.js as a middleware
-  // eslint-disable-next-line global-require, import/no-unresolved
   app = require('../build/server').default;
   appPromiseIsResolved = true;
   appPromiseResolve();
+
+  const port = process.env.PORT ? Number(process.env.PORT) : undefined;
 
   // Launch the development server with Browsersync and HMR
   await new Promise((resolve, reject) =>
@@ -232,6 +158,7 @@ async function start() {
         middleware: [server],
         open: !process.argv.includes('--silent'),
         ...(isDebug ? {} : { notify: false, ui: false }),
+        ...(port ? { port } : null),
       },
       (error, bs) => (error ? reject(error) : resolve(bs)),
     ),

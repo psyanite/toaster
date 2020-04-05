@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { Admin, StoreGroup, UserReward } from '../models';
 import UserRewardType from '../types/User/UserRewardType';

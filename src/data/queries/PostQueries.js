@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { GraphQLBoolean as Boolean, GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 import { Post } from '../models';

@@ -1,9 +1,7 @@
-/* eslint-disable no-param-reassign */
-import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
-import { Comment, Reply, UserProfile } from '../models';
+import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull } from 'graphql';
+import { Comment, Reply } from '../models';
 import CommentType from '../types/Post/CommentType';
 import ReplyType from '../types/Post/ReplyType';
-import FcmService from '../services/FcmService';
 
 export default {
   commentsByPostId: {
