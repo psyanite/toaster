@@ -1,3 +1,4 @@
+import { QueryTypes } from 'sequelize';
 import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import bcrypt from 'bcrypt';
 
@@ -6,6 +7,7 @@ import AdminType from '../types/Admin/AdminType';
 import UserProfileType from '../types/User/UserProfileType';
 import FcmService from '../services/FcmService';
 import Utils from '../../utils/Utils';
+import sequelize from '../sequelize';
 
 export default {
   adminById: {
@@ -45,10 +47,26 @@ export default {
 
 
   /** Test Queries **/
-  meow: {
-    type: String,
-    resolve: () => {
-      return "woof";
+  cooper: {
+    type: Int,
+    resolve: async () => {
+      const result = await sequelize
+        .query(`
+          select reltuples
+          from pg_catalog.pg_class
+          where relname = 'stores'
+        `, { type: QueryTypes.SELECT });
+
+      try {
+        return parseInt(result[0]['reltuples'], 10);
+      } catch (e) {
+        const msg = `Failed response: ${JSON.stringify(result)}`;
+        Utils.error(() => {
+          console.error(msg);
+          console.error(e);
+        });
+        return msg;
+      }
     },
   },
 

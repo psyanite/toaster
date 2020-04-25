@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize';
+import { Sequelize } from 'sequelize';
 import configs from '../configs';
 
 // https://github.com/sequelize/sequelize/issues/8417

@@ -1,21 +1,33 @@
-const ENV = {
-  development: 'development',
-  stage: 'stage',
-  production: 'production',
+export const Env = {
+  Dev: 'development',
+  Stage: 'stage',
+  Prod: 'production',
 };
 
-if (process.env.NODE_ENV !== ENV.production) {
+if (process.env.NODE_ENV !== Env.Prod) {
   require('dotenv').config();
 }
 
-const env = process.env.NODE_ENV || ENV.development;
+const env = process.env.NODE_ENV || Env.Dev;
 
-module.exports = {
-  ENV,
+let envCode;
+switch (env) {
+  case Env.Dev: envCode = 'DEV'; break;
+  case Env.Stage: envCode = 'STAGE'; break;
+  case Env.Prod: envCode = 'PROD'; break;
+  case _: envCode = "DEV";
+}
+
+const port = process.env.PORT || 3000
+const url = env === Env.Prod ? 'https://burntoast.appspot.com' : `http://localhost:${port}`;
+
+export default {
 
   env: env,
+  envCode: envCode,
 
-  port: process.env.PORT || 3000,
+  url: url,
+  port: port,
 
   api: {
     bearer: process.env.BEARER || '',
