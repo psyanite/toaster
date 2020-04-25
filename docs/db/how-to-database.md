@@ -23,6 +23,7 @@ psql "sslmode=verify-ca sslrootcert=knob-server-ca.pem \
 ```
 
 
+
 # Setup
 
 ## 1. Create database
@@ -55,16 +56,6 @@ create extension unaccent;
 ## 4. Update .env and app.yaml
 * Update `.env` and `app.yaml`
 
-### How to connect to the database via Datagrip
-* Visit [Heroku](https://data.heroku.com/datastores/08663315-9dc4-4d18-81ba-827e25eb4ebf#administration)
-* Host: `ec2-54-163-237-249.compute-1.amazonaws.com`
-* Database: `d1dugrvvqelvff`
-* Port: `5432`
-* User: `sikvdmrgyocaly`
-* Password: Check the website
-* Go to the Advanced tab
-* ssl: `true`
-* sslfactory: `org.postgresql.ssl.NonValidatingFactory`
 
 
 ### How to export the database
@@ -79,20 +70,40 @@ create extension unaccent;
 * Format: File
 * Uncheck Clean Database, Add "IF EXISTS", Create database, and Data only
 * Out path: `C:/Desktop/export.sql`
+* Add params to the box: `--no-owner --format=plain --no-acl`
 * Run
+* cd ~/Desktop
+* sed -E 's/(DROP|CREATE|COMMENT ON) EXTENSION/-- \1 EXTENSION/g' export.sql > export2.sql
 * Replace `src/scripts/export.sql`
 * Commit changes
 
-Alternative:
+Export database
 ```
-pg_dump -U [USERNAME] --format=plain --no-owner --no-acl [DATABASE_NAME] \
+pg_dump -U [USERNAME] --format=plain --no-owner --no-acl [DATABASE-NAME]  \
     | sed -E 's/(DROP|CREATE|COMMENT ON) EXTENSION/-- \1 EXTENSION/g' > [SQL_FILE].sql
-
- --format=plain --no-owner --no-acl production | sed -E 's/(DROP|CREATE|COMMENT ON) EXTENSION/-- \1 EXTENSION/g'
 ```
 
-### How to run export.sql
-* cd to project directory
-* `psql -U postgres`
-* `\c burntoast`
-* `\i src/scripts/export.sql`
+Export only schema
+```
+pg_dump -U [USERNAME] --format=plain --no-owner --no-acl --schema=[SCHEMA-NAME] [DATABASE-NAME] \
+    | sed -E 's/(DROP|CREATE|COMMENT ON) EXTENSION/-- \1 EXTENSION/g' > [SQL_FILE].sql
+```
+
+Example
+```
+pg_dump -U postgres --format=plain --no-owner --no-acl -v --schema=croissant burntoast \
+    | sed -E 's/(DROP|CREATE|COMMENT ON) EXTENSION/-- \1 EXTENSION/g' > export.sql
+```
+
+
+
+### How to connect to the database via Datagrip
+* Visit [Heroku](https://data.heroku.com/datastores/08663315-9dc4-4d18-81ba-827e25eb4ebf#administration)
+* Host: `ec2-54-163-237-249.compute-1.amazonaws.com`
+* Database: `d1dugrvvqelvff`
+* Port: `5432`
+* User: `sikvdmrgyocaly`
+* Password: Check the website
+* Go to the Advanced tab
+* ssl: `true`
+* sslfactory: `org.postgresql.ssl.NonValidatingFactory`
