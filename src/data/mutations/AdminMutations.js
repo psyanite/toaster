@@ -5,6 +5,8 @@ import sequelize from '../sequelize';
 import { Admin, UserAccount, UserProfile } from '../models';
 import UserProfileType from '../types/User/UserProfileType';
 
+const SaltRounds = 10;
+
 export default {
 
   addAdmin: {
@@ -23,7 +25,7 @@ export default {
     resolve: async (_, { email, username, password }) => {
       return sequelize.transaction(async t => {
         const user = await UserAccount.create({ email }, { transaction: t });
-        const hash = await bcrypt.hash(password, username);
+        const hash = await bcrypt.hash(password, SaltRounds);
         const admin = await Admin.create({ user_id: user.id, hash }, { transaction: t });
 
         return UserProfile.create({
@@ -49,13 +51,13 @@ export default {
     resolve: async (_, { username, password }) => {
       const admin = await Admin.findOne({
         include: [{
-          model: UserAccount,
+          model: UserProfile,
           where: { username: username }
         }]
       });
 
       if (admin == null) throw Error(`Could not find Admin by username: ${username}`);
-      const hash = await bcrypt.hash(password, username);
+      const hash = await bcrypt.hash(password, SaltRounds);
       await admin.update({ hash: hash });
       return admin;
     }
