@@ -18,7 +18,7 @@ switch (env) {
   case _: envCode = "DEV";
 }
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 const url = env === Env.Prod ? 'https://burntoast.appspot.com' : `http://localhost:${port}`;
 
 export default {
@@ -40,5 +40,9 @@ export default {
     port: process.env.DATABASE_PORT || 5432,
     username: process.env.DATABASE_USERNAME || 'username',
     password: process.env.DATABASE_PASSWORD || 'password',
+  },
+
+  coffeeCat: {
+    alertHook: process.env.COFFEE_CAT_ALERT_HOOK || '',
   }
 };

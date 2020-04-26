@@ -40,6 +40,7 @@ env_variables:
   DATABASE_USERNAME: "???"
   DATABASE_PASSWORD: "???"
   BEARER: "???"
+  COFFEE_CAT_ALERT_HOOK: "???"
 ```
 
 # 4. Add secrets

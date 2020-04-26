@@ -3,7 +3,7 @@ import superagent from 'superagent';
 import configs from '../configs';
 
 const Hook = {
-  Alert: 'https://hooks.slack.com/services/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',
+  Alert: configs.coffeeCat.alertHook,
 }
 
 function doPost(hook, emoji, msg, callback) {
