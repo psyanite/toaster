@@ -28,7 +28,6 @@ async function copy() {
     ),
     copyFile('yarn.lock', 'build/yarn.lock'),
     copyFile('app.yaml', 'build/app.yaml'),
-    copyFile('.gcloudignore', 'build/.gcloudignore'),
     copyDir('public', 'build/public'),
   ]);
 

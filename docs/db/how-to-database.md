@@ -50,11 +50,28 @@ create extension unaccent;
 * Click on 'Users'
 * Add `toaster`, `toaster-nyatella`, and `nyatella`
 * Connect to database via Datagrip
-* Run `alter role toaster set search_path = croissant`;
-* Run `alter role "toaster-nyatella" set search_path = croissant`;
+* Run `alter role toaster set search_path to croissant, public;`
+* Run `alter role nyatella set search_path to croissant, public;`
+* Run `alter role "toaster-nyatella" set search_path to croissant, public;`
 
 ## 4. Update .env and app.yaml
 * Update `.env` and `app.yaml`
+
+
+### How to export local database
+Open CMD
+cd Desktop
+pg_dump -U postgres --format=plain --no-owner --no-acl -v --schema=croissant burntoast > export.sql
+
+
+
+
+
+
+
+
+
+
 
 
 
