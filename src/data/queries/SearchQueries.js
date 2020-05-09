@@ -56,15 +56,16 @@ export default {
       },
     },
     resolve: async (_, { query }) => {
-      return await sequelize
+      return sequelize
         .query(`
             select *
             from cuisine_search
-            where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+            where document @@ to_tsquery('english', unaccent(lower(:queryStr))) 
+                  or unaccent(name) ~* unaccent(:queryStr)
             order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: CuisineSearchResult,
-          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%` }
+          replacements: { queryStr: Utils.tsClean(query) }
         });
     }
   },
@@ -80,15 +81,16 @@ export default {
       }
     },
     resolve: async (_, { query, limit }) => {
-      return await sequelize
+      return sequelize
         .query(`
             select *
             from location_search
-            where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+            where document @@ to_tsquery('english', unaccent(lower(:queryStr))) 
+              or unaccent(name) ~* unaccent(:queryStr)
             order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
         `, {
           model: LocationSearchResult,
-          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit || 12 }
+          replacements: { queryStr: Utils.tsClean(query), limitStr: limit || 12 }
         });
     }
   },

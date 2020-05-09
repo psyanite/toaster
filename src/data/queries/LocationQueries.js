@@ -52,12 +52,13 @@ export default {
         .query(`
             select *
             from suburbs
-            where document @@ to_tsquery('english', :queryStr) or lower(name) like lower(:likeStr)
+            where document @@ to_tsquery('english', :queryStr) 
+              or unaccent(name) ~* unaccent(:queryStr)
             order by ts_rank(document, to_tsquery('english', :queryStr)) desc
             limit :limitStr
         `, {
           model: Suburb,
-          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit || 12 }
+          replacements: { queryStr: Utils.tsClean(query), limitStr: limit || 12 }
         });
       return Suburb.findAll({ where: { id: { [Op.in]: suburbs.map(s => s.id) } } });
     }

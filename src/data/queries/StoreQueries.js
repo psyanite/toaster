@@ -6,8 +6,6 @@ import sequelize from '../../data/sequelize';
 import Utils from '../../utils/Utils';
 import Sequelize from 'sequelize';
 
-const Op = Sequelize.Op;
-
 export default {
   topStores: {
     type: new List(StoreType),
@@ -52,17 +50,18 @@ export default {
       }
     },
     resolve: async (_, { query, limit, offset }) => {
-      return await sequelize
+      return sequelize
         .query(`
           select *
           from store_search
-          where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          where document @@ to_tsquery('english', unaccent(lower(:queryStr)))
+            or unaccent(name) ~* unaccent(:queryStr)
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
           limit :limitStr
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset }
+          replacements: { queryStr: Utils.tsClean(query), limitStr: limit, offsetStr: offset }
         });
     }
   },
@@ -91,7 +90,8 @@ export default {
         .query(`
           select *  
           from store_search
-          where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
+          where 
+            (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(name) ~* unaccent(:queryStr))
             and (coords <@> point(:lng, :lat)) * 1.60934 < 100
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
             (coords <@> point(:lng, :lat)) * 1.60934
@@ -99,7 +99,7 @@ export default {
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
+          replacements: { queryStr: Utils.tsClean(query), limitStr: limit, offsetStr: offset, lat, lng }
         });
 
       if (tryA.length > 0) return tryA;
@@ -108,14 +108,15 @@ export default {
         .query(`
           select *  
           from store_search
-          where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(lower(name)) like unaccent(lower(:likeStr)))
+          where document @@ to_tsquery('english', unaccent(lower(:queryStr)))
+            or unaccent(name) ~* unaccent(:queryStr)
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
             (coords <@> point(:lng, :lat)) * 1.60934
           limit :limitStr
           offset :offsetStr
         `, {
           model: Store,
-          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%`, limitStr: limit, offsetStr: offset, lat, lng }
+          replacements: { queryStr: Utils.tsClean(query), limitStr: limit, offsetStr: offset, lat, lng }
         });
     }
   },

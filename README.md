@@ -42,3 +42,7 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
 - [How to postgres full text search](http://rachbelaid.com/postgres-full-text-search-is-good-enough/)
 - [How to sequelize full text search](https://medium.com/riipen-engineering/full-text-search-with-sequelize-and-postgresql-3572cb3093e7)
 - [Test Plan](./docs/test-plan.md)
+
+```
+for i in $(cat 1.txt) ; do curl -O $(echo $i | tr '\r' ' ' |  sed 's/\?.*//' ) ; done
+```

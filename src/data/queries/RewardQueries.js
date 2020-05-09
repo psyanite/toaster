@@ -85,10 +85,11 @@ export default {
         .query(`
           select id
           from reward_search
-          where document @@ to_tsquery('english', :queryStr) or unaccent(lower(name)) like unaccent(lower(:likeStr))
+          where document @@ to_tsquery('english', :queryStr) 
+            or unaccent(name) ~* unaccent(:queryStr)
           order by ts_rank(document, to_tsquery('english', :queryStr)) desc
         `, {
-          replacements: { queryStr: Utils.tsClean(query), likeStr: `%${query}%` }
+          replacements: { queryStr: Utils.tsClean(query)}
         });
       if (!results || results.length === 0) {
         return [];
