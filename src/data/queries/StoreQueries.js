@@ -1,16 +1,33 @@
 import { GraphQLFloat as Float, GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Store, Cuisine } from '../models';
+import { Store } from '../models';
 import StoreType from '../types/Store/StoreType';
 import sequelize from '../../data/sequelize';
 import Utils from '../../utils/Utils';
 import Sequelize from 'sequelize';
 
+const Op = Sequelize.Op;
+
 export default {
   topStores: {
     type: new List(StoreType),
     resolve: async () => {
-      return Store.findAll({ where: { rank: 1 }, limit: 12 });
+      return Store.findAll({
+        where: { rank: 1 },
+        limit: 12,
+        order: sequelize.random(),
+      });
+    }
+  },
+
+  famousStores: {
+    type: new List(StoreType),
+    resolve: async () => {
+      const famousStoreIds = [63788, 63793, 63856, 63830, 63831, 63797];
+      return Store.findAll({
+        where: { id: { [Op.in]: famousStoreIds } },
+        order: sequelize.random(),
+      });
     }
   },
 
