@@ -1,6 +1,6 @@
 import { GraphQLString as String } from 'graphql';
 import sequelize from '../sequelize';
-import { Store, Reward } from '../models';
+import { Reward, Store } from '../models';
 
 export default {
   refreshMaterializedViews: {

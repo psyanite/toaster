@@ -8,7 +8,7 @@ import {
 import { resolver } from 'graphql-sequelize';
 import { PointObject } from 'graphql-geojson';
 
-import { Address, Cuisine, Location, Rating, Store, Suburb, UserProfile, Tag, StoreHour, City } from '../../models';
+import { Address, City, Cuisine, Location, Rating, Store, StoreHour, Suburb, Tag, UserProfile } from '../../models';
 import SuburbType from '../Location/SuburbType';
 import LocationType from '../Location/LocationType';
 import AddressType from '../Location/AddressType';

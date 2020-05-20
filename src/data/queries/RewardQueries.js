@@ -69,7 +69,10 @@ export default {
       if (!results || results.length === 0) {
         return [];
       }
-      return Reward.findAll({ where: { id: { [Op.in]: results.map(r => r.id) } } });
+      return Reward.findAll({
+        where: { id: { [Op.in]: results.map(r => r.id) } },
+        order: sequelize.random(),
+      });
     }
   },
 
@@ -85,11 +88,10 @@ export default {
         .query(`
           select id
           from reward_search
-          where document @@ to_tsquery('english', :queryStr) 
-            or unaccent(name) ~* unaccent(:queryStr)
+          where document @@ to_tsquery('english', :queryStr) or unaccent(name) ~* unaccent(:queryStr)
           order by ts_rank(document, to_tsquery('english', :queryStr)) desc
         `, {
-          replacements: { queryStr: Utils.tsClean(query)}
+          replacements: { queryStr: Utils.tsClean(query) }
         });
       if (!results || results.length === 0) {
         return [];
@@ -150,9 +152,9 @@ export default {
           { model: UserReward, as: 'userRewards', where: { user_id: userId }, required: false },
           { model: UserProfile, as: 'favoritedBy', where: { user_id: userId } },
         ],
-      order: [
-        [ { model: UserReward, as: 'userRewards' }, 'last_redeemed_at', 'DESC NULLS LAST' ]
-      ]
+        order: [
+          [{ model: UserReward, as: 'userRewards' }, 'last_redeemed_at', 'DESC NULLS LAST']
+        ]
       });
     }
   },

@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { resolver } from 'graphql-sequelize';
 
-import { UserAccount, UserClaim, UserLogin, UserProfile, Store, Reward, Post } from '../../models';
+import { Post, Reward, Store, UserAccount, UserClaim, UserLogin, UserProfile } from '../../models';
 import UserProfileType from './UserProfileType';
 import PostType from '../Post/PostType';
 import RewardType from '../Reward/RewardType';

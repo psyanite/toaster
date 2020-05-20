@@ -1,4 +1,4 @@
-import { burntoastAdmin, butterAdmin} from './FirebaseAdminService';
+import { burntoastAdmin, butterAdmin } from './FirebaseAdminService';
 import Utils from '../../utils/Utils';
 
 const burntoastMessenger = burntoastAdmin.messaging();

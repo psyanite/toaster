@@ -54,11 +54,9 @@ export default {
         .query(`
           select *
           from store_search
-          where document @@ to_tsquery('english', unaccent(lower(:queryStr)))
-            or unaccent(name) ~* unaccent(:queryStr)
+          where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(name) ~* unaccent(:queryStr)
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc
-          limit :limitStr
-          offset :offsetStr
+          limit :limitStr offset :offsetStr
         `, {
           model: Store,
           replacements: { queryStr: Utils.tsClean(query), limitStr: limit, offsetStr: offset }
@@ -88,15 +86,13 @@ export default {
     resolve: async (_, { query, lat, lng, limit, offset }) => {
       const tryA = await sequelize
         .query(`
-          select *  
+          select *
           from store_search
-          where 
-            (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(name) ~* unaccent(:queryStr))
-            and (coords <@> point(:lng, :lat)) * 1.60934 < 100
+          where (document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(name) ~* unaccent(:queryStr)) and
+            (coords <@> point(:lng, :lat)) * 1.60934 < 100
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
             (coords <@> point(:lng, :lat)) * 1.60934
-          limit :limitStr
-          offset :offsetStr
+          limit :limitStr offset :offsetStr
         `, {
           model: Store,
           replacements: { queryStr: Utils.tsClean(query), limitStr: limit, offsetStr: offset, lat, lng }
@@ -106,14 +102,12 @@ export default {
 
       await sequelize
         .query(`
-          select *  
+          select *
           from store_search
-          where document @@ to_tsquery('english', unaccent(lower(:queryStr)))
-            or unaccent(name) ~* unaccent(:queryStr)
+          where document @@ to_tsquery('english', unaccent(lower(:queryStr))) or unaccent(name) ~* unaccent(:queryStr)
           order by ts_rank(document, to_tsquery('english', unaccent(lower(:queryStr)))) desc,
             (coords <@> point(:lng, :lat)) * 1.60934
-          limit :limitStr
-          offset :offsetStr
+          limit :limitStr offset :offsetStr
         `, {
           model: Store,
           replacements: { queryStr: Utils.tsClean(query), limitStr: limit, offsetStr: offset, lat, lng }
@@ -169,15 +163,13 @@ export default {
     resolve: async (_, { cuisines, lat, lng, limit, offset }) => {
       return sequelize
         .query(`
-          select
-            stores.*,
+          select stores.*,
             (coords <@> point(:lng, :lat)) * 1.60934 as distance
           from stores
-          join store_cuisines sc on stores.id = sc.store_id and sc.cuisine_id in (:cuisines)
+                 join store_cuisines sc on stores.id = sc.store_id and sc.cuisine_id in (:cuisines)
           group by stores.id
           order by distance
-          limit :limitStr
-          offset :offsetStr;
+          limit :limitStr offset :offsetStr;
         `, {
           model: Store,
           replacements: { cuisines, lat, lng, limitStr: limit, offsetStr: offset }

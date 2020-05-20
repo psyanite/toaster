@@ -1,5 +1,4 @@
-import { Post, Tag } from '../models';
-import Sequelize from 'sequelize';
+import { Tag } from '../models';
 
 const Tags = [
   "sweet",

@@ -3,7 +3,7 @@ import { Admin, StoreGroup, UserReward } from '../models';
 import UserRewardType from '../types/User/UserRewardType';
 import Sequelize from 'sequelize';
 import Reward from '../models/Reward/Reward';
-import RewardType, { RewardTypeValues } from '../types/Reward/RewardType';
+import { RewardTypeValues } from '../types/Reward/RewardType';
 import Utils from '../../utils/Utils';
 
 const Op = Sequelize.Op;

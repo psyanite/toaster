@@ -1,11 +1,11 @@
-import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String, GraphQLFloat as Float } from 'graphql';
+import { GraphQLFloat as Float, GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 
 import sequelize from '../sequelize';
 
 import WhereService from '../services/WhereService';
 import CuisineService from '../services/CuisineService';
 
-import { Suburb, Store, StoreAddress, StoreCuisine, StoreFollow, StoreHour, UserAccount } from '../models';
+import { Store, StoreAddress, StoreCuisine, StoreFollow, StoreHour, Suburb, UserAccount } from '../models';
 import StoreType from '../types/Store/StoreType';
 import StoreFollowType from '../types/Store/StoreFollowType';
 import Utils from '../../utils/Utils';
@@ -87,7 +87,6 @@ export default {
         const suburbObj = await Suburb.findOne({ where: { name: suburb }});
         if (suburbObj == null) throw Error(`Could not find suburb by: ${suburb}`);
 
-        // const exist = await Store.findOne({ where: { z_id: z_id }});
         await Store.destroy({ where: { z_id: zId }, transaction: t });
 
         const cityObj = await WhereService.greateCity(city);

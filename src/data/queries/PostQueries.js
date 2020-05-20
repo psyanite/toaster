@@ -29,7 +29,7 @@ export default {
       },
     },
     resolve: async (_, { storeId, limit, offset }) => {
-      return await sequelize
+      return sequelize
         .query(`
           select * from (
             select distinct on (posted_by, store_id) *

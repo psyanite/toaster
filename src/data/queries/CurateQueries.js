@@ -1,5 +1,5 @@
 import TagType from '../types/Store/TagType';
-import { GraphQLString as String, GraphQLNonNull as NonNull } from 'graphql';
+import { GraphQLNonNull as NonNull, GraphQLString as String } from 'graphql';
 import CurateService from '../services/CurateService';
 
 export default {

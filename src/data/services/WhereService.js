@@ -1,4 +1,4 @@
-import { Location, City } from '../models';
+import { City, Location } from '../models';
 
 export default class WhereService {
 

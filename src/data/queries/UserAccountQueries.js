@@ -1,8 +1,7 @@
 import { GraphQLInt as Int, GraphQLList as List, GraphQLNonNull as NonNull, GraphQLString as String, } from 'graphql';
 import { resolver } from 'graphql-sequelize';
-import { Post, UserProfile, UserAccount } from '../models';
+import { Post, UserAccount } from '../models';
 import UserAccountType from '../types/User/UserAccountType';
-import UserProfileType from '../types/User/UserProfileType';
 
 export default {
 

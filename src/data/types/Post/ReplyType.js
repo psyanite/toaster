@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
-import { Reply, ReplyLike, UserProfile, Store } from '../../models';
+import { Reply, ReplyLike, Store, UserProfile } from '../../models';
 import UserProfileType from '../User/UserProfileType';
 import ReplyLikeType from './ReplyLikeType';
 import StoreType from '../Store/StoreType';

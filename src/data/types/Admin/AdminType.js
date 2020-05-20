@@ -1,4 +1,4 @@
-import { GraphQLObjectType as ObjectType, GraphQLInt as Int, GraphQLNonNull as NonNull } from 'graphql';
+import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType } from 'graphql';
 import { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
 

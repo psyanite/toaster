@@ -1,8 +1,4 @@
-import {
-  GraphQLInt as Int,
-  GraphQLNonNull as NonNull,
-  GraphQLObjectType as ObjectType,
-} from 'graphql';
+import { GraphQLInt as Int, GraphQLNonNull as NonNull, GraphQLObjectType as ObjectType, } from 'graphql';
 import { Rating, Store } from '../../models';
 
 Rating.Store = Rating.belongsTo(Store, {

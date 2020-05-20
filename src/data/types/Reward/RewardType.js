@@ -1,11 +1,11 @@
 import {
+  GraphQLBoolean as Boolean,
   GraphQLEnumType as EnumType,
   GraphQLInt as Int,
   GraphQLList as List,
   GraphQLNonNull as NonNull,
   GraphQLObjectType as ObjectType,
   GraphQLString as String,
-  GraphQLBoolean as Boolean,
 } from 'graphql';
 import { GraphQLDate as Date } from 'graphql-iso-date';
 import { resolver } from 'graphql-sequelize';
