@@ -21,15 +21,15 @@ function getMessenger(fcmName) {
   }
 }
 
-function buildMessage({ token, title, body, imageUrl, data }) {
+function buildMessage({ token, title, body, image, data }) {
   return {
     notification: {
       ...(title && { title }),
       ...(body && { body }),
-      ...(imageUrl && { imageUrl }),
     },
     data: {
       click_action: clickActionKey,
+      ...(image && { image }),
       ...data
     },
     token,
@@ -65,7 +65,7 @@ function sendMessage(messenger, message) {
 
 export default class FcmService {
 
-  static notifyPost(fcm, { token, title, body, imageUrl, postId, flashComment, flashReply }) {
+  static notifyPost(fcm, { token, title, body, image, postId, flashComment, flashReply }) {
     const messenger = getMessenger(fcm);
 
     const data = {

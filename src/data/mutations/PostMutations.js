@@ -40,7 +40,7 @@ async function notifyNewPost(post) {
         token: fcmToken,
         title: postedBy.username,
         body: 'Posted a new review for your store',
-        imageUrl: postedBy.profile_picture,
+        image: postedBy.profile_picture,
         postId: post.id,
       })
     });

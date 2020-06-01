@@ -9,18 +9,20 @@ DATABASE_DIALECT = 'postgres'
 DATABASE_HOST = 'localhost'
 DATABASE_PORT = 5432
 DATABASE_NAME = 'burntoast'
-DATABASE_USERNAME = 'postgres'
-DATABASE_PASSWORD = '???'
-BEARER = '???'
+DATABASE_USERNAME = 'toaster'
+DATABASE_PASSWORD = 'meow'
+BEARER = 'breadcat'
+COFFEE_CAT_ALERT_HOOK = '???'
 
 # Cloud SQL
-#DATABASE_DIALECT = 'postgres'
+#DATABASE_DIALECT = '???'
 #DATABASE_HOST = '???'
-#DATABASE_PORT = 5432
+#DATABASE_PORT = ???
 #DATABASE_NAME = '???'
 #DATABASE_USERNAME = '???'
 #DATABASE_PASSWORD = '???'
 #BEARER = '???'
+#COFFEE_CAT_ALERT_HOOK = '???'
 ```
 
 # 3. Add app.yaml

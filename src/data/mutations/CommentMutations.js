@@ -24,7 +24,7 @@ async function notifyNewComment(post, comment) {
       token: fcmToken,
       title: title,
       body: `Commented on your post: ${comment.body}`,
-      imageUrl: commentedBy.profile_picture,
+      image: commentedBy.profile_picture,
       postId: post.id,
       flashComment: comment.id,
     });
@@ -53,7 +53,7 @@ async function notifyNewReply(commentId, reply) {
       token: fcmToken,
       title: title,
       body: `Replied to you: ${reply.body}`,
-      imageUrl: repliedBy.profile_picture,
+      image: repliedBy.profile_picture,
       postId: comment.post_id,
       flashReply: reply.id,
     });
