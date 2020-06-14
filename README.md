@@ -33,16 +33,8 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
 - Node.js Core
 
 ### How to start the frakkin toaster
-- See [here](./docs/how-to-assemble.md)
+- See [here](./docs/db/how-to-assemble.md)
 
-### More docos
-
-- [How to database](./docs/how-to-database.md)
-- [How to Heroku](./docs/how-to-heroku.md)
-- [How to postgres full text search](http://rachbelaid.com/postgres-full-text-search-is-good-enough/)
-- [How to sequelize full text search](https://medium.com/riipen-engineering/full-text-search-with-sequelize-and-postgresql-3572cb3093e7)
-- [Test Plan](./docs/test-plan.md)
-
-```
+s```
 for i in $(cat 1.txt) ; do curl -O $(echo $i | tr '\r' ' ' |  sed 's/\?.*//' ) ; done
 ```

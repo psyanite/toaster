@@ -50,9 +50,13 @@ create extension unaccent;
 * Click on 'Users'
 * Add `toaster`, `toaster-nyatella`, and `nyatella`
 * Connect to database via Datagrip
-* Run `alter role toaster set search_path to croissant, public;`
-* Run `alter role nyatella set search_path to croissant, public;`
-* Run `alter role "toaster-nyatella" set search_path to croissant, public;`
+alter role toaster set search_path to croissant, public;
+alter role nyatella set search_path to croissant, public;
+alter role "toaster-nyatella" set search_path to croissant, public;
+alter materialized view location_search owner to toaster;
+alter materialized view cuisine_search owner to toaster;
+alter materialized view reward_search owner to toaster;
+alter materialized view store_search owner to toaster;
 
 ## 4. Update .env and app.yaml
 * Update `.env` and `app.yaml`

@@ -30,3 +30,7 @@ grant usage on schema croissant to toaster;
 grant select,insert,update,delete on all tables in schema croissant to toaster;
 grant execute on all functions in schema croissant to toaster;
 grant usage,select on all sequences in schema croissant to toaster;
+alter materialized view location_search owner to toaster;
+alter materialized view cuisine_search owner to toaster;
+alter materialized view reward_search owner to toaster;
+alter materialized view store_search owner to toaster;
