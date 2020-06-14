@@ -26,6 +26,7 @@ function buildMessage({ token, title, body, image, data }) {
     notification: {
       ...(title && { title }),
       ...(body && { body }),
+      ...(image && { image }),
     },
     data: {
       click_action: clickActionKey,
@@ -75,7 +76,7 @@ export default class FcmService {
       ...(flashReply && {flashReply: flashReply.toString()}),
     };
 
-    const message = buildMessage({ token, title, body, imageUrl, data });
+    const message = buildMessage({ token, title, body, image, data });
     return sendMessage(messenger, message);
   };
 
