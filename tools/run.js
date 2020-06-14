@@ -16,7 +16,7 @@ function run(fn, options) {
     console.info(
       `[${format(end)}] Finished '${task.name}${
         options ? ` (${options})` : ''
-      }' after ${time} ms`,
+      }' - ${time} ms`,
     );
     return resolution;
   });

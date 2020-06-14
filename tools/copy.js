@@ -56,7 +56,7 @@ async function copy() {
       }
       const end = new Date();
       const time = end.getTime() - start.getTime();
-      console.info(`[${format(end)}] ${event} '${dist}' after ${time} ms`);
+      console.info(`[${format(end)}] ${event} '${dist}' - ${time} ms`);
     });
   }
 }

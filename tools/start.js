@@ -22,14 +22,14 @@ function createCompilationPromise(name, compiler, config) {
       const time = timeEnd.getTime() - timeStart.getTime();
       if (stats.hasErrors()) {
         console.info(
-          `[${format(timeEnd)}] Failed to compile '${name}' after ${time} ms`,
+          `[${format(timeEnd)}] Failed to compile '${name}' - ${time} ms`,
         );
         reject(new Error('Compilation failed!'));
       } else {
         console.info(
           `[${format(
             timeEnd,
-          )}] Finished '${name}' compilation after ${time} ms`,
+          )}] Finished '${name}' compilation - ${time} ms`,
         );
         resolve(stats);
       }
@@ -87,9 +87,9 @@ async function start() {
   });
 
   function checkForUpdate(fromUpdate) {
-    const hmrPrefix = '[\x1b[35mHMR\x1b[0m] ';
+    const hmrPrefix = '[\x1b[35mHMR\x1b[0m]';
     if (!app.hot) {
-      throw new Error(`${hmrPrefix}Hot Module Replacement is disabled.`);
+      throw new Error(`${hmrPrefix} Hot Module Replacement is disabled.`);
     }
     if (app.hot.status() !== 'idle') {
       return Promise.resolve();
@@ -99,14 +99,14 @@ async function start() {
       .then(updatedModules => {
         if (!updatedModules) {
           if (fromUpdate) {
-            console.info(`${hmrPrefix}Update applied.`);
+            console.info(`${hmrPrefix} Update applied.`);
           }
           return;
         }
         if (updatedModules.length === 0) {
-          console.info(`${hmrPrefix}Nothing hot updated.`);
+          console.info(`${hmrPrefix} Nothing hot updated.`);
         } else {
-          console.info(`${hmrPrefix}Updated modules:`);
+          console.info(`${hmrPrefix} Updated modules:`);
           updatedModules.forEach(moduleId =>
             console.info(`${hmrPrefix} - ${moduleId}`),
           );
@@ -115,13 +115,13 @@ async function start() {
       })
       .catch(error => {
         if (['abort', 'fail'].includes(app.hot.status())) {
-          console.warn(`${hmrPrefix}Cannot apply update.`);
+          console.warn(`${hmrPrefix} Cannot apply update.`);
           delete require.cache[require.resolve('../build/server')];
           app = require('../build/server').default;
-          console.warn(`${hmrPrefix}App has been reloaded.`);
+          console.warn(`${hmrPrefix} App has been reloaded.`);
         } else {
           console.warn(
-            `${hmrPrefix}Update failed: ${error.stack || error.message}`,
+            `${hmrPrefix} Update failed: ${error.stack || error.message}`,
           );
         }
       });
@@ -166,7 +166,7 @@ async function start() {
 
   const timeEnd = new Date();
   const time = timeEnd.getTime() - timeStart.getTime();
-  console.info(`[${format(timeEnd)}] Server launched after ${time} ms`);
+  console.info(`[${format(timeEnd)}] Server launched - ${time} ms`);
   return server;
 }
 
