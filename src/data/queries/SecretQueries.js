@@ -1,8 +1,64 @@
 import { GraphQLString as String } from 'graphql';
 import sequelize from '../sequelize';
-import { Reward, Store } from '../models';
+import { Reward, Store, UserProfile } from '../models';
+import { GraphQLInt as Int } from 'graphql/type/scalars';
+import { QueryTypes } from 'sequelize';
+import Utils from '../../utils/Utils';
+import BucketService from '../services/BucketService';
+import FcmService from '../services/FcmService';
 
 export default {
+  cooper: {
+    type: Int,
+    resolve: async () => {
+      const result = await sequelize
+        .query(`
+          select reltuples
+          from pg_catalog.pg_class
+          where relname = 'stores'
+        `, { type: QueryTypes.SELECT });
+
+      try {
+        return parseInt(result[0]['reltuples'], 10);
+      } catch (e) {
+        const msg = `Failed response: ${JSON.stringify(result)}`;
+        Utils.error(() => {
+          console.error(msg);
+          console.error(e);
+        });
+        return msg;
+      }
+    },
+  },
+
+  backupBuckets: {
+    type: String,
+    resolve: () => {
+      BucketService.backupBurntoastBucket().then(() => {});
+      BucketService.backupButterBucket().then(() => {});
+      return "Started";
+    },
+  },
+
+  testNotification: {
+    type: String,
+    resolve: async () => {
+      const user = await UserProfile.findByPk(2);
+      try {
+        return FcmService.notifyPost(FcmService.fcm.burntoast, {
+          token: user.fcm_token,
+          title: 'perrylicious',
+          body: 'Replied to your comment: Can\'t wait to come here next Friday!!! 🥩',
+          postId: '134',
+          flashReply: '92',
+          image: 'https://i.imgur.com/5gnUT3I.jpg',
+        });
+      } catch (e) {
+        Utils.error(() => console.error(e, e.stack));
+      }
+    },
+  },
+
   refreshMaterializedViews: {
     type: String,
     resolve: async () => {
@@ -37,7 +93,8 @@ export default {
           update posts set comment_count = c.comments_count
           from counted c where c.post_id = posts.id
         `);
-      return `Updated ${likeResult.rowCount} like counts, and ${commentResult.rowCount} comment counts`;
+      const result = likeResult.rowCount > 0 && commentResult.rowCount > 0 ? 'Success' : 'Failed';
+      return `${result}, updated ${likeResult.rowCount} like counts, and ${commentResult.rowCount} comment counts`;
     }
   },
 
@@ -60,8 +117,10 @@ export default {
           from reward_rankings rr
           where rewards.id = rr.reward_id
         `);
+      const updatedCount = firstUpdate.rowCount + secondUpdate.rowCount;
       const total = await Reward.count();
-      return `Updated ${firstUpdate.rowCount + secondUpdate.rowCount} rewards out of ${total} rewards`;
+      const result = updatedCount === total ? 'Success' : 'Failed';
+      return `${result}, updated ${updatedCount} / ${total} rewards`;
     }
   },
 
@@ -85,14 +144,16 @@ export default {
           where stores.id = rr.store_id
         `);
       const total = await Store.count();
-      return `Updated ${firstUpdate.rowCount + secondUpdate.rowCount} stores out of ${total} stores`;
+      const updatedCount = firstUpdate.rowCount + secondUpdate.rowCount;
+      const result = updatedCount === total ? 'Success' : 'Failed';
+      return `${result}, updated ${updatedCount} / ${total} stores`;
     }
   },
 
   updateStoreFollowerCount: {
     type: String,
     resolve: async () => {
-      const [, result] = await sequelize
+      const [, updated] = await sequelize
         .query(`
           with counted as (
            select store_id, count(*) as follow_count
@@ -102,14 +163,15 @@ export default {
           update stores set follower_count = c.follow_count
           from counted c where c.store_id = stores.id
         `);
-      return `Updated follower counts for ${result.rowCount} stores`;
+      const result = updated.rowCount > 0 ? 'Success' : 'Failed';
+      return `${result}, updated follower counts for ${updated.rowCount} stores`;
     }
   },
 
   updateUserFollowerCount: {
     type: String,
     resolve: async () => {
-      const [, result] = await sequelize
+      const [, updated] = await sequelize
         .query(`
           with counted as (
            select user_id, count(*) as follow_count
@@ -119,14 +181,15 @@ export default {
           update user_profiles set follower_count = c.follow_count
           from counted c where c.user_id = user_profiles.user_id
         `);
-      return `Updated follower counts for ${result.rowCount} user profiles`;
+      const result = updated.rowCount > 0 ? 'Success' : 'Failed';
+      return `${result}, updated follower counts for ${updated.rowCount} user profiles`;
     }
   },
 
   updateReviewCount: {
     type: String,
     resolve: async () => {
-      const [, result] = await sequelize
+      const [, updated] = await sequelize
         .query(`
           with counted as (
             select posted_by, count(*) as count from (
@@ -141,7 +204,8 @@ export default {
           from counted c
           where c.posted_by = user_profiles.user_id;
         `);
-      return `Updated store counts for ${result.rowCount} user profiles`;
+      const result = updated.rowCount > 0 ? 'Success' : 'Failed';
+      return `${result}, updated store counts for ${updated.rowCount} user profiles`;
     }
   },
 
@@ -166,8 +230,10 @@ export default {
             )
           where store_group_id is not null
         `);
+      const updatedCount = firstUpdate.rowCount + secondUpdate.rowCount;
       const total = await Reward.count();
-      return `Updated ${firstUpdate.rowCount + secondUpdate.rowCount} rewards out of ${total} rewards`;
+      const result = updatedCount === total ? 'Success' : 'Failed';
+      return `${result}, updated ${updatedCount} / ${total} rewards`;
     }
   },
 };
