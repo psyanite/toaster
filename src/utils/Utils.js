@@ -1,12 +1,12 @@
 import * as Randomize from 'randomstring';
 import moment from 'moment-timezone';
 
-const sep = "======================================================================";
+const sep = '======================================================================';
 
-const SydneyTimezone = "Australia/Sydney";
+const SydneyTimezone = 'Australia/Sydney';
 
 export const DateFormat = {
-  Server: "YYYY-MM-DD HH:mm:ss z",
+  Server: 'YYYY-MM-DD HH:mm:ss z',
 }
 
 export default {
@@ -21,9 +21,20 @@ export default {
     return this.now().format(DateFormat.Server);
   },
 
+
+  // General
+
   generateCode() {
     const options = { length: 5, charset: 'bcdfghjklmnpqrtvwxBCDFGHJKLMNPQRTVWX23456789' };
     return Randomize.generate(options).toString();
+  },
+
+  chunkArray(array, chunkSize) {
+    return Array(
+      Math.ceil(array.length / chunkSize))
+      .fill()
+      .map((_, index) => index * chunkSize)
+      .map(begin => array.slice(begin, begin + chunkSize));
   },
 
 

@@ -23,7 +23,7 @@ function doPost(hook, emoji, msg, callback) {
 }
 
 function mkCallback(msg) {
-  return () => Utils.log(`CoffeeCat - Message sent, ${msg}`)
+  return () => console.log(`CoffeeCat - Message sent, ${msg}`)
 }
 
 export const Emoji = {
@@ -36,6 +36,7 @@ export const Emoji = {
 export default class CoffeeCat {
 
   static msgAlert(emoji, title, msg) {
+    console.log(`${title} - ${msg}`);
     const titleStr = title !== '' ? `*${title}* - ` : '';
     const env = configs.envCode;
     const now  = Utils.nowServerFmt();
