@@ -34,7 +34,7 @@
     "@babel/preset-env": "^7.7.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-loader": "^8.0.0",
-    "browser-sync": "^2.24.7",
+    "browser-sync": "^2.26.7",
     "chokidar": "^3.3.0",
     "dotenv": "^8.2.0",
     "glob": "^7.1.6",
