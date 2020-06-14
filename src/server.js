@@ -24,12 +24,12 @@ function checkAuth(req, res) {
   }
 }
 
-function cooper(req, res) {
+function runGraphqlQuery(req, res, query, callback) {
   checkAuth(req, res);
 
   const request = superagent
     .post(`${configs.url}/graphql`)
-    .send({ query: 'query { cooper }' })
+    .send({ query: `query { ${query} }` })
     .set('Authorization', `Bearer ${configs.api.bearer}`)
     .set('Content-type', 'application/json')
     .set('Accept', 'application/json');
@@ -37,12 +37,22 @@ function cooper(req, res) {
   request
     .then((r) => {
       try {
-        respondOk(res, r.body.data.cooper.toString());
+        respondOk(res, callback(r));
       } catch (e) {
+        console.log("Failed to perform GraphqlQuery");
+        console.log(query);
+        console.log(JSON.stringify(r));
+        console.log(e);
         respondBad(res, 500, `Response: ${JSON.stringify(r)}, Error: ${e.message}`);
       }
     })
-    .catch((e) => respondBad(res, 500, e.message));
+    .catch((e) => {
+      CoffeeCat.msgAlert(Emoji.Error, 'GraphqlQuery', `Exception on query: ${query}, ${e.message}`)
+      console.log("Failed to perform GraphqlQuery");
+      console.log(query);
+      console.log(e);
+      respondBad(res, 500, e.message)
+    });
 }
 
 function graphql(req, res) {
@@ -62,7 +72,6 @@ function graphql(req, res) {
       path: error.path,
     }),
   }))(req, res)
-
 }
 
 
@@ -72,12 +81,58 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 
-
 const app = express();
 
 app.use('/graphql', (req, res) => graphql(req, res));
 
-app.get('/cooper', (req, res) => cooper(req, res));
+
+const cooperCallback = (r) => {
+  const value = r.body.data.cooper.toString();
+  const int = parseInt(value);
+  const result = int > 498 ? 'Success' : 'Failed';
+  return `${result} ${int}`;
+}
+app.get('/cmd/cooper', (req, res) => {
+  runGraphqlQuery(req, res, 'cooper', cooperCallback);
+});
+
+const bucketCallback = (r) => r.body.data.backupBuckets.toString();
+app.get('/cmd/backupBuckets', (req, res) => {
+  return runGraphqlQuery(req, res, 'backupBuckets', bucketCallback);
+});
+
+const cacheCallback = (r) => {
+  const data = r.body.data;
+  const result = (
+    data['refreshMaterializedViews'] === 'Updated materialized views location_search, cuisine_search, store_search reward_search'
+    && data['updatePostLikeCommentCache'].startsWith('Success')
+    && data['updateRewardRankings'].startsWith('Success')
+    && data['updateStoreRankings'].startsWith('Success')
+    && data['updateStoreFollowerCount'].startsWith('Success')
+    && data['updateUserFollowerCount'].startsWith('Success')
+    && data['updateRewardCoords'].startsWith('Success')
+  ) ? 'Success' : 'Failed';
+  const msg = `${result}, Response: ${JSON.stringify(r.body.data)}`
+  if (result === 'Success') {
+    CoffeeCat.msgAlert(Emoji.Info, "RebuildCaches", "Done")
+  } else {
+    CoffeeCat.msgAlert(Emoji.Error, 'RebuildCaches', `Failed to rebuild caches\n${msg}`)
+  }
+  return msg;
+}
+app.get('/cmd/rebuildCaches', (req, res) => {
+  CoffeeCat.msgAlert(Emoji.Info, "RebuildCaches", "Started")
+  const query = `
+    refreshMaterializedViews
+    updatePostLikeCommentCache
+    updateRewardRankings
+    updateStoreRankings
+    updateStoreFollowerCount
+    updateUserFollowerCount
+    updateRewardCoords
+`;
+  return runGraphqlQuery(req, res, query, cacheCallback);
+});
 
 app.use((err, req, res, _) => {
   res.status(403).send({ 'errors': [{ 'message': err.message }] });
@@ -95,10 +150,6 @@ if (!module.hot) {
 
 if (module.hot) {
   app.hot = module.hot;
-}
-
-if (configs.env === Env.Prod) {
-  CoffeeCat.msgAlert(Emoji.Success, '', 'Wormhole engaged')
 }
 
 export default app;
