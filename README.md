@@ -16,7 +16,7 @@ Toaster is a pure GraphQL API delivering Sequelized data from a PostgreSQL datab
 - JDK
 - Git
 - Yarn 1.21.1
-- Node 10.19.0
+- Node 10.19.0  
 - Intellij
 - DataGrip
 - Android Studio

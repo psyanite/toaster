@@ -1,13 +1,13 @@
-import { GraphQLString as String } from 'graphql';
+import { GraphQLInt as Int, GraphQLString as String } from 'graphql';
 import sequelize from '../sequelize';
 import { Reward, Store, UserProfile } from '../models';
-import { GraphQLInt as Int } from 'graphql/type/scalars';
 import { QueryTypes } from 'sequelize';
 import Utils from '../../utils/Utils';
 import BucketService from '../services/BucketService';
 import FcmService from '../services/FcmService';
 
 export default {
+
   cooper: {
     type: Int,
     resolve: async () => {
@@ -34,9 +34,9 @@ export default {
   backupBuckets: {
     type: String,
     resolve: () => {
-      BucketService.backupBurntoastBucket().then(() => {});
-      BucketService.backupButterBucket().then(() => {});
-      return "Started";
+      BucketService.backupBurntoastBucket().then(() => null);
+      BucketService.backupButterBucket().then(() => null);
+      return 'Started';
     },
   },
 
