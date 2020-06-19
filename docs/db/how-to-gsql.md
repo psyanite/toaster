@@ -10,12 +10,3 @@ DATABASE_PASSWORD = '???'
 BEARER = '???'
 ```
 * Uncomment the commented section in `sequelize.js`
-
-
-
-## How Cloud SQL was setup
-
-##.l
-
-`gcloud app logs read`
-
