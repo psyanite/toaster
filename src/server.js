@@ -3,7 +3,7 @@ import graphqlHTTP from 'express-graphql';
 import superagent from 'superagent';
 
 import index from '../run/assets/index';
-import configs, { Env } from './configs';
+import configs from './configs';
 import schema from './data/schema';
 import CoffeeCat, { Emoji } from './utils/CoffeeCat';
 
@@ -17,15 +17,15 @@ function respondBad(res, status, msg) {
     .send({ 'errors': [{ 'message': msg }] });
 }
 
-function checkAuth(req, res) {
+function checkAuth(req) {
   const auth = req.headers.authorization;
   if (!auth || auth !== `Bearer ${configs.api.bearer}`) {
-    res.status(403).end();
+    throw new Error('meow');
   }
 }
 
 function runGraphqlQuery(req, res, query, callback) {
-  checkAuth(req, res);
+  checkAuth(req);
 
   const request = superagent
     .post(`${configs.url}/graphql`)
@@ -57,7 +57,7 @@ function runGraphqlQuery(req, res, query, callback) {
 
 function graphql(req, res) {
   if (req.method === 'POST') {
-    checkAuth(req, res);
+    checkAuth(req);
   }
 
   graphqlHTTP(req => ({
@@ -83,7 +83,8 @@ process.on('unhandledRejection', (reason, p) => {
 
 const app = express();
 
-app.use('/graphql', (req, res) => graphql(req, res));
+
+app.use('/graphql', graphql);
 
 
 const cooperCallback = (r) => {
@@ -93,7 +94,7 @@ const cooperCallback = (r) => {
   return `${result} ${int}`;
 }
 app.get('/cmd/cooper', (req, res) => {
-  runGraphqlQuery(req, res, 'cooper', cooperCallback);
+  runGraphqlQuery(req, res,'cooper', cooperCallback);
 });
 
 const bucketCallback = (r) => r.body.data.backupBuckets.toString();
