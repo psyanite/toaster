@@ -1,12 +1,39 @@
-import { GraphQLInt as Int, GraphQLString as String } from 'graphql';
-import sequelize from '../sequelize';
-import { Reward, Store, UserProfile } from '../models';
+import { GraphQLInt as Int, GraphQLString as String, GraphQLNonNull as NonNull } from 'graphql';
 import { QueryTypes } from 'sequelize';
-import Utils from '../../utils/Utils';
+
+import sequelize from '../sequelize';
+import { Reward, Store, UserProfile, UserAccount } from '../models';
 import BucketService from '../services/BucketService';
 import FcmService from '../services/FcmService';
+import Utils from '../../utils/Utils';
+import configs, { Env } from '../../configs';
 
 export default {
+
+  addMeow: {
+    type: Int,
+    args: {
+      username: {
+        type: new NonNull(String),
+      },
+    },
+    resolve: async (_, { username }) => {
+      if (configs.envCode !== 'DEV') return 3;
+
+      const email = `${username}@gmeow.com`
+      const userAccount = await UserAccount.create({ email });
+
+      await UserProfile.create({
+        user_id: userAccount.id,
+        username,
+        preferred_name: null,
+        profile_picture: 'https://i.imgur.com/5gnUT3I.jpg',
+        code: Utils.generateCode(),
+      });
+
+      return 1;
+    }
+  },
 
   cooper: {
     type: Int,
@@ -80,8 +107,10 @@ export default {
             from user_favorite_posts
             group by post_id
           )
-          update posts set like_count = c.like_count
-          from counted c where c.post_id = posts.id
+          update posts
+          set like_count = c.like_count
+          from counted c
+          where c.post_id = posts.id
         `);
       const [, commentResult] = await sequelize
         .query(`
@@ -90,8 +119,10 @@ export default {
             from comments
             group by post_id
           )
-          update posts set comment_count = c.comments_count
-          from counted c where c.post_id = posts.id
+          update posts
+          set comment_count = c.comments_count
+          from counted c
+          where c.post_id = posts.id
         `);
       const result = likeResult.rowCount > 0 && commentResult.rowCount > 0 ? 'Success' : 'Failed';
       return `${result}, updated ${likeResult.rowCount} like counts, and ${commentResult.rowCount} comment counts`;
@@ -105,10 +136,11 @@ export default {
         .query(`
           update rewards
           set rank = 99
-          where not exists (
-            select true from reward_rankings
-            where reward_rankings.reward_id = rewards.id
-          )
+          where not exists(
+              select true
+              from reward_rankings
+              where reward_rankings.reward_id = rewards.id
+            )
         `);
       const [, secondUpdate] = await sequelize
         .query(`
@@ -131,10 +163,11 @@ export default {
         .query(`
           update stores
           set rank = 99
-          where not exists (
-            select true from store_rankings
-            where store_rankings.store_id = stores.id
-          )
+          where not exists(
+              select true
+              from store_rankings
+              where store_rankings.store_id = stores.id
+            )
         `);
       const [, secondUpdate] = await sequelize
         .query(`
@@ -156,12 +189,14 @@ export default {
       const [, updated] = await sequelize
         .query(`
           with counted as (
-           select store_id, count(*) as follow_count
-           from store_follows
-           group by store_id
+            select store_id, count(*) as follow_count
+            from store_follows
+            group by store_id
           )
-          update stores set follower_count = c.follow_count
-          from counted c where c.store_id = stores.id
+          update stores
+          set follower_count = c.follow_count
+          from counted c
+          where c.store_id = stores.id
         `);
       const result = updated.rowCount > 0 ? 'Success' : 'Failed';
       return `${result}, updated follower counts for ${updated.rowCount} stores`;
@@ -174,12 +209,14 @@ export default {
       const [, updated] = await sequelize
         .query(`
           with counted as (
-           select user_id, count(*) as follow_count
-           from user_follows
-           group by user_id
+            select user_id, count(*) as follow_count
+            from user_follows
+            group by user_id
           )
-          update user_profiles set follower_count = c.follow_count
-          from counted c where c.user_id = user_profiles.user_id
+          update user_profiles
+          set follower_count = c.follow_count
+          from counted c
+          where c.user_id = user_profiles.user_id
         `);
       const result = updated.rowCount > 0 ? 'Success' : 'Failed';
       return `${result}, updated follower counts for ${updated.rowCount} user profiles`;
@@ -192,7 +229,8 @@ export default {
       const [, updated] = await sequelize
         .query(`
           with counted as (
-            select posted_by, count(*) as count from (
+            select posted_by, count(*) as count
+            from (
               select posted_by, store_id
               from posts
               group by posted_by, store_id
@@ -215,7 +253,7 @@ export default {
       const [, firstUpdate] = await sequelize
         .query(`
           update rewards r
-          set coords = array[s.coords]
+          set coords = array [s.coords]
           from stores s
           where r.store_id = s.id
         `);
@@ -223,10 +261,10 @@ export default {
         .query(`
           update rewards r
           set coords = array(
-            select s.coords
-            from stores s
-              left join store_group_stores sgs on sgs.store_id = s.id
-            where r.store_group_id = sgs.group_id
+              select s.coords
+              from stores s
+                     left join store_group_stores sgs on sgs.store_id = s.id
+              where r.store_group_id = sgs.group_id
             )
           where store_group_id is not null
         `);

@@ -15,7 +15,7 @@ switch (env) {
   case Env.Dev: envCode = 'DEV'; break;
   case Env.Stage: envCode = 'STAGE'; break;
   case Env.Prod: envCode = 'PROD'; break;
-  case _: envCode = "DEV";
+  case _: envCode = 'DEV';
 }
 
 const port = process.env.PORT || 3000;
