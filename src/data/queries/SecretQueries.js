@@ -61,6 +61,7 @@ export default {
   backupBuckets: {
     type: String,
     resolve: () => {
+      if (configs.envCode !== "PROD") return 'Disabled';
       BucketService.backupBurntoastBucket().then(() => null);
       BucketService.backupButterBucket().then(() => null);
       return 'Started';
