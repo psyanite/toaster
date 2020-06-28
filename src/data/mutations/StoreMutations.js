@@ -108,7 +108,7 @@ export default {
           city_id: cityObj.id,
           more_info: moreInfo,
           avg_cost: avgCost,
-          coords: sequelize.literal(`POINT(${lat},${lng})`),
+          coords: sequelize.literal(`POINT(${lng},${lat})`),
         }, { transaction: t });
 
         await StoreAddress.create({
