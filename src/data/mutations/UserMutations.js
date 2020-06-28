@@ -40,8 +40,9 @@ export default {
     resolve: (
       value_,
       { username, displayName, email, profilePicture, socialId, socialType },
-    ) =>
-      sequelize
+    ) => {
+      if (!(username.length >= 6 && username.length <= 24)) throw Error('Invalid username');
+      return sequelize
         .transaction(t =>
           UserAccount.create(
             {
@@ -73,7 +74,8 @@ export default {
               ),
             ),
         )
-        .then(result => result),
+        .then(result => result)
+    }
   },
 
   addUserFollower: {
