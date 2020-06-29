@@ -117,7 +117,7 @@ export default {
 
       if (tryA.length > 0) return tryA;
 
-      await sequelize
+      return sequelize
         .query(`
           select *
           from store_search
