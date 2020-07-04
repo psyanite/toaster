@@ -1,16 +1,20 @@
+# Miscellaneous
+.DS_Store
+
+# IntelliJ
+.idea/codeStyles
+.idea/libraries
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/shelf
 modules.xml
-.iml
+*.iml
 
-.DS_Store
-
+# Meow
 backup
 build
 node_modules
 secrets
-
 .env
 app.yaml
