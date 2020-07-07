@@ -94,8 +94,8 @@ export default {
     ) => {
       let store = await Store.findByPk(storeId);
       if (store == null) throw Error(`Could not find Store by storeId: ${storeId}`);
-      let user = await UserAccount.findByPk(postedBy);
-      if (user == null) throw Error(`Could not find UserAccount by userId: ${postedBy}`);
+      let user = await UserProfile.findByPk(postedBy);
+      if (user == null) throw Error(`Could not find UserProfile by userId: ${postedBy}`);
 
       const process = async (t) => {
         const post = await Post.create({
@@ -128,7 +128,7 @@ export default {
 
       try {
         const post = await sequelize.transaction(process);
-        notifyNewPost(post);
+        if (user.admin_id == null) notifyNewPost(post).then(() => {});
         return post;
       } catch (err) {
         Utils.error(err.errors);
