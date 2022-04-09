@@ -18,7 +18,7 @@
     "graphql-relay": "^0.6.0",
     "graphql-sequelize": "^9.3.5",
     "graphqlify": "^1.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.28",
     "pg": "^8.0.2",
     "randomstring": "^1.1.5",
