@@ -19,7 +19,7 @@
     "graphql-sequelize": "^9.3.5",
     "graphqlify": "^1.1.0",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.28",
+    "moment-timezone": "^0.5.35",
     "pg": "^8.0.2",
     "randomstring": "^1.1.5",
     "sequelize": "^5.21.2",
